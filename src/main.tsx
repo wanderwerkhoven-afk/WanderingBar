@@ -7,7 +7,7 @@ const tabs:[Tab,LucideIcon][]=[['Home',House],['Evenementen',CalendarDays],['Inv
 const initial=['Paklijst workshop afronden','Ingrediënten inkopen','Opstelling controleren'];
 type EventItem={id:number;title:string;date:string;city:string;guests:number;progress:number;status:'Aankomend'|'In voorbereiding'|'Afgerond';photo:string};
 const sampleEvents:EventItem[]=[
-{id:1,title:'Cocktailworkshop',date:'Za 15 feb',city:'Utrecht',guests:20,progress:75,status:'In voorbereiding',photo:'https://images.unsplash.com/photo-1536935338788846bb9981813?auto=format&fit=crop&w=450&q=80'},
+{id:1,title:'Cocktailworkshop',date:'Za 15 feb',city:'Utrecht',guests:20,progress:75,status:'In voorbereiding',photo:'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=450&q=80'},
 {id:2,title:'Mobiele cocktailbar',date:'Vr 28 feb',city:'Amsterdam',guests:80,progress:40,status:'In voorbereiding',photo:'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=450&q=80'},
 {id:3,title:'Gin & Tonic Bar',date:'Za 8 mrt',city:'Rotterdam',guests:50,progress:0,status:'Aankomend',photo:'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=450&q=80'}
 ];

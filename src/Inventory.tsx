@@ -6,7 +6,7 @@ type Category='Bar & materialen'|'Dranken'|'Garneringen'|'Verbruiksartikelen';
 type Item={id:string;name:string;category:Category;subcategory:string;quantity:number|null;unit:string;location:string;notes:string};
 const categories:{name:Category;description:string;icon:LucideIcon;subcategories:string[]}[]=[
 {name:'Bar & materialen',description:'Tools, glaswerk, deco',icon:Martini,subcategories:['Bar & inrichting','Bar tools','Glaswerk','Logistiek']},
-{name:'Dranken',description:'Spirits, mixers, siropen',icon:Wine,subcategories:['Spirits','Likeuren','Mixers','Siropen','Frisdranken','Overig']},
+{name:'Dranken',description:'Spirits, mixers, siropen',icon:Wine,subcategories:['Spirits','Likeuren','Sappen','Siropen','Mixers','Frisdranken','Wijn & bubbels','Bier','Overig']},
 {name:'Garneringen',description:'Fruit, kruiden, gedroogd',icon:Citrus,subcategories:['Vers fruit','Kruiden','Gedroogd','Overig']},
 {name:'Verbruiksartikelen',description:'Servetten, schoonmaak',icon:Package,subcategories:['Servetten','Schoonmaak','Workshopmateriaal','Drukwerk','Overig']}
 ];
@@ -17,9 +17,20 @@ const seed:[string,Category,string][]=[
 ['Opbergkrat','Bar & materialen','Logistiek'],
 ['Servetten','Verbruiksartikelen','Servetten'],['Vaatdoekjes','Verbruiksartikelen','Schoonmaak'],['Theedoeken','Verbruiksartikelen','Schoonmaak'],['Zeep','Verbruiksartikelen','Schoonmaak'],['Workshopreceptkaarten','Verbruiksartikelen','Workshopmateriaal']
 ];
+// Catalogusvoorstellen: geen bevestigde voorraad, merken of hoeveelheden.
+const beverageCatalog:[string,string][]=[
+['Vodka','Spirits'],['Gin','Spirits'],['Witte rum','Spirits'],['Bruine rum','Spirits'],['Tequila blanco','Spirits'],['Tequila reposado','Spirits'],['Bourbon whiskey','Spirits'],['Whisky','Spirits'],['Cognac','Spirits'],['Pisco','Spirits'],['Cachaça','Spirits'],['Mezcal','Spirits'],
+['Triple sec','Likeuren'],['Cointreau','Likeuren'],['Amaretto','Likeuren'],['Koffielikeur','Likeuren'],['Perziklikeur','Likeuren'],['Vlierbloesemlikeur','Likeuren'],['Crème de cassis','Likeuren'],['Blue curaçao','Likeuren'],['Aperol','Likeuren'],['Campari','Likeuren'],['Limoncello','Likeuren'],['Vermouth rood','Likeuren'],['Vermouth droog','Likeuren'],
+['Limoensap','Sappen'],['Citroensap','Sappen'],['Sinaasappelsap','Sappen'],['Ananassap','Sappen'],['Cranberrysap','Sappen'],['Grapefruitsap','Sappen'],['Appelsap','Sappen'],['Passievruchtsap','Sappen'],['Mangonectar','Sappen'],['Tomatensap','Sappen'],['Granaatappelsap','Sappen'],
+['Suikersiroop','Siropen'],['Rietsuikersiroop','Siropen'],['Vanillesiroop','Siropen'],['Passievruchtsiroop','Siropen'],['Grenadine','Siropen'],['Vlierbloesemsiroop','Siropen'],['Frambozensiroop','Siropen'],['Aardbeiensiroop','Siropen'],['Kokossiroop','Siropen'],['Orgeat (amandelsiroop)','Siropen'],['Gembersiroop','Siropen'],['Karamelsiroop','Siropen'],['Lavendelsiroop','Siropen'],['Honingstroop','Siropen'],
+['Tonic water','Mixers'],['Elderflower tonic','Mixers'],['Ginger beer','Mixers'],['Ginger ale','Mixers'],['Sodawater','Mixers'],['Bitter lemon','Mixers'],['Cola','Frisdranken'],['Cola zero','Frisdranken'],['Sprite / 7UP','Frisdranken'],['Fanta','Frisdranken'],['Bruiswater','Frisdranken'],['Plat water','Frisdranken'],
+['Prosecco','Wijn & bubbels'],['Cava','Wijn & bubbels'],['Witte wijn','Wijn & bubbels'],['Rode wijn','Wijn & bubbels'],['Rosé','Wijn & bubbels'],['Bier pils','Bier'],['Alcoholvrij bier','Bier'],
+['Angostura bitters','Overig'],['Orange bitters','Overig'],['Chocolate bitters','Overig'],['Kokosroom','Overig'],['Aquafaba','Overig']
+];
+const beverageStarter:Item[]=beverageCatalog.map(([name,subcategory],i)=>({id:'beverage-'+i,name,category:'Dranken',subcategory,quantity:null,unit:'flessen',location:'',notes:''}));
 const key='wandering-barback-inventory-v1';
 const starter:Item[]=seed.map(([name,category,subcategory],i)=>({id:'starter-'+i,name,category,subcategory,quantity:null,unit:'stuks',location:'',notes:''}));
-function load():Item[]{try{const s=localStorage.getItem(key);if(s){const value:unknown=JSON.parse(s);if(Array.isArray(value))return value as Item[]}}catch{}return starter}
+function load():Item[]{try{const s=localStorage.getItem(key);if(s){const value:unknown=JSON.parse(s);if(Array.isArray(value)){const existing=value as Item[];const migrated=localStorage.getItem('wandering-barback-beverages-seeded-v1')==='yes';if(migrated)return existing;const names=new Set(existing.filter(i=>i.category==='Dranken').map(i=>i.name.toLocaleLowerCase('nl')));const missing=beverageStarter.filter(i=>!names.has(i.name.toLocaleLowerCase('nl')));localStorage.setItem('wandering-barback-beverages-seeded-v1','yes');return [...existing,...missing]}}}catch{}return [...starter,...beverageStarter]}
 const blank=(category:Category):Item=>({id:'',name:'',category,subcategory:categories.find(c=>c.name===category)!.subcategories[0],quantity:null,unit:'stuks',location:'',notes:''});
 export default function Inventory(){
 const [items,setItems]=useState<Item[]>(load);

@@ -47,15 +47,15 @@ const verifiedPrices:Record<string,{price:number;brand:string;supplier:string;we
 'Bloedsinaasappelsap':{price:2.89,brand:'AH',supplier:'Albert Heijn',webLink:'https://www.ah.nl/producten/product/wi382448/ah-bloedsinaasappelsap',notes:'Prijsreferentie: 1 liter verpakking (4 nov 2026).'},
 'Limoen':{price:0.69,brand:'AH',supplier:'Albert Heijn',webLink:'https://www.ah.nl/producten/product/wi231211/ah-limoen',notes:'Prijsreferentie: per stuk (4 nov 2026).'}
 };
-const gallPrices = { 'Witte rum': 18.99, 'Gin': 24.49, 'Cointreau': 26.49 };
+const gallPrices:Record<string,{price:number;brand:string;webLink:string}> = { 'Witte rum': {price:18.99,brand:'Bacardí Carta Blanca 70 cl',webLink:'https://www.gall.nl/bacardi-carta-blanca-70cl-762164.html'}, 'Gin': {price:24.49,brand:'Bombay Sapphire 70 cl',webLink:'https://www.gall.nl/bombay-sapphire-70cl-778818.html'}, 'Cointreau': {price:26.49,brand:'Cointreau 70 cl',webLink:'https://www.gall.nl/cointreau-70cl-671711.html'} };
 const key='wandering-barback-inventory-v1';
 const starter:Item[]=seed.map(([name,category,subcategory],i)=>({id:'starter-'+i,name,category,subcategory,quantity:0,unit:'stuks',location:'',notes:''}));
-function applyVerifiedPrices(items:Item[]):Item[]{return items.map(i=>{const p=verifiedPrices[i.name];return p&&i.price==null?{...i,...p,priceCheckedAt:'2026-11-04'}:i})}
+function applyVerifiedPrices(items:Item[]):Item[]{return items.map(i=>{const p=verifiedPrices[i.name];const g=gallPrices[i.name];if(g&&i.price==null)return {...i,...g,supplier:'Gall & Gall',priceCheckedAt:'2026-11-04'};return p&&i.price==null?{...i,...p,priceCheckedAt:'2026-11-04'}:i})}
 function load():Item[]{
 const all=[...starter,...beverageStarter,...extraStarter].map(i=>verifiedPrices[i.name]?{...i,...verifiedPrices[i.name],priceCheckedAt:'2026-11-04'}:i);
 try{
  const raw=localStorage.getItem(key);
- if(!raw)return all;
+ if(!raw)return applyVerifiedPrices(all);
  const value:unknown=JSON.parse(raw);
  if(!Array.isArray(value))return all;
  const existing=value as Item[];

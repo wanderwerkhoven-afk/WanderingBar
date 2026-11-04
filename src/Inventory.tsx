@@ -41,10 +41,17 @@ const extraCatalog:[string,Category,string,string][]=[
 ['Verse munt','Garneringen','Kruiden','gram'],['Verse basilicum','Garneringen','Kruiden','gram'],['Verse rozemarijn','Garneringen','Kruiden','gram'],['Verse tijm','Garneringen','Kruiden','gram'],['Verse salie','Garneringen','Kruiden','gram'],['Verse gember','Garneringen','Kruiden','gram'],['Citroengras','Garneringen','Kruiden','stuks'],['Kaneelstokjes','Garneringen','Gedroogd','stuks'],['Steranijs','Garneringen','Gedroogd','stuks'],['Kruidnagel','Garneringen','Gedroogd','stuks'],['Gedroogde sinaasappelschijfjes','Garneringen','Gedroogd','stuks'],['Gedroogde limoenschijfjes','Garneringen','Gedroogd','stuks'],['Gedroogde citroenschijfjes','Garneringen','Gedroogd','stuks'],['Gedroogde grapefruitschijfjes','Garneringen','Gedroogd','stuks'],['Eetbare bloemen','Garneringen','Overig','stuks'],['Cocktailkersen','Garneringen','Overig','stuks'],['Olijven','Garneringen','Overig','stuks'],['Grof zeezout','Garneringen','Overig','gram'],['Rietsuiker','Garneringen','Overig','gram'],['Kristalsuiker','Garneringen','Overig','gram'],['Tajín kruidenmix','Garneringen','Overig','gram'],['Kokosrasp','Garneringen','Overig','gram'],['Passievruchtpuree','Garneringen','Fruitpurees','gram'],['Mangopuree','Garneringen','Fruitpurees','gram'],['Aardbeienpuree','Garneringen','Fruitpurees','gram'],['Frambozenpuree','Garneringen','Fruitpurees','gram'],['Perzikpuree','Garneringen','Fruitpurees','gram'],['Yuzupuree','Garneringen','Fruitpurees','gram']
 ];
 const extraStarter:Item[]=extraCatalog.map(([name,category,subcategory,unit],i)=>({id:'extra-'+i,name,category,subcategory,quantity:0,unit,location:'',notes:''}));
+const verifiedPrices:Record<string,{price:number;brand:string;supplier:string;webLink:string;notes:string}>={
+'Sinaasappelsap':{price:1.59,brand:'AH',supplier:'Albert Heijn',webLink:'https://www.ah.nl/producten/product/wi377720/ah-sinaasappelsap',notes:'Prijsreferentie: 1 liter verpakking (4 nov 2026).'},
+'Appelsap':{price:1.59,brand:'AH',supplier:'Albert Heijn',webLink:'https://www.ah.nl/producten/product/wi377726/ah-appelsap',notes:'Prijsreferentie: 1 liter verpakking (4 nov 2026).'},
+'Bloedsinaasappelsap':{price:2.89,brand:'AH',supplier:'Albert Heijn',webLink:'https://www.ah.nl/producten/product/wi382448/ah-bloedsinaasappelsap',notes:'Prijsreferentie: 1 liter verpakking (4 nov 2026).'},
+'Limoen':{price:0.69,brand:'AH',supplier:'Albert Heijn',webLink:'https://www.ah.nl/producten/product/wi231211/ah-limoen',notes:'Prijsreferentie: per stuk (4 nov 2026).'}
+};
 const key='wandering-barback-inventory-v1';
 const starter:Item[]=seed.map(([name,category,subcategory],i)=>({id:'starter-'+i,name,category,subcategory,quantity:0,unit:'stuks',location:'',notes:''}));
+function applyVerifiedPrices(items:Item[]):Item[]{return items.map(i=>{const p=verifiedPrices[i.name];return p&&i.price==null?{...i,...p,priceCheckedAt:'2026-11-04'}:i})}
 function load():Item[]{
-const all=[...starter,...beverageStarter,...extraStarter];
+const all=[...starter,...beverageStarter,...extraStarter].map(i=>verifiedPrices[i.name]?{...i,...verifiedPrices[i.name],priceCheckedAt:'2026-11-04'}:i);
 try{
  const raw=localStorage.getItem(key);
  if(!raw)return all;
@@ -52,12 +59,12 @@ try{
  if(!Array.isArray(value))return all;
  const existing=value as Item[];
  const migrationKey='wandering-barback-inventory-expanded-zero-v1';
- if(localStorage.getItem(migrationKey)==='yes')return existing;
+ if(localStorage.getItem(migrationKey)==='yes')return applyVerifiedPrices(existing);
  const known=new Set(existing.map(i=>i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));
  const missing=all.filter(i=>!known.has(i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));
  const result=[...existing,...missing].map(i=>({...i,quantity:0}));
  localStorage.setItem(migrationKey,'yes');
- return result;
+ return applyVerifiedPrices(result);
 }catch{return all}
 }
 const blank=(category:Category):Item=>({id:'',name:'',category,subcategory:categories.find(c=>c.name===category)!.subcategories[0],quantity:0,unit:category==='Dranken'?'flessen':'stuks',location:'',notes:''});

@@ -77,3 +77,14 @@
 .form-actions .secondary{background:#e8d8c8;color:#4b2c1d}
 .event-detail{width:min(100%,380px)}
 @media(max-width:370px){.event-list-card{gap:9px;padding:10px}.event-thumbnail{width:28%}.event-card-details h2{font-size:15px}.event-meta{font-size:12px}.event-filters button{padding:11px 12px;font-size:12px}}
+
+/* Event details and editable fields */
+.event-detail{max-height:min(85dvh,700px);overflow-y:auto}
+.detail-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.detail-heading h2{font-family:'Playfair Display',serif;margin:0}
+.detail-close{border:0;background:transparent!important;color:#4b2c1d!important;padding:3px!important}
+.event-detail>p{display:flex;align-items:center;gap:9px;font-size:14px}
+.event-detail .event-progress{margin:20px 0}
+.detail-edit{width:100%;margin-top:14px}
+.event-form select{font:inherit;border:1px solid #d7c6b8;border-radius:10px;padding:10px;background:white}
+.event-form input[type=range]{accent-color:#4b2c1d;padding:5px 0}

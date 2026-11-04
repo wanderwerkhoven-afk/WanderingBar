@@ -1,2 +1,46 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,500&display=swap');
 :root{font-family:'DM Sans',sans-serif;color:#261810;background:#f8eee2;font-synthesis:none}*{box-sizing:border-box}body{margin:0}button{font:inherit;cursor:pointer}.shell{max-width:600px;min-height:100dvh;margin:auto;background:linear-gradient(#fff7ed,#f9eddf);padding-bottom:105px}.header{padding:52px 24px 22px;background:linear-gradient(145deg,#fff8ef,#f1ddca)}.top{display:flex;justify-content:space-between;align-items:center}.brand{font:700 28px/1.05 'Playfair Display',serif}.brand span{display:block;color:#aa744b;font-style:italic;font-weight:500}.actions{display:flex;align-items:center;gap:16px}.icon-button{background:none;border:0;color:#332119}.avatar{background:#b17a4c;border:0;border-radius:50%;width:49px;height:49px;color:white;font-size:19px}.header h1{font:700 38px 'Playfair Display',serif;margin:31px 0 0}main{padding:20px 20px 24px}.card{background:#fffaf4;border-radius:22px;box-shadow:0 9px 24px #65412a13;overflow:hidden}.section-title{display:flex;align-items:center;justify-content:space-between;width:100%;background:#ead9c9;border:0;padding:12px 17px;font-size:21px;font-weight:800;color:#21160f}.event-content{display:flex;gap:16px;padding:17px 15px 20px}.event-image{width:36%;min-height:175px;border-radius:18px;background:radial-gradient(circle at 50% 40%,#a47a43,#261810 75%);display:flex;align-items:center;justify-content:center;font-size:62px}.event-info{flex:1;min-width:0}.event-info h2{font-size:21px;margin:0 0 10px}.event-info>div:not(.progress-line){display:flex;align-items:center;gap:9px;font-size:15px;margin:8px 0}.progress-line{display:flex;align-items:center;gap:10px;margin:14px 0}.track{height:9px;background:#ddc9b9;border-radius:99px;flex:1;overflow:hidden}.track span{display:block;width:75%;height:100%;background:#5b3421;border-radius:99px}.status{display:inline-block;background:#ffdda0;border-radius:99px;padding:9px 15px;font-weight:700;font-size:13px}.tasks{margin-top:29px}.tasks-heading{display:flex;justify-content:space-between;align-items:center;margin:0 7px 10px}.tasks-heading h2{font-size:25px;margin:0}.count{background:#b67f51;border-radius:50%;width:34px;height:34px;display:grid;place-items:center;font-weight:700}.task-list{padding:8px 17px}.task{display:flex;align-items:center;gap:14px;min-height:58px;border-bottom:1px solid #eaded1;font-size:16px}.task:last-child{border:0}.task input{appearance:none;border:2px solid #38251a;border-radius:5px;width:23px;height:23px;flex-shrink:0}.task input:checked{background:#5b3421;border-color:#5b3421}.task input:checked:after{content:'✓';color:white;display:block;text-align:center;font-size:17px}.task span{flex:1}.completed{text-decoration:line-through;color:#897b70}.new-event{margin-top:26px;width:100%;border:0;border-radius:20px;padding:19px;background:#4b2c1d;color:#fff;display:flex;align-items:center;justify-content:center;gap:13px;font-size:18px;font-weight:700}.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,600px);padding:12px 5px calc(12px + env(safe-area-inset-bottom));background:#fff7ee;border-top:1px solid #e8d6c7;display:flex;justify-content:space-around;box-shadow:0 -4px 15px #5d392010}.bottom-nav button{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;color:#786e65;font-size:10px;padding:3px 0;min-width:55px}.bottom-nav button.active{color:#4b2c1d;font-weight:800}.placeholder{text-align:center;padding:55px 20px}.placeholder h2{font-size:24px}.placeholder p{color:#6b5c50}.overlay{position:fixed;inset:0;background:#0007;display:grid;place-items:center;padding:25px;z-index:10}.modal{background:#fff8ef;border-radius:20px;padding:24px;max-width:380px}.modal button{background:#4b2c1d;color:white;border:0;border-radius:12px;padding:12px 20px}@media(max-width:380px){.event-content{gap:10px}.event-image{min-height:160px}.event-info h2{font-size:18px}.header h1{font-size:34px}.task{font-size:14px}}
+
+/* Compact mobile dashboard proportions based on the approved mockup. */
+@media (max-width: 600px) {
+  .shell { padding-bottom: 82px; }
+  .header { padding: 24px 20px 18px; }
+  .brand { font-size: 23px; line-height: 1.02; }
+  .actions { gap: 12px; }
+  .icon-button { padding: 4px; }
+  .icon-button svg { width: 22px; height: 22px; }
+  .avatar { width: 42px; height: 42px; font-size: 15px; }
+  .header h1 { font-size: 32px; margin: 24px 0 0; line-height: 1.14; }
+  main { padding: 15px 16px 22px; }
+  .card { border-radius: 19px; }
+  .section-title { padding: 10px 14px; font-size: 18px; }
+  .section-title svg { width: 20px; height: 20px; }
+  .event-content { gap: 13px; padding: 12px 13px 14px; }
+  .event-image { width: 34%; min-height: 140px; border-radius: 14px; font-size: 48px; }
+  .event-info h2 { font-size: 17px; line-height: 1.2; margin: 0 0 8px; }
+  .event-info > div:not(.progress-line) { gap: 7px; font-size: 13px; margin: 6px 0; }
+  .event-info > div:not(.progress-line) svg { width: 16px; height: 16px; }
+  .progress-line { gap: 8px; margin: 10px 0; font-size: 13px; }
+  .track { height: 7px; }
+  .status { font-size: 11px; padding: 7px 11px; }
+  .tasks { margin-top: 20px; }
+  .tasks-heading { margin: 0 5px 9px; }
+  .tasks-heading h2 { font-size: 21px; }
+  .count { width: 29px; height: 29px; font-size: 14px; }
+  .task-list { padding: 5px 14px; }
+  .task { gap: 12px; min-height: 48px; font-size: 14px; }
+  .task input { width: 20px; height: 20px; }
+  .task svg { width: 18px; height: 18px; }
+  .new-event { margin-top: 17px; padding: 14px; border-radius: 16px; gap: 10px; font-size: 15px; }
+  .new-event svg { width: 22px; height: 22px; }
+  .bottom-nav { padding: 9px 3px calc(9px + env(safe-area-inset-bottom)); }
+  .bottom-nav button { gap: 4px; min-width: 0; flex: 1; font-size: 10px; }
+  .bottom-nav svg { width: 22px; height: 22px; }
+}
+@media (max-width: 360px) {
+  .brand { font-size: 21px; }
+  .event-content { gap: 9px; padding: 11px; }
+  .event-image { width: 31%; min-height: 132px; }
+  .event-info h2 { font-size: 16px; }
+  .bottom-nav button { font-size: 9px; }
+}

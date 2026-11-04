@@ -47,6 +47,7 @@ const verifiedPrices:Record<string,{price:number;brand:string;supplier:string;we
 'Bloedsinaasappelsap':{price:2.89,brand:'AH',supplier:'Albert Heijn',webLink:'https://www.ah.nl/producten/product/wi382448/ah-bloedsinaasappelsap',notes:'Prijsreferentie: 1 liter verpakking (4 nov 2026).'},
 'Limoen':{price:0.69,brand:'AH',supplier:'Albert Heijn',webLink:'https://www.ah.nl/producten/product/wi231211/ah-limoen',notes:'Prijsreferentie: per stuk (4 nov 2026).'}
 };
+const gallPrices = { 'Witte rum': 18.99, 'Gin': 24.49, 'Cointreau': 26.49 };
 const key='wandering-barback-inventory-v1';
 const starter:Item[]=seed.map(([name,category,subcategory],i)=>({id:'starter-'+i,name,category,subcategory,quantity:0,unit:'stuks',location:'',notes:''}));
 function applyVerifiedPrices(items:Item[]):Item[]{return items.map(i=>{const p=verifiedPrices[i.name];return p&&i.price==null?{...i,...p,priceCheckedAt:'2026-11-04'}:i})}

@@ -41,7 +41,7 @@ const extraCatalog:[string,Category,string,string][]=[
 ['Verse munt','Garneringen','Kruiden','gram'],['Verse basilicum','Garneringen','Kruiden','gram'],['Verse rozemarijn','Garneringen','Kruiden','gram'],['Verse tijm','Garneringen','Kruiden','gram'],['Verse salie','Garneringen','Kruiden','gram'],['Verse gember','Garneringen','Kruiden','gram'],['Citroengras','Garneringen','Kruiden','stuks'],['Kaneelstokjes','Garneringen','Gedroogd','stuks'],['Steranijs','Garneringen','Gedroogd','stuks'],['Kruidnagel','Garneringen','Gedroogd','stuks'],['Gedroogde sinaasappelschijfjes','Garneringen','Gedroogd','stuks'],['Gedroogde limoenschijfjes','Garneringen','Gedroogd','stuks'],['Gedroogde citroenschijfjes','Garneringen','Gedroogd','stuks'],['Gedroogde grapefruitschijfjes','Garneringen','Gedroogd','stuks'],['Eetbare bloemen','Garneringen','Overig','stuks'],['Cocktailkersen','Garneringen','Overig','stuks'],['Olijven','Garneringen','Overig','stuks'],['Grof zeezout','Garneringen','Overig','gram'],['Rietsuiker','Garneringen','Overig','gram'],['Kristalsuiker','Garneringen','Overig','gram'],['Tajín kruidenmix','Garneringen','Overig','gram'],['Kokosrasp','Garneringen','Overig','gram'],['Passievruchtpuree','Garneringen','Fruitpurees','gram'],['Mangopuree','Garneringen','Fruitpurees','gram'],['Aardbeienpuree','Garneringen','Fruitpurees','gram'],['Frambozenpuree','Garneringen','Fruitpurees','gram'],['Perzikpuree','Garneringen','Fruitpurees','gram'],['Yuzupuree','Garneringen','Fruitpurees','gram']
 ];
 const extraStarter:Item[]=extraCatalog.map(([name,category,subcategory,unit],i)=>({id:'extra-'+i,name,category,subcategory,quantity:0,unit,location:'',notes:''}));
-const homemadeStarter:Item[]=[{id:'homemade-honey-syrup',name:'Honingsiroop',category:'Dranken',subcategory:'Siropen',quantity:0,unit:'flessen',location:'',notes:'Zelf maken; voorraad van honing en water afzonderlijk bijhouden.',recipe:'Ingrediënten (voor circa 1 liter):\n- 500 ml honing (50%)\n- 500 ml water (50%)\n\nBereiding:\n1. Verwarm het water licht (niet koken).\n2. Roer de honing erdoor tot alles is opgelost.\n3. Laat afkoelen en giet in een schone fles.\n4. Etiketteer met bereidingsdatum en bewaar gekoeld.'},{id:'homemade-honey-stock',name:'Honing',category:'Garneringen',subcategory:'Overig',quantity:0,unit:'gram',location:'',notes:'Grondstof voor zelfgemaakte honingsiroop.'}];
+const homemadeStarter:Item[]=[{id:'homemade-honey-syrup',name:'Honingstroop',category:'Dranken',subcategory:'Siropen',quantity:0,unit:'flessen',location:'',notes:'Zelf maken; voorraad van honing en water afzonderlijk bijhouden.',recipe:'Ingrediënten (voor circa 1 liter):\n- 500 ml honing (50%)\n- 500 ml water (50%)\n\nBereiding:\n1. Verwarm het water licht (niet koken).\n2. Roer de honing erdoor tot alles is opgelost.\n3. Laat afkoelen en giet in een schone fles.\n4. Etiketteer met bereidingsdatum en bewaar gekoeld.'},{id:'homemade-honey-stock',name:'Honing',category:'Garneringen',subcategory:'Overig',quantity:0,unit:'gram',location:'',notes:'Grondstof voor zelfgemaakte honingsiroop.'}];
 const verifiedPrices:Record<string,{price:number;brand:string;supplier:string;webLink:string;notes:string}>={
 'Sinaasappelsap':{price:1.59,brand:'AH',supplier:'Albert Heijn',webLink:'https://www.ah.nl/producten/product/wi377720/ah-sinaasappelsap',notes:'Prijsreferentie: 1 liter verpakking (4 nov 2026).'},
 'Appelsap':{price:1.59,brand:'AH',supplier:'Albert Heijn',webLink:'https://www.ah.nl/producten/product/wi377726/ah-appelsap',notes:'Prijsreferentie: 1 liter verpakking (4 nov 2026).'},
@@ -75,22 +75,23 @@ const preferredSyrupPrices={"Grenadine":{"price":3.49,"brand":"Raak vruchtensiro
 const key='wandering-barback-inventory-v1';
 const starter:Item[]=seed.map(([name,category,subcategory],i)=>({id:'starter-'+i,name,category,subcategory,quantity:0,unit:'stuks',location:'',notes:''}));
 function applyVerifiedPrices(items:Item[]):Item[]{return items.map(i=>{const preferred=preferredSyrupPrices[i.name];const oldSyrup=syrupBatchTwenty[i.name]||syrupBatchTen[i.name];if(preferred&&(i.price==null||(oldSyrup&&i.price===oldSyrup.price&&(i.brand===oldSyrup.brand||!i.brand))))return {...i,...preferred,priceCheckedAt:''};const a=syrupBatchTwenty[i.name]||syrupBatchTen[i.name]||ahBatchForty[i.name]||ahBatchThirty[i.name]||ahBatchTwenty[i.name]||ahBatchTen[i.name]||newAhPrices[i.name]||ahFruitMixerBatch[i.name];if(a&&i.price==null)return {...i,...a,supplier:'Albert Heijn',priceCheckedAt:''};const p=verifiedPrices[i.name];const g=gallBatch13[i.name]||gallBatch12[i.name]||gallBatch11[i.name]||gallPrices[i.name]||moreGallPrices[i.name]||newGallPrices[i.name]||gallBatch2[i.name]||gallBatch3[i.name]||gallBatch4[i.name]||gallBatch5[i.name]||gallBatch6[i.name]||gallBatch7[i.name]||gallBatch8[i.name]||gallBatch9[i.name]||gallBatch10[i.name];if(g&&i.price==null)return {...i,...g,supplier:'Gall & Gall',priceCheckedAt:g.price==null?'':'2026-11-04'};return p&&i.price==null?{...i,...p,priceCheckedAt:'2026-11-04'}:i})}
+function attachHomemadeRecipes(items:Item[]):Item[]{return items.map(item=>{const preset=homemadeStarter.find(s=>s.name===item.name&&s.category===item.category);return preset?.recipe&&!item.recipe?{...item,recipe:preset.recipe}:item})}
 function load():Item[]{
 const all=[...starter,...beverageStarter,...extraStarter,...homemadeStarter].map(i=>verifiedPrices[i.name]?{...i,...verifiedPrices[i.name],priceCheckedAt:'2026-11-04'}:i);
 try{
  const raw=localStorage.getItem(key);
- if(!raw)return applyVerifiedPrices(all);
+ if(!raw)return applyVerifiedPrices(attachHomemadeRecipes(all));
  const value:unknown=JSON.parse(raw);
- if(!Array.isArray(value))return all;
+ if(!Array.isArray(value))return applyVerifiedPrices(attachHomemadeRecipes(all));
  const existing=value as Item[];
  const migrationKey='wandering-barback-inventory-expanded-zero-v1';
- if(localStorage.getItem(migrationKey)==='yes'){const known=new Set(existing.map(i=>i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));const missing=homemadeStarter.filter(i=>!known.has(i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));return applyVerifiedPrices([...existing,...missing]);}
+ if(localStorage.getItem(migrationKey)==='yes'){const known=new Set(existing.map(i=>i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));const missing=homemadeStarter.filter(i=>!known.has(i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));return applyVerifiedPrices(attachHomemadeRecipes([...existing,...missing]));}
  const known=new Set(existing.map(i=>i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));
  const missing=all.filter(i=>!known.has(i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));
  const result=[...existing,...missing].map(i=>({...i,quantity:0}));
  localStorage.setItem(migrationKey,'yes');
- return applyVerifiedPrices(result);
-}catch{return all}
+ return applyVerifiedPrices(attachHomemadeRecipes(result));
+}catch{return applyVerifiedPrices(attachHomemadeRecipes(all))}
 }
 const blank=(category:Category):Item=>({id:'',name:'',category,subcategory:categories.find(c=>c.name===category)!.subcategories[0],quantity:0,unit:category==='Dranken'?'flessen':'stuks',location:'',notes:''});
 export default function Inventory(){

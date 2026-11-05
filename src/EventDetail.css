@@ -37,10 +37,3 @@
 .ed-panel progress{height:10px;accent-color:#754a30}
 @media(max-width:420px){.ed-page{padding-left:16px;padding-right:16px}.ed-fields{grid-template-columns:1fr 1fr;gap:9px}.ed-summary strong{font-size:15px}.ed-line .ed-time,.ed-add .ed-time{width:64px!important;flex-basis:64px}.ed-line{gap:6px}.ed-line .ed-number{width:49px!important;flex-basis:49px}.ed-line input:not([type=checkbox]){padding:9px 7px}.ed-tabs button{padding:10px 13px}}
 @media(min-width:650px){.ed-page{padding:28px 34px 40px}.ed-modal{border-radius:24px!important}}
-
-
-/* Tab navigation: all five sections visible without horizontal scrolling */
-.ed-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;overflow:visible;position:static;margin:12px 0 4px;padding:8px 0 16px}
-.ed-tabs button{white-space:normal;width:100%;min-height:46px;display:flex;align-items:center;justify-content:center;text-align:center;padding:11px 9px;line-height:1.25}
-.ed-tabs button:last-child:nth-child(odd){grid-column:1/-1}
-@media(min-width:650px){.ed-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.ed-tabs button:last-child:nth-child(odd){grid-column:auto}}

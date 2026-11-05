@@ -9,6 +9,7 @@ const tabs:[Tab,LucideIcon][]=[['Home',House],['Evenementen',CalendarDays],['Inv
 const initial=['Paklijst workshop afronden','Ingrediënten inkopen','Opstelling controleren'];
 type EventItem=EventData;
 const sampleEvents:EventItem[]=[
+{id:4,title:'ODW team uitje',date:'Datum nog invullen',city:'Locatie nog invullen',guests:16,progress:0,status:'In voorbereiding',photo:'',service:'Cocktail workshop',start:'19:00',end:'21:00',arrival:'17:30',departure:'21:45',menu:['Last Sip','Blackberry Sage Smash','Spicy Guava Margarita'],quantities:{'Last Sip':16,'Blackberry Sage Smash':16,'Spicy Guava Margarita':16},notes:'Voorbeeldplanning: tijden, locatie en contactpersoon nog bevestigen.'},
 {id:1,title:'Cocktailworkshop',date:'Za 15 feb',city:'Utrecht',guests:20,progress:75,status:'In voorbereiding',photo:'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=450&q=80'},
 {id:2,title:'Mobiele cocktailbar',date:'Vr 28 feb',city:'Amsterdam',guests:80,progress:40,status:'In voorbereiding',photo:'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=450&q=80'},
 {id:3,title:'Gin & Tonic Bar',date:'Za 8 mrt',city:'Rotterdam',guests:50,progress:0,status:'Aankomend',photo:'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=450&q=80'}

@@ -1,7 +1,7 @@
 name: Event detail build
 on:
   push:
-    branches: [feature/event-detail-dashboard]
+    branches: [main, feature/event-detail-dashboard]
   pull_request:
     branches: [main]
 jobs:

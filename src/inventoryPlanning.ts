@@ -9,8 +9,8 @@ function available(item:Item,unit:string):number|null{if(item.quantity==null)ret
 export function purchaseLines(needs:Need[],items:Item[],margin:number):PurchaseLine[]{return needs.map(n=>{const item=matchItem(n.name,items);const amount=n.amount*(1+margin/100);const stock=item?available(item,n.unit):null;const shortage=stock==null?null:Math.max(0,amount-stock);const cost=item?.price!=null&&shortage!=null&&item.quantity!=null&&item.quantity>0&&stock!=null&&stock>0?shortage/stock*item.quantity*item.price:null;return {...n,amount,stock,shortage,supplier:item?.supplier||'Niet ingesteld',price:item?.price??null,cost,inventoryName:item?.name||null}})}
 export type BatchRecipe={name:string;outputMl:number;ingredients:{name:string;amount:number;unit:string}[];instructions:string};
 export const batchRecipes:BatchRecipe[]=[
-{name:'Honingstroop',outputMl:1000,ingredients:[{name:'Honing',amount:500,unit:'ml'},{name:'Water',amount:500,unit:'ml'}],instructions:'Meng 50% honing met 50% warm water, roer glad, laat afkoelen en bewaar gekoeld.'},
-{name:'Suikersiroop',outputMl:1000,ingredients:[{name:'Kristalsuiker',amount:500,unit:'gram'},{name:'Water',amount:500,unit:'ml'}],instructions:'Meng gelijke delen suiker en water op gewicht; verwarm zacht tot de suiker is opgelost en laat afkoelen. Het uiteindelijke volume kan afwijken.'}
+{name:'Honingstroop',outputMl:1000,ingredients:[{name:'Honing',amount:500,unit:'gram'},{name:'Water',amount:500,unit:'ml'}],instructions:'Meng 500 g honing met 500 ml warm water (ongeveer gelijke delen; uiteindelijke volume kan afwijken), roer glad, laat afkoelen en bewaar gekoeld.'},
+{name:'Zelfgemaakte suikersiroop',outputMl:1000,ingredients:[{name:'Kristalsuiker',amount:500,unit:'gram'},{name:'Water',amount:500,unit:'ml'}],instructions:'Meng gelijke delen suiker en water op gewicht; verwarm zacht tot de suiker is opgelost en laat afkoelen. Het uiteindelijke volume kan afwijken.'}
 ];
 export function saveBatch(recipe:BatchRecipe,quantityMl:number,items:Item[]):{ok:boolean;message:string;items:Item[]}{
  if(!Number.isFinite(quantityMl)||quantityMl<=0)return {ok:false,message:'Voer een positieve hoeveelheid in.',items};

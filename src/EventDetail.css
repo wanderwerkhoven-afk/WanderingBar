@@ -60,3 +60,33 @@
 .ed-timeline-item.is-done>div{border-left-color:#72866b}
 .ed-done-mark{color:#54734c;font-weight:800}
 @media(max-width:380px){.ed-read-grid{gap:0 12px;padding:5px 12px}.ed-read-item p{font-size:14px!important}.ed-timeline-item{grid-template-columns:46px 1fr auto;gap:8px}}
+
+/* Keep every event panel and editor inside the viewport on phones. */
+.ed-overlay{width:100vw;max-width:100vw;overflow:hidden}
+.ed-modal{box-sizing:border-box;width:100%!important;max-width:min(850px,100vw)!important;min-width:0;overflow-x:hidden!important;overscroll-behavior:contain}
+.ed-page,.ed-panel,.ed-fields,.ed-read-grid,.ed-summary,.ed-timeline,.ed-choice,.ed-quantity,.ed-add,.ed-line{box-sizing:border-box;max-width:100%;min-width:0}
+.ed-page{width:100%;overflow-wrap:anywhere;overflow-x:hidden}
+.ed-page img{max-width:100%;height:auto}
+.ed-page input,.ed-page textarea,.ed-page select{max-width:100%}
+.ed-page .ed-fields>*{min-width:0}
+.ed-read-item,.ed-timeline-item,.ed-timeline-item>div,.ed-choice>span,.ed-quantity>span{min-width:0;overflow-wrap:anywhere}
+.ed-tabs{max-width:100%;min-width:0}
+.ed-line .ed-grow input{min-width:0;width:100%}
+.ed-add input:not(.ed-time){flex:1 1 130px;min-width:0}
+.ed-add button{flex:0 0 auto}
+@media(max-width:520px){
+ .ed-fields,.ed-read-grid{grid-template-columns:minmax(0,1fr)}
+ .ed-read-item.ed-read-wide{grid-column:auto}
+ .ed-page{padding-left:clamp(12px,4vw,20px);padding-right:clamp(12px,4vw,20px)}
+ .ed-section-heading{flex-wrap:wrap}
+ .ed-summary{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+ .ed-line{flex-wrap:wrap}
+ .ed-line>div.ed-grow{flex:1 1 140px}
+ .ed-timeline-item{grid-template-columns:44px minmax(0,1fr) auto;gap:8px}
+ .ed-timeline-item>div{padding-left:9px}
+}
+@media(max-width:340px){
+ .ed-summary{grid-template-columns:minmax(0,1fr)}
+ .ed-tabs button{padding:9px 10px}
+ .ed-line .ed-time,.ed-add .ed-time{width:60px!important;flex-basis:60px}
+}

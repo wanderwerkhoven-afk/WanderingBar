@@ -88,3 +88,24 @@
 .detail-edit{width:100%;margin-top:14px}
 .event-form select{font:inherit;border:1px solid #d7c6b8;border-radius:10px;padding:10px;background:white}
 .event-form input[type=range]{accent-color:#4b2c1d;padding:5px 0}
+
+/* Responsive event cards, event creation dialog and long labels. */
+.shell,.shell main,.events-page,.event-list,.event-list-card,.event-card-details,.event-content,.event-info{min-width:0;max-width:100%}
+.event-list-card{box-sizing:border-box;overflow:hidden}
+.event-card-details h2,.event-meta span,.event-info h2{overflow-wrap:anywhere}
+.event-meta{min-width:0;white-space:normal;align-items:flex-start}
+.event-meta span{min-width:0}
+.event-list-card .event-chevron{flex:0 0 auto}
+.event-form{box-sizing:border-box;max-width:100%;max-height:calc(100dvh - 32px);overflow-y:auto;overflow-x:hidden}
+.event-form input,.event-form select,.event-form textarea{width:100%;max-width:100%;box-sizing:border-box}
+.event-form img{max-width:100%;height:auto}
+@media(max-width:400px){
+ .event-list-card{gap:9px;padding:10px}
+ .event-thumbnail{width:26%;max-width:92px}
+ .event-card-details h2{font-size:clamp(14px,4vw,17px)}
+ .event-meta{font-size:12px;gap:5px}
+ .event-chevron{width:18px}
+ .event-content{min-width:0}
+ .event-image{flex:0 0 31%;width:31%}
+ .event-info{min-width:0}
+}

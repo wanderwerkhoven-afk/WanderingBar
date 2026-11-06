@@ -90,3 +90,6 @@
  .ed-tabs button{padding:9px 10px}
  .ed-line .ed-time,.ed-add .ed-time{width:60px!important;flex-basis:60px}
 }
+
+/* Inventory-aware procurement and production */
+.ed-stock-line{display:flex;flex-direction:column;gap:5px;padding:13px 12px;margin:9px 0;border:1px solid #e9d9c9;border-radius:13px;background:#fffefa;min-width:0;overflow-wrap:anywhere;font-size:13px}.ed-stock-line strong{font-size:15px}.ed-stock-line small{color:#816b5c}.ed-stock-short{color:#a43d2b;font-weight:800}.ed-stock-ok{color:#396b43;font-weight:800}.ed-stock-unknown{color:#986e39;font-weight:700}

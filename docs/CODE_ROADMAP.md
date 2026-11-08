@@ -183,3 +183,9 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 6. **Afronding:** noem gewijzigde modules, documentatiestatus, compatibiliteit en resterende risico's in het wijzigingsoverzicht.
 
 **Reikwijdte:** deze afspraak geldt voor alle toekomstige wijzigingen in Wandering BarBack, niet alleen de catalogus. Een documentatie-update alleen vervangt geen automatische CI-controle.
+
+## Meer — schermvullende detailpagina's (9 november 2026)
+- [x] Meer → Catalogus en Meer → Verwijderde evenementen openen in een afzonderlijke viewport-vullende overlay, analoog aan de evenementdetailweergave.
+- [x] Gedeelde terug-/sluitbalk, eigen scrollcontainer, iOS safe-area en desktopbegrenzing.
+- [x] Bestaande catalogus- en herstelgegevensstromen behouden; geen opslagmigratie.
+- [ ] Mobiele browser-/buildtest uitvoeren en terugnavigatie bij systeem-back/escape controleren.

@@ -128,3 +128,10 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - [ ] Flesbierkeuze in de evenementplanner uitbreiden van drie generieke soorten naar het volledige inventarisassortiment.
 
 - [x] Bij dienst Speciaalbierbar toont EventDetail alle 28 merkgebonden flesbieropties, naast eventuele bestaande selecties. Andere diensten tonen deze specifieke bierbarsectie niet. Valt terug op vaste catalogus indien inventarisopslag nog niet is geïnitialiseerd.
+
+## Dienstspecifieke menukaarten (9 november 2026)
+- [x] Cocktail workshop/catering/mobiele cocktailbar: cocktails en mocktails, maximum 3.
+- [x] Wijnbar: alleen wijn en prosecco; G&T bar: alleen drie G&T signatures.
+- [x] Speciaalbierbar: uitsluitend BLADE-tapbier en 28+ inventarisgebonden flesbierkeuzes; geen dubbele generieke bierkaart.
+- [x] Dienst wijzigen via selectielijst in eventdetails. Niet-passende oude selecties blijven opgeslagen maar tellen niet mee in actuele inkoop.
+- [ ] Productiebuild en interactietests voor wisselen van dienst en berekeningen.

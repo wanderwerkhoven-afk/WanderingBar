@@ -135,3 +135,10 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - [x] Speciaalbierbar: uitsluitend BLADE-tapbier en 28+ inventarisgebonden flesbierkeuzes; geen dubbele generieke bierkaart.
 - [x] Dienst wijzigen via selectielijst in eventdetails. Niet-passende oude selecties blijven opgeslagen maar tellen niet mee in actuele inkoop.
 - [ ] Productiebuild en interactietests voor wisselen van dienst en berekeningen.
+
+## Catalogus (9 november 2026)
+- [x] Meer → Catalogus: aparte pagina voor cocktails, mocktails, wijnen, gin-tonics en read-only bieroverzicht.
+- [x] Recepten toevoegen, bewerken en verwijderen met ingrediënten, hoeveelheden en eenheden; localStorage-persistent.
+- [x] EventDetail leest de bewerkbare catalogus en koppelt ingrediënten aan de inkoop.
+- [ ] Foto's, bereidingswijze en receptenmaterialen toevoegen.
+- [ ] End-to-end productiebuild, mobiele UX en wijziging van bestaande receptnamen controleren.

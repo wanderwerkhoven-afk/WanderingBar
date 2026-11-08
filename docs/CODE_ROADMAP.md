@@ -1,6 +1,6 @@
 # Wandering BarBack — Code Roadmap
 
-Status: 2026-11-06 · branch: main · documentatie van de bestaande code (geen afgeronde refactor).
+Status: 2026-11-08 · branch: main · eerste compatibele model- en opslagrefactor uitgevoerd; verdere fasen open.
 
 ## Doel en werkafspraken
 De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet datamodel, een eigenaar-module, opslagstrategie, foutafhandeling en een test. Bewaar bestaande localStorage-data; migreer via versienummers. Voeg nieuwe velden optioneel toe tot migratie is afgerond. Documenteer nieuwe gedeelde variabelen in VARIABLE_REGISTRY.md bij iedere wijziging.
@@ -24,8 +24,8 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - [ ] Verifieer dat batchproductie grondstoffen correct afboekt en het werkelijk geproduceerde volume registreert.
 
 ## Fase 1 — Datamodellen losmaken
-- [ ] `src/types/event.ts`: Event, MenuSelection, ScheduleItem, PackingItem, StaffMember.
-- [ ] `src/types/inventory.ts`: InventoryItem, InventoryUnit, Supplier, PriceQuote, Recipe.
+- [x] `src/types/event.ts`: bestaand EventData-model, ScheduleItem, PackingItem, StaffMember en DeletedEvent centraal gezet; MenuSelection blijft voorlopig in legacy-vorm.
+- [x] `src/types/inventory.ts`: bestaande Item en Category centraal gezet; InventoryUnit, Supplier, PriceQuote en Recipe volgen later.
 - [ ] `src/data/cocktails.ts`: cocktailrecepten en stabiele ingredient-ID's.
 - [ ] `src/data/inventorySeed.ts`: standaardproducten; geen prijsbronnen in UI.
 - [ ] `src/data/prices.ts`: prijzen met bron, datum, btw-status, verpakking en verificatiestatus.
@@ -47,8 +47,8 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - [ ] Alternatieven alleen gebruiken als receptkwaliteit en concentratie passen.
 
 ## Fase 4 — Opslaglaag en Firestore
-- [ ] `src/repositories/` met interface voor events, items, recepten, bewegingen.
-- [ ] Huidige localStorage-implementatie achter die interface plaatsen.
+- [x] `src/repositories/` met eerste opslagmodules voor events en inventaris; interfaces voor recepten en bewegingen volgen.
+- [ ] Alle bestaande localStorage-operaties achter repositories plaatsen (event-opslag is aangesloten; inventaris-UI nog niet volledig).
 - [ ] Versieerbare migratie en export/back-up van bestaande lokale gegevens.
 - [ ] Daarna pas Firestore-adapter, auth, rechten en beveiligingsregels toevoegen.
 - [ ] Firestore-documentlimiet en afbeeldingopslag evalueren; Firebase Storage voor grotere afbeeldingen.
@@ -78,3 +78,12 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - `eventImage.ts` maakt Base64 JPEG; let op documentlimieten en lokale opslagquota.
 - `EventDetail.tsx` bevat recepten hardcoded in `RECIPES`; inventaris- en cocktailnamen zijn niet overal gelijk.
 - De roadmap beschrijft beoogd werk; aangevinkte items zijn pas afgerond na verificatie.
+
+## Uitgevoerde refactor — 8 november 2026
+- Nieuwe centrale domeintypes: `src/types/event.ts` en `src/types/inventory.ts`.
+- Centrale opslagkeys: `src/repositories/storageKeys.ts`; de drie bestaande `*-v1` keys blijven **ongewijzigd**.
+- `src/repositories/eventRepository.ts` verzorgt laden en opslaan van actieve en verwijderde evenementen. `main.tsx` gebruikt deze functies.
+- `src/repositories/inventoryRepository.ts` biedt getypeerde lees-/schrijffuncties; `Inventory.tsx` gebruikt nog zijn bestaande seed-, merge- en schrijfgedrag om bestaande gegevens niet te verstoren.
+- `EventDetail.tsx`, `Inventory.tsx` en `inventoryPlanning.ts` gebruiken de centrale types. Oude type-exports blijven compatibel.
+- **Geen migratie of verwijdering van bestaande lokale gegevens uitgevoerd.** De daadwerkelijke browsergegevens zijn niet vanaf GitHub inzichtelijk.
+- Nog te verifiëren: GitHub Actions build, browser-test met bestaande lokale data, en restore na herladen.

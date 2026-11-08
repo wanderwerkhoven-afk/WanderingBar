@@ -120,3 +120,9 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - [x] Inkoop verwerkt fusten, flesjes en ijs met bestaande inventarismatch; onbekende voorraad blijft onbekend.
 - [x] Optioneel `event.beerBarPlan` bewaart de configuratie in de bestaande eventrecords; geen destructieve migratie.
 - [ ] Productiebuild en end-to-end browsertest; koppeling aan echte productverpakkingen en eventueel tapverlies.
+
+## Flesbiercatalogus (8 november 2026)
+- [x] 16 zomerse en klassieke flesbieren plus 12 craftbieropties van Moersleutel, Uiltje, 't IJ, Jopen, Two Chefs, Frontaal, Kees, De Molen en Noordt toegevoegd aan Inventaris > Dranken > Bier.
+- [x] Bestaande records en aantallen behouden; nieuwe records starten met onbekende voorraad.
+- [ ] Flesinhoud, alcoholpercentage, actuele leverbaarheid en prijzen per variant verifiëren.
+- [ ] Flesbierkeuze in de evenementplanner uitbreiden van drie generieke soorten naar het volledige inventarisassortiment.

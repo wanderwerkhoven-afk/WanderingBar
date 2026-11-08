@@ -90,3 +90,16 @@ Bij elke PR/commit met een nieuwe gedeelde variabele of opslagveld:
 | `readStoredInventory`, `writeStoredInventory` | `src/repositories/inventoryRepository.ts` | Toekomstige inventarisrefactor | Voorbereid, nog niet verbonden met inventaris-UI |
 
 **Compatibiliteit:** oude exports `EventDetail.EventData`, `Inventory.Item` en `Inventory.INVENTORY_STORAGE_KEY` blijven bestaan als re-exports. Geen schemawijziging of automatische migratie. 
+
+## Dienstspecifieke menukaart — 8 november 2026
+| Symbool | Eigenaar | Gebruikt in | Betekenis |
+|---|---|---|---|
+| `MenuKind`, `MenuEntry` | `src/data/menuCatalog.ts` | `EventDetail.tsx` | Type van drankcategorie en recept/serveerhoeveelheden |
+| `COCKTAIL_RECIPES` | `src/data/menuCatalog.ts` | `MENU_CATALOG` | Bestaande cocktail- en mocktailrecepten, ongewijzigd overgenomen |
+| `MENU_CATALOG` | `src/data/menuCatalog.ts` | `EventDetail.tsx` | Cocktail-, wijn-, bier- en G&T-startcatalogus |
+| `serviceMenuKinds` | `src/data/menuCatalog.ts` | `EventDetail.tsx` | Toegestane drankcategorieën per dienst |
+| `getMenuEntry` | `src/data/menuCatalog.ts` | `EventDetail.tsx` | Naamgebaseerde receptlookup voor inkoop |
+| `allowedKinds`, `availableMenu`, `visibleMenu` | `EventDetail` | Menukaart-UI | Afgeleide filterwaarden; niet opgeslagen |
+| `maxMenuItems`, `menuTitle` | `EventDetail` | Menukaart-UI | Dienstspecifieke limiet en koptekst; niet opgeslagen |
+
+Bestaande persistente velden `event.service`, `event.menu` en `event.quantities` blijven ongewijzigd. Nieuwe dranken zijn voorlopig startvoorbeelden en geen geverifieerde voorraadproducten.

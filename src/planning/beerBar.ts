@@ -5,7 +5,7 @@ export type BeerBarPlan={taps:{beer:string;glasses:number}[];bottles:Record<stri
 export const defaultBeerBarPlan=():BeerBarPlan=>({taps:BLADE_BEERS.map(beer=>({beer,glasses:0})),bottles:{},bottlesPerTub:24,iceKgPerTub:8});
 export function normalizeBeerBarPlan(input?:Partial<BeerBarPlan>):BeerBarPlan{
  const defaults=defaultBeerBarPlan();
- return {taps:Array.from({length:3},(_,i)=>({beer:input?.taps?.[i]?.beer||defaults.taps[i].beer,glasses:Math.max(0,Math.floor(Number(input?.taps?.[i]?.glasses)||0))})),bottles:input?.bottles&&typeof input.bottles==='object'?input.bottles:{},bottlesPerTub:Math.max(1,Math.floor(Number(input?.bottlesPerTub)||24)),iceKgPerTub:Math.max(0,Number(input?.iceKgPerTub)??8)};
+ return {taps:Array.from({length:3},(_,i)=>({beer:input?.taps?.[i]?.beer||defaults.taps[i].beer,glasses:Math.max(0,Math.floor(Number(input?.taps?.[i]?.glasses)||0))})),bottles:input?.bottles&&typeof input.bottles==='object'?input.bottles:{},bottlesPerTub:Math.max(1,Math.floor(Number(input?.bottlesPerTub)||24)),iceKgPerTub:Math.max(0,Number(input?.iceKgPerTub??8))};
 }
 export function beerBarRequirements(plan:BeerBarPlan){
  const tapped=plan.taps.map(t=>({...t,kegs:Math.ceil(t.glasses*0.25/8)}));

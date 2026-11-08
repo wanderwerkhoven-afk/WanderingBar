@@ -28,9 +28,8 @@ export const MENU_CATALOG:MenuEntry[]=[
 {name:'Speciaalbier IPA',type:'Speciaalbier',ingredients:[['Speciaalbier IPA',1,'flessen']]},
 {name:'Speciaalbier tripel',type:'Speciaalbier',ingredients:[['Speciaalbier tripel',1,'flessen']]},
 {name:'Speciaalbier alcoholvrij',type:'Speciaalbier',ingredients:[['Speciaalbier alcoholvrij',1,'flessen']]},
-{name:'Classic G&T',type:'G&T',ingredients:[['Gin',50,'ml'],['Tonic',150,'ml'],['Limoen',1,'stuks']]},
-{name:'Pink G&T',type:'G&T',ingredients:[['Pink gin',50,'ml'],['Tonic',150,'ml'],['Aardbei',1,'stuks']]},
-{name:'Mediterranean G&T',type:'G&T',ingredients:[['Gin',50,'ml'],['Mediterranean tonic',150,'ml'],['Rozemarijn',1,'takjes']]},
-{name:'Alcoholvrije G&T',type:'G&T',ingredients:[['Alcoholvrije gin',50,'ml'],['Tonic',150,'ml'],['Limoen',1,'stuks']]}
+{name:'Pink Pepper & Grapefruit G&T',type:'G&T',ingredients:[['London Dry Gin',50,'ml'],['Indian tonic',150,'ml'],['Roze peperkorrels',5,'stuks'],['Roze grapefruit',0.125,'stuks'],['Rozemarijn',1,'takjes']]},
+{name:'Cucumber Mint G&T',type:'G&T',ingredients:[["Hendrick's Gin",50,'ml'],['Indian tonic',150,'ml'],['Komkommer',0.125,'stuks'],['Verse munt',2,'blaadjes']]},
+{name:'Mediterranean Sunset G&T',type:'G&T',ingredients:[['Mediterranean Gin',50,'ml'],['Mediterranean tonic',150,'ml'],['Sinaasappel',0.125,'stuks'],['Tijm',1,'takjes']]}
 ];
 export function getMenuEntry(name:string):MenuEntry|undefined{return MENU_CATALOG.find(entry=>entry.name===name)}

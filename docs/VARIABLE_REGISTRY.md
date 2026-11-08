@@ -123,3 +123,6 @@ Bestaande persistente velden `event.service`, `event.menu` en `event.quantities`
 | Symbool | Eigenaar | Consument | Betekenis |
 |---|---|---|---|
 | `bottledBeerCatalog` | `src/Inventory.tsx` | `addBeerBarOptions` | 28 merkgebonden flesbieropties met onbekende voorraad, zonder vaste prijzen of flesformaten |
+
+| `BOTTLED_BEER_CATALOG` | `src/planning/beerBar.ts` | `EventDetail` | Vaste fallback voor 28 flesbieropties, ook als inventaris nog niet is bezocht |
+| `bottledBeerOptions` | `EventDetail` | Flesbiersectie bij Speciaalbierbar | Unieke combinatie van catalogus, aanwezige inventarisopties en opgeslagen eventselecties |

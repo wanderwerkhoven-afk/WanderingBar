@@ -86,7 +86,318 @@ const beerBarStarter:Item[]=[
 {id:'beerbar-bottle-ipa',name:'Speciaalbier IPA flesjes',category:'Dranken',subcategory:'Bier',quantity:null,unit:'flessen',location:'',notes:'Flesbier voor presentatie in luxe ijsbak; merk, flesinhoud en prijs later instellen.'},
 {id:'beerbar-bottle-tripel',name:'Speciaalbier tripel flesjes',category:'Dranken',subcategory:'Bier',quantity:null,unit:'flessen',location:'',notes:'Flesbier voor presentatie in luxe ijsbak; merk, flesinhoud en prijs later instellen.'}
 ];
-function addBeerBarOptions(items:Item[]):Item[]{const known=new Set(items.map(i=>i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));return [...items,...beerBarStarter.filter(i=>!known.has(i.category+'|'+i.name.trim().toLocaleLowerCase('nl')))];}
+// Bierflesjes zijn assortimentopties, geen getelde voorraad. Flesmaat, prijs en actuele leverbaarheid zijn te controleren.
+const bottledBeerCatalog:Item[]=[
+ {
+  "id": "beerbar-bottle-catalog-0",
+  "name": "Desperados Original",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Desperados",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: biermix / tequila-aroma. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-1",
+  "name": "Corona Extra",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Corona",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: lager. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-2",
+  "name": "Sol",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Sol",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: lager. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-3",
+  "name": "Birra Moretti fles",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Birra Moretti",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: lager. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-4",
+  "name": "Liefmans Fruitesse",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Liefmans",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: fruitbier. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-5",
+  "name": "Hoegaarden Wit",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Hoegaarden",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: witbier. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-6",
+  "name": "Vedett Extra White",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Vedett",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: witbier. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-7",
+  "name": "Oedipus Mannenliefde",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Oedipus",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: saison. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-8",
+  "name": "Kasteel Rouge",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Kasteel",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: fruitbier. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-9",
+  "name": "Texels Skuumkoppe",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Texels",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: donker tarwebier. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-10",
+  "name": "Affligem Blond fles",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Affligem",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: blond. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-11",
+  "name": "La Chouffe",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Chouffe",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: blond. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-12",
+  "name": "Tripel Karmeliet",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Tripel Karmeliet",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: tripel. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-13",
+  "name": "Jopen Mooie Nel IPA",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Jopen",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: IPA. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-14",
+  "name": "BrewDog Punk IPA",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "BrewDog",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: IPA. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-15",
+  "name": "vandeStreek Playground IPA 0.5",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "vandeStreek",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: alcoholarme IPA. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-16",
+  "name": "Moersleutel Motor Oil",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "De Moersleutel",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: imperial stout. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-17",
+  "name": "Moersleutel Crank the Juice",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "De Moersleutel",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: IPA. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-18",
+  "name": "Uiltje Bird of Prey",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Uiltje",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: IPA. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-19",
+  "name": "Uiltje Wit",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Uiltje",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: witbier. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-20",
+  "name": "Brouwerij 't IJ IJwit",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Brouwerij 't IJ",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: witbier. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-21",
+  "name": "Brouwerij 't IJ Zatte",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Brouwerij 't IJ",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: tripel. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-22",
+  "name": "Jopen Adriaan Wit",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Jopen",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: witbier. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-23",
+  "name": "Two Chefs Brewing Funky Falcon",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Two Chefs Brewing",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: pale ale. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-24",
+  "name": "Frontaal Juice Punch",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Frontaal",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: IPA. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-25",
+  "name": "Brouwerij Kees Caramel Fudge Stout",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Brouwerij Kees",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: stout. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-26",
+  "name": "De Molen Hel & Verdoemenis",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Brouwerij De Molen",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: imperial stout. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ },
+ {
+  "id": "beerbar-bottle-catalog-27",
+  "name": "Brouwerij Noordt Noordtsingle",
+  "category": "Dranken",
+  "subcategory": "Bier",
+  "quantity": null,
+  "unit": "flessen",
+  "location": "",
+  "brand": "Brouwerij Noordt",
+  "notes": "Flesbier voor luxe ijsbakken. Stijl: blond. Flesinhoud, alcoholpercentage, leverancier en actuele beschikbaarheid nog verifiëren."
+ }
+];
+function addBeerBarOptions(items:Item[]):Item[]{const known=new Set(items.map(i=>i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));return [...items,...[...beerBarStarter,...bottledBeerCatalog].filter(i=>!known.has(i.category+'|'+i.name.trim().toLocaleLowerCase('nl')))];}
 const key=INVENTORY_STORAGE_KEY;
 const starter:Item[]=seed.map(([name,category,subcategory],i)=>({id:'starter-'+i,name,category,subcategory,quantity:0,unit:'stuks',location:'',notes:''}));
 function priceLookup(record:object,key:string):any{return (record as Record<string,any>)[key]}

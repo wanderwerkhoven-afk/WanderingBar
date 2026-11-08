@@ -189,3 +189,11 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Gedeelde terug-/sluitbalk, eigen scrollcontainer, iOS safe-area en desktopbegrenzing.
 - [x] Bestaande catalogus- en herstelgegevensstromen behouden; geen opslagmigratie.
 - [ ] Mobiele browser-/buildtest uitvoeren en terugnavigatie bij systeem-back/escape controleren.
+
+## Automatisch ontworpen evenementmenukaarten — 9 november 2026
+- [x] Evenement → Menukaart toont live een ontworpen kaart op basis van geselecteerde dranknamen en maximaal vier receptingrediënten.
+- [x] Ondersteunt cocktail-, mocktail-, wijn-, G&T- en speciaalbierbarselecties, inclusief BLADE-taps en geselecteerd flesbier.
+- [x] Drie lokale presentatievarianten: Signature, Minimal en Elegant; A4-printstylesheet en browserprint/PDF-knop.
+- [x] Gebruikt bestaande `event.menu`, `event.beerBarPlan` en `readMenuCatalog`; geen dubbele receptopslag of nieuwe localStorage-key.
+- [ ] Printvoorbeeld, paginering bij veel drankopties en mobiele rendering controleren; productiebuild niet geverifieerd.
+- [ ] Optioneel later: huisstijllogo, afbeeldingen, afzonderlijke PDF-download en opgeslagen designvoorkeur per evenement.

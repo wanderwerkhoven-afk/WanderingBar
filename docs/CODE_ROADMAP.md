@@ -26,7 +26,7 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 ## Fase 1 — Datamodellen losmaken
 - [x] `src/types/event.ts`: bestaand EventData-model, ScheduleItem, PackingItem, StaffMember en DeletedEvent centraal gezet; MenuSelection blijft voorlopig in legacy-vorm.
 - [x] `src/types/inventory.ts`: bestaande Item en Category centraal gezet; InventoryUnit, Supplier, PriceQuote en Recipe volgen later.
-- [ ] `src/data/cocktails.ts`: cocktailrecepten en stabiele ingredient-ID's.
+- [x] `src/data/menuCatalog.ts`: cocktailrecepten plus startcatalogus voor wijn, speciaalbier en G&T; stabiele ingredient-ID's volgen nog.
 - [ ] `src/data/inventorySeed.ts`: standaardproducten; geen prijsbronnen in UI.
 - [ ] `src/data/prices.ts`: prijzen met bron, datum, btw-status, verpakking en verificatiestatus.
 - [ ] UI-componenten losmaken van bedrijfslogica; bestaande opslagvelden compatibel houden.
@@ -87,3 +87,13 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - `EventDetail.tsx`, `Inventory.tsx` en `inventoryPlanning.ts` gebruiken de centrale types. Oude type-exports blijven compatibel.
 - **Geen migratie of verwijdering van bestaande lokale gegevens uitgevoerd.** De daadwerkelijke browsergegevens zijn niet vanaf GitHub inzichtelijk.
 - Nog te verifiëren: GitHub Actions build, browser-test met bestaande lokale data, en restore na herladen.
+
+## Dienstspecifieke menukaart — 8 november 2026
+- [x] Catalogus verplaatst naar `src/data/menuCatalog.ts` met `MenuKind`, `MenuEntry`, `MENU_CATALOG`, `serviceMenuKinds` en `getMenuEntry`.
+- [x] Cocktail workshop/catering/mobiele cocktailbar: cocktails en mocktails (maximaal drie).
+- [x] Wijnbar: wijnkaart; Speciaalbierbar: bierkaart; G&T bar: gin-toniccombinaties. Andere diensten tonen de volledige catalogus.
+- [x] Bestaande `event.menu` (string[]) en `event.quantities` (naam → aantal) behouden: geen opslagmigratie.
+- [x] Bij dienstwissel blijven bestaande geselecteerde items zichtbaar onder 'Eerder geselecteerde items' en zijn ze handmatig te verwijderen.
+- [x] Inkoop gebruikt ingrediënten en eenheden uit dezelfde catalogus; onbekende inventarisartikelen krijgen geen verzonnen voorraad.
+- [ ] Build en handmatige tests met dienstwissel, bestaande events en alle vier de menutypes.
+- [ ] Catalogus uitbreiden met echte product-ID's, merken, volumes en beheerscherm; huidige wijn-/bier-/G&T-items zijn startvoorbeelden.

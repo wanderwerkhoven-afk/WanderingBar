@@ -5,7 +5,7 @@ import {inventoryItems,purchaseLines,batchRecipes,saveBatch} from './inventoryPl
 
 import type {EventData} from './types/event';
 import {MENU_CATALOG,getMenuEntry,serviceMenuKinds,type MenuKind} from './data/menuCatalog';
-import {BLADE_BEERS,normalizeBeerBarPlan,beerBarRequirements,beerBarPacking} from './planning/beerBar';
+import {BLADE_BEERS,BOTTLED_BEER_CATALOG,normalizeBeerBarPlan,beerBarRequirements,beerBarPacking} from './planning/beerBar';
 export type {EventData} from './types/event';
 const DEFAULT_PACK=[['Cocktailshakers',8,'stuks'],['Jiggers',8,'stuks'],['Strainers',8,'stuks'],['Barlepels',8,'stuks'],['Muddlers',8,'stuks'],['Cocktailglazen',48,'stuks'],['Receptkaarten',16,'stuks'],['IJsblokjes',12,'kg'],['Koelboxen',2,'stuks'],['Snijplanken en messen',4,'sets'],['Servetten',60,'stuks'],['Theedoeken',6,'stuks'],['Afvalzakken',3,'stuks']] as const;
 const DEFAULT_SCHEDULE=[['17:30','Aankomst en opbouw'],['18:30','Laatste controle'],['19:00','Ontvangst en introductie'],['19:15','Cocktailworkshop'],['20:45','Afronding'],['21:00','Opruimen en vertrek']] as const;
@@ -31,7 +31,7 @@ useEffect(()=>{const refresh=()=>setStockItems(inventoryItems());window.addEvent
 const uploadPhoto=async(file?:File)=>{if(!file)return;setPhotoBusy(true);setPhotoError('');try{patch({photo:await imageToBase64(file)})}catch(error){setPhotoError(error instanceof Error?error.message:'Afbeelding verwerken mislukt.')}finally{setPhotoBusy(false)}};
 const isBeerBar=(event.service||'').toLocaleLowerCase('nl').includes('speciaalbier');
 const beerPlan=normalizeBeerBarPlan(event.beerBarPlan);
-const bottledBeerOptions=stockItems.filter(item=>item.category==='Dranken'&&item.subcategory==='Bier'&&(item.id.startsWith('beerbar-bottle-catalog-')||item.id.startsWith('beerbar-bottle-'))).map(item=>item.name).sort((a,b)=>a.localeCompare(b,'nl'));
+const bottledBeerOptions=[...new Set([...BOTTLED_BEER_CATALOG,...stockItems.filter(item=>item.category==='Dranken'&&item.subcategory==='Bier'&&(item.id.startsWith('beerbar-bottle-catalog-')||item.id.startsWith('beerbar-bottle-'))).map(item=>item.name)])].sort((a,b)=>a.localeCompare(b,'nl'));
 const beerNeeds=beerBarRequirements(beerPlan);
 const beerPacking=beerBarPacking(beerPlan);
 const updateBeerPlan=(updates:Partial<typeof beerPlan>)=>patch({beerBarPlan:{...beerPlan,...updates}});

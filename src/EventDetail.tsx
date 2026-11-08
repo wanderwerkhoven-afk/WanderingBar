@@ -3,7 +3,8 @@ import './EventDetail.css';
 import {imageToBase64} from './eventImage';
 import {inventoryItems,purchaseLines,batchRecipes,saveBatch} from './inventoryPlanning';
 
-export type EventData={id:number;title:string;date:string;city:string;guests:number;progress:number;status:'Aankomend'|'In voorbereiding'|'Afgerond';photo:string;service?:string;address?:string;contact?:string;phone?:string;notes?:string;start?:string;end?:string;arrival?:string;departure?:string;menu?:string[];quantities?:Record<string,number>;schedule?:{id:number;time:string;title:string;description:string;done:boolean}[];packing?:{id:number;name:string;quantity:number;unit:string;done:boolean}[];staff?:{id:number;name:string;role:string;start:string;end:string}[];purchaseMargin?:number;logisticsNotes?:string};
+import type {EventData} from './types/event';
+export type {EventData} from './types/event';
 const RECIPES:{name:string;type:'Cocktail'|'Mocktail';ingredients:[string,number,string][]}[]=[
 {name:'Last Sip',type:'Cocktail',ingredients:[['Vodka',40,'ml'],['Lycheelikeur',20,'ml'],['Yuzusap',15,'ml'],['Vanillesiroop',15,'ml'],['Lycheesap',20,'ml'],['Passievruchtschuim',20,'ml']]},
 {name:'Spicy Guava Margarita',type:'Cocktail',ingredients:[['Tequila blanco',45,'ml'],['Guavepuree',25,'ml'],['Ananassap',20,'ml'],['Limoensap',20,'ml'],['Agavesiroop',10,'ml'],['Jalapeñosiroop',5,'ml']]},

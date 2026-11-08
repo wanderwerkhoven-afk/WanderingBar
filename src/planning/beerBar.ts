@@ -1,5 +1,6 @@
 import type {PackingItem} from '../types/event';
 export const BLADE_BEERS=['Affligem Blond BLADE 8 L','Lagunitas IPA BLADE 8 L','Birra Moretti BLADE 8 L'] as const;
+export const BOTTLED_BEER_CATALOG=["Desperados Original","Corona Extra","Sol","Birra Moretti fles","Liefmans Fruitesse","Hoegaarden Wit","Vedett Extra White","Oedipus Mannenliefde","Kasteel Rouge","Texels Skuumkoppe","Affligem Blond fles","La Chouffe","Tripel Karmeliet","Jopen Mooie Nel IPA","BrewDog Punk IPA","vandeStreek Playground IPA 0.5","Moersleutel Motor Oil","Moersleutel Crank the Juice","Uiltje Bird of Prey","Uiltje Wit","Brouwerij 't IJ IJwit","Brouwerij 't IJ Zatte","Jopen Adriaan Wit","Two Chefs Brewing Funky Falcon","Frontaal Juice Punch","Brouwerij Kees Caramel Fudge Stout","De Molen Hel & Verdoemenis","Brouwerij Noordt Noordtsingle"] as const;
 export const BOTTLED_BEERS=['Speciaalbier blond flesjes','Speciaalbier IPA flesjes','Speciaalbier tripel flesjes'] as const;
 export type BeerBarPlan={taps:{beer:string;glasses:number}[];bottles:Record<string,number>;bottlesPerTub:number;iceKgPerTub:number};
 export const defaultBeerBarPlan=():BeerBarPlan=>({taps:BLADE_BEERS.map(beer=>({beer,glasses:0})),bottles:{},bottlesPerTub:24,iceKgPerTub:8});

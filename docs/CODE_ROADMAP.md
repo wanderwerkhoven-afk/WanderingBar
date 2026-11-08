@@ -126,3 +126,5 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - [x] Bestaande records en aantallen behouden; nieuwe records starten met onbekende voorraad.
 - [ ] Flesinhoud, alcoholpercentage, actuele leverbaarheid en prijzen per variant verifiëren.
 - [ ] Flesbierkeuze in de evenementplanner uitbreiden van drie generieke soorten naar het volledige inventarisassortiment.
+
+- [x] Bij dienst Speciaalbierbar toont EventDetail alle 28 merkgebonden flesbieropties, naast eventuele bestaande selecties. Andere diensten tonen deze specifieke bierbarsectie niet. Valt terug op vaste catalogus indien inventarisopslag nog niet is geïnitialiseerd.

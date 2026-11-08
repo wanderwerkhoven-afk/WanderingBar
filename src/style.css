@@ -117,3 +117,24 @@
 .event-swipe-delete:focus-visible,.event-swipe-content:focus-visible{outline:3px solid #d59b69;outline-offset:-3px}
 .event-swipe-delete svg{flex-shrink:0}
 @media(prefers-reduced-motion:reduce){.event-swipe-content{transition:none}}
+
+/* Settings: recoverable deleted events */
+.settings-page{width:100%;min-width:0;padding:4px 0 110px}
+.settings-title{display:flex;align-items:center;gap:11px;margin:8px 0 20px;color:#4b2c1d}
+.settings-title h2{font:700 25px/1.2 'Playfair Display',Georgia,serif;margin:0;min-width:0}
+.settings-link{display:flex;align-items:center;gap:12px;width:100%;border:0;text-align:left;padding:16px 13px;color:#3d291e}
+.settings-link-icon{display:grid;place-items:center;color:#a44940;background:#fae9e5;border-radius:12px;width:42px;height:42px;flex:0 0 42px}
+.settings-link-text{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.settings-link-text strong{font-size:14px;overflow-wrap:anywhere}
+.settings-link-text small,.deleted-event-info small{font-size:12px;color:#867467}
+.settings-count{background:#efe0d1;border-radius:20px;padding:4px 9px;font-size:12px;font-weight:700}
+.settings-back{border:0;background:transparent;color:#754a30;font-weight:700;padding:6px 2px;white-space:nowrap}
+.settings-description{font-size:13px;line-height:1.5;color:#78665a;margin:0 0 18px}
+.deleted-event-list{display:flex;flex-direction:column;gap:12px}
+.deleted-event-card{display:flex;align-items:center;gap:10px;padding:15px 13px;min-width:0}
+.deleted-event-info{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px;overflow-wrap:anywhere}
+.deleted-event-info strong{font-size:15px}
+.deleted-event-info span{font-size:12px;color:#715e50}
+.restore-event{display:flex;align-items:center;justify-content:center;gap:5px;flex:0 0 auto;background:#4b2c1d;border:0;border-radius:11px;padding:11px 10px;color:#fff;font-size:12px;font-weight:700}
+.settings-error{color:#a43127;font-size:13px}
+@media(max-width:360px){.deleted-event-card{align-items:flex-start;flex-direction:column}.restore-event{align-self:flex-end}}

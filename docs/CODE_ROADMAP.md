@@ -142,3 +142,33 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - [x] EventDetail leest de bewerkbare catalogus en koppelt ingrediënten aan de inkoop.
 - [ ] Foto's, bereidingswijze en receptenmaterialen toevoegen.
 - [ ] End-to-end productiebuild, mobiele UX en wijziging van bestaande receptnamen controleren.
+
+## Actuele navigatie en code-audit — 9 november 2026
+**Routevorm:** de huidige app gebruikt React-state en conditionele rendering, geen URL-router. De onderstaande paden zijn UI-navigatiepaden, geen afzonderlijke URL's.
+
+| Navigatiepad | Eigenaar | Status |
+|---|---|---|
+| Home | `src/main.tsx` | Dashboard |
+| Evenementen | `src/main.tsx` | Eventoverzicht, zoeken, filters, eventaanmaak |
+| Evenementen → Evenementdetail → Overzicht/Menukaart/Inkoop/Paklijst/Planning | `src/EventDetail.tsx` | Modal met vijf tabbladen; dienstspecifieke menu's |
+| Inventaris | `src/Inventory.tsx` | Producten, voorraad en prijzen |
+| Voorbereiding | `src/main.tsx` | Placeholder, nog niet geïmplementeerd |
+| Meer → Catalogus | `src/main.tsx`, `src/Catalog.tsx`, `src/Catalog.css` | Recepten en wijn/G&T beheren, bieroverzicht |
+| Meer → Verwijderde evenementen | `src/main.tsx` | Herstellen van soft-deleted events |
+
+### Actuele opslag en afhankelijkheden
+- `src/data/menuCatalog.ts`: `COCKTAIL_RECIPES`, `MENU_CATALOG`, `serviceMenuKinds`, `getMenuEntry`, `readMenuCatalog`, `writeMenuCatalog`, `CATALOG_STORAGE_KEY`.
+- `src/Catalog.tsx`: beheert recepten via `readMenuCatalog`/`writeMenuCatalog`; wijzigingen gaan via browser-event `wandering-catalog-updated`.
+- `src/EventDetail.tsx`: filtert de bewerkbare catalogus per dienst en gebruikt de recepten voor inkoop; de speciaalbierbar gebruikt `src/planning/beerBar.ts`.
+- `src/Inventory.tsx`: beheert producten; bierassortiment wordt met `beerBarStarter` en `bottledBeerCatalog` aangevuld.
+- `src/repositories/storageKeys.ts`: centrale keys voor events, verwijderde events en inventaris. **Cataloguskey is nog in `menuCatalog.ts` gedefinieerd**, dus centralisatie is nog open.
+- Alle vier persistente hoofdcollecties staan momenteel in localStorage: events, verwijderde events, inventaris en catalogus.
+
+### Documentatiecorrecties en resterende verificatie
+- De eerdere roadmapregel dat `EventDetail.tsx` `RECIPES` hardcoded bevat is **achterhaald**; recepten worden via `getMenuEntry` uit `menuCatalog.ts` gelezen.
+- De eerdere open taak om bierbarplanning aan evenementen te koppelen is **achterhaald**; `EventData.beerBarPlan` en `beerBarPacking` zijn geïmplementeerd.
+- De eerdere open taak om 28 flesbierkeuzes in evenementen te tonen is **achterhaald**; deze zijn beschikbaar bij Speciaalbierbar.
+- [ ] Verwijder of herschrijf verouderde historische regels in de oorspronkelijke hoofdstukken, zonder auditgeschiedenis te verliezen.
+- [ ] Centraliseer `CATALOG_STORAGE_KEY` in `storageKeys.ts`.
+- [ ] Controleer alle imports/exports en types via `npm run build`; de audit is een broncode-/documentatiecontrole, geen geslaagde build.
+- [ ] Test navigatie, opslag, bewerken/hernoemen van recepten, dienstwissel en bestaande browserdata.

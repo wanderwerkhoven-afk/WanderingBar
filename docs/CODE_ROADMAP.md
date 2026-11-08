@@ -172,3 +172,14 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - [ ] Centraliseer `CATALOG_STORAGE_KEY` in `storageKeys.ts`.
 - [ ] Controleer alle imports/exports en types via `npm run build`; de audit is een broncode-/documentatiecontrole, geen geslaagde build.
 - [ ] Test navigatie, opslag, bewerken/hernoemen van recepten, dienstwissel en bestaande browserdata.
+
+## Verplicht onderhoudsprotocol — vanaf 9 november 2026
+Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij iedere wijziging.
+1. **Vooraf:** zoek bestaande routes, componenten, types, functies en opslagkeys; hergebruik waar mogelijk. Controleer op naam- en functieduplicaten.
+2. **Implementatie:** houd één eigenaar per domeinmodel, berekening en persistente key aan. Vermijd tweede bronnen van waarheid en destructieve opslagwijzigingen.
+3. **In dezelfde wijzigingsronde:** werk de roadmap bij voor architectuur, UI-navigatie, status en open taken; werk het variabelenregister bij voor gedeelde symbolen, afhankelijkheden en opslag.
+4. **Correctie:** verouderde actuele uitspraken verwijderen of duidelijk als historisch markeren; documentatie mag geen tegenstrijdige actuele definities bevatten.
+5. **Verificatie:** voer beschikbare typecheck, build en gerichte regressietests uit; noteer expliciet wat niet getest is. Claim geen geslaagde build zonder bewijs.
+6. **Afronding:** noem gewijzigde modules, documentatiestatus, compatibiliteit en resterende risico's in het wijzigingsoverzicht.
+
+**Reikwijdte:** deze afspraak geldt voor alle toekomstige wijzigingen in Wandering BarBack, niet alleen de catalogus. Een documentatie-update alleen vervangt geen automatische CI-controle.

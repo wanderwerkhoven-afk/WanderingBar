@@ -32,4 +32,8 @@ export const MENU_CATALOG:MenuEntry[]=[
 {name:'Cucumber Mint G&T',type:'G&T',ingredients:[["Hendrick's Gin",50,'ml'],['Indian tonic',150,'ml'],['Komkommer',0.125,'stuks'],['Verse munt',2,'blaadjes']]},
 {name:'Mediterranean Sunset G&T',type:'G&T',ingredients:[['Mediterranean Gin',50,'ml'],['Mediterranean tonic',150,'ml'],['Sinaasappel',0.125,'stuks'],['Tijm',1,'takjes']]}
 ];
-export function getMenuEntry(name:string):MenuEntry|undefined{return MENU_CATALOG.find(entry=>entry.name===name)}
+export const CATALOG_STORAGE_KEY='wandering-barback-catalog-v1';
+export function readMenuCatalog():MenuEntry[]{try{const raw=localStorage.getItem(CATALOG_STORAGE_KEY);if(!raw)return MENU_CATALOG;const saved=JSON.parse(raw);return Array.isArray(saved)?saved:MENU_CATALOG}catch{return MENU_CATALOG}}
+export function writeMenuCatalog(entries:MenuEntry[]){localStorage.setItem(CATALOG_STORAGE_KEY,JSON.stringify(entries));window.dispatchEvent(new Event('wandering-catalog-updated'))}
+export function getMenuEntry(name:string):MenuEntry|undefined{return readMenuCatalog().find(entry=>entry.name===name)}
+

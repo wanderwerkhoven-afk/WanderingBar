@@ -1,5 +1,5 @@
-import type {Item} from './Inventory';
-import {INVENTORY_STORAGE_KEY} from './Inventory';
+import type {Item} from './types/inventory';
+import {INVENTORY_STORAGE_KEY} from './repositories/storageKeys';
 export type Need={name:string;unit:string;amount:number};
 export type PurchaseLine=Need&{stock:number|null;shortage:number|null;supplier:string;price:number|null;cost:number|null;inventoryName:string|null};
 const aliases:Record<string,string>={'Honingsiroop':'Honingstroop','Verse bramen':'Bramen','Verse salie':'Salie','Munt':'Verse munt'};

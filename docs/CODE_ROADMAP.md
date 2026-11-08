@@ -97,3 +97,9 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - [x] Inkoop gebruikt ingrediënten en eenheden uit dezelfde catalogus; onbekende inventarisartikelen krijgen geen verzonnen voorraad.
 - [ ] Build en handmatige tests met dienstwissel, bestaande events en alle vier de menutypes.
 - [ ] Catalogus uitbreiden met echte product-ID's, merken, volumes en beheerscherm; huidige wijn-/bier-/G&T-items zijn startvoorbeelden.
+
+## G&T bar — drie signatures (8 november 2026)
+- [x] G&T-catalogus teruggebracht tot drie vaste signatures met elk een eigen gin: Pink Pepper & Grapefruit (London Dry), Cucumber Mint (Hendrick's), Mediterranean Sunset (Mediterranean Gin).
+- [x] Ingrediënten en serveerhoeveelheden per G&T zijn opgenomen in `src/data/menuCatalog.ts` en tellen mee in de bestaande inkoopberekening.
+- [ ] Koppel de specifieke ginmerken en garneringen aan concrete inventarisartikelen en controleer leveranciers/verpakkingseenheden.
+- [ ] Test build en bestaande G&T-events; oude selecties blijven als eerder geselecteerde items zichtbaar.

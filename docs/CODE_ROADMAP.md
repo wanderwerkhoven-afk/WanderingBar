@@ -103,3 +103,12 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - [x] Ingrediënten en serveerhoeveelheden per G&T zijn opgenomen in `src/data/menuCatalog.ts` en tellen mee in de bestaande inkoopberekening.
 - [ ] Koppel de specifieke ginmerken en garneringen aan concrete inventarisartikelen en controleer leveranciers/verpakkingseenheden.
 - [ ] Test build en bestaande G&T-events; oude selecties blijven als eerder geselecteerde items zichtbaar.
+
+## Speciaalbierbar — BLADE en flesbier (8 november 2026)
+- [x] Drie 8-liter BLADE-fustopties toegevoegd: Affligem Blond, Lagunitas IPA en Birra Moretti.
+- [x] Materiaalopties: Heineken BLADE biertap en luxe grote ijsbak voor bierflesjes.
+- [x] Flesbier-catalogusopties: blond, IPA en tripel; merk en inhoud nog te kiezen.
+- [x] Bestaande inventarisrecords behouden: nieuwe catalogusregels worden op naam/categorie aangevuld, niet overschreven. Nieuwe voorraad is `null` (nog niet geteld).
+- [ ] BLADE-fustbeschikbaarheid en prijzen per leverancier bevestigen, vooral Lagunitas.
+- [ ] Biertap- en flesbierplanning koppelen aan evenementen, aantallen en paklijst.
+- [ ] Productiebuild en browserdata-test uitvoeren.

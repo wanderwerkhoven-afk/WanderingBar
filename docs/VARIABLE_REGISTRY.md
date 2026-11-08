@@ -163,3 +163,11 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 **Verouderde vermeldingen in de oorspronkelijke tabel:** `STORAGE_KEY` als eigenaar in `main.tsx` en `RECIPES` in `EventDetail.tsx` zijn niet meer actueel. Gebruik respectievelijk `EVENT_STORAGE_KEY` en `readMenuCatalog`/`getMenuEntry`.
 
 **Belangrijk:** geen volledige statische symbolenindex of compile-/routetest uitgevoerd. Bij nieuwe modules en wijzigingen moet dit register verder worden bijgewerkt.
+
+## Verplicht registerprotocol — vanaf 9 november 2026
+- Voor nieuwe gedeelde symbolen: eerst zoeken naar een bestaande definitie en importeren/hergebruiken in plaats van dupliceren.
+- Eén canonieke eigenaar per type, functie, configuratie, opslagkey of domeinberekening; noteer naam, type, bestand, consumenten, persistentie en migratie-effect.
+- Bij hernoemen of verwijderen: alle consumenten en dit register gelijktijdig aanpassen; verouderde vermeldingen corrigeren of expliciet als historisch markeren.
+- Geen registratie van iedere tijdelijke loopvariabele: alleen gedeelde, persistente en architectuurbepalende symbolen, om het register onderhoudbaar te houden.
+- Controleer bij iedere wijziging ook `docs/CODE_ROADMAP.md` en eventuele wijzigingen in navigatie en gegevensstromen.
+- Typecheck, build en regressietests uitvoeren waar beschikbaar; ontbrekende verificatie zichtbaar vastleggen.

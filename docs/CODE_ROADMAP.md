@@ -112,3 +112,11 @@ De app blijft mobile-first. Alle nieuwe functionaliteit krijgt een expliciet dat
 - [ ] BLADE-fustbeschikbaarheid en prijzen per leverancier bevestigen, vooral Lagunitas.
 - [ ] Biertap- en flesbierplanning koppelen aan evenementen, aantallen en paklijst.
 - [ ] Productiebuild en browserdata-test uitvoeren.
+
+## Speciaalbierbar eventplanning — 8 november 2026
+- [x] Drie afzonderlijk configureerbare BLADE-taps met fustselectie en verwacht aantal 25cl-glazen.
+- [x] Flesbier op ijs met aantallen per bier, instelbare bakcapaciteit en kg ijs per bak.
+- [x] `src/planning/beerBar.ts` berekent 8L-fusten, ijsbakken, flesjes en ijs voor de paklijst.
+- [x] Inkoop verwerkt fusten, flesjes en ijs met bestaande inventarismatch; onbekende voorraad blijft onbekend.
+- [x] Optioneel `event.beerBarPlan` bewaart de configuratie in de bestaande eventrecords; geen destructieve migratie.
+- [ ] Productiebuild en end-to-end browsertest; koppeling aan echte productverpakkingen en eventueel tapverlies.

@@ -232,3 +232,10 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [ ] Inkooptekorten nog niet meegenomen: voorraadhoeveelheden zijn vaak onbekend; vermijd onterechte inkoopclaims.
 - [ ] Verdere dienstconcepten: centrale vereisten, service-specifieke paklijsten en draaiboeken, inkoop en voorraadreserveringen, capaciteit en echte taakdeadlines.
 - [ ] Productiebuild, mobile UI en datamigratie-/regressietests nog uitvoeren.
+
+## Deadline-gedreven taakprioriteit — 9 november 2026
+- [x] Evenementdatum heeft altijd voorrang op taaksoort: vandaag/morgen = Kritiek; 2–3 dagen = Zeer hoog; 4–7 dagen = Hoog; 8–14 dagen = Gemiddeld; later = Laag.
+- [x] Binnen dezelfde urgentieklasse wordt op resterende dagen gesorteerd; pas daarna op taaksoort en evenementnaam.
+- [x] Dashboard en Voorbereiding tonen een urgentielabel en dagen tot het evenement.
+- [x] Datumloze evenementen blijven zichtbaar als 'Datum ontbreekt' met correctietaak, maar kunnen een gedateerd evenement deze week niet verdringen.
+- [ ] Build en browser-/regressietests nog niet geverifieerd.

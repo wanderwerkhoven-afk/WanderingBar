@@ -212,3 +212,10 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 |---|---|---|---|
 | `parseEventDate`, `formatEventDate`, `nextUpcomingEvent` | `src/eventDates.ts` | `main.tsx`, `EventDetail.tsx`, `SwipeEventCard.tsx` | ISO-validatie, Nederlandse datumweergave en selectie op datum; vervangt lokale `eventDate`/`nextEvent` |
 | `EventData.date` | `src/types/event.ts` | Eventopslag en alle eventweergaven | String: nieuwe records `YYYY-MM-DD`; oude vrije tekst blijft bestaan tot gebruiker expliciet corrigeert |
+
+## Cross-event taken en dienstconcepten — 9 november 2026
+| Symbool | Eigenaar | Consument | Betekenis |
+|---|---|---|---|
+| `getEventTasks`, `EventTask` | `src/planning/eventTasks.ts` | `src/main.tsx` dashboard en Voorbereiding | Niet-persistente afgeleide taken uit `EventData`; prioriteit, event-id, item-id, actie |
+| `getServiceConcept`, `ServiceConcept` | `src/planning/serviceConcepts.ts` | `eventTasks.ts` | Service-eisen afgeleid van `SERVICE_OPTIONS` en `serviceMenuKinds`; geen eigen catalogus |
+| `allTasks`, `openTasks`, `taskRows`, `toggleDashboardTask` | `src/main.tsx` | Dashboard en Voorbereiding | Afgeleide UI, top 5 vs alle taken, writes alleen op bestaande eventvelden |

@@ -159,3 +159,12 @@
 .dashboard-empty{padding:20px;color:#715e50}
 .dashboard-empty button{border:0;border-radius:10px;background:#4b2c1d;color:white;padding:11px 14px;font-weight:700}
 .dashboard-no-tasks{margin:0;padding:20px 8px;color:#78665a;font-size:14px}
+
+/* Shared cross-event task overview: dashboard and Preparation. */
+.dashboard-task{gap:10px}
+.dashboard-task .task-link{flex:1;min-width:0;text-align:left;border:0;background:none;color:inherit;padding:10px 0;display:flex;flex-direction:column;gap:4px}
+.dashboard-task .task-link strong{font-size:14px;font-weight:650}
+.dashboard-task .task-link small{font-size:11px;color:#866b59;line-height:1.35}
+.dashboard-task .task-alert{display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;border-radius:50%;background:#efcf98;color:#55321e;font-weight:800;font-size:13px}
+.dashboard-tasks-intro{font-size:13px;line-height:1.5;color:#766457;margin:0 6px 14px}
+.preparation-tasks{margin-top:5px}

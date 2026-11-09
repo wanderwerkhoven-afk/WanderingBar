@@ -156,3 +156,14 @@
  .ed-size-a5.ed-frame-ornate:after{inset:11mm}
  .ed-size-a5.ed-frame-ornate .ed-menu-paper{padding:21mm!important}
 }
+
+/* Per-event action tasks with their own deadlines. */
+.ed-action-task{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid #e9d9ca}
+.ed-action-task>input[type=checkbox]{width:21px;height:21px;flex-shrink:0;margin-top:10px}
+.ed-action-task-fields{display:flex;flex:1;flex-direction:column;gap:8px;min-width:0}
+.ed-action-task-fields>input,.ed-action-task-fields input,.ed-action-task-add>input,.ed-action-task-add input{width:100%;min-width:0;border:1px solid #ddcbbb;border-radius:10px;padding:10px;background:#fffdf8;color:#33251c;font:inherit}
+.ed-action-task-fields label,.ed-action-task-add label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:#735b49}
+.ed-action-task>button{border:0;background:transparent;color:#735b49;font-size:25px;padding:4px}
+.ed-action-task-add{display:grid;gap:10px;margin-top:15px}
+.ed-action-task-add button{border:0;background:#4b2c1d;color:white;border-radius:11px;padding:12px;font-weight:700}
+.ed-action-task-add button:disabled{opacity:.5}

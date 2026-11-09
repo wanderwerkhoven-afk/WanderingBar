@@ -197,3 +197,10 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Gebruikt bestaande `event.menu`, `event.beerBarPlan` en `readMenuCatalog`; geen dubbele receptopslag of nieuwe localStorage-key.
 - [ ] Printvoorbeeld, paginering bij veel drankopties en mobiele rendering controleren; productiebuild niet geverifieerd.
 - [ ] Optioneel later: huisstijllogo, afbeeldingen, afzonderlijke PDF-download en opgeslagen designvoorkeur per evenement.
+
+## Herbruikbare menukaarttemplates en gouden fotolijst (9 november 2026)
+- [x] Canonieke stijldefinities in `src/data/menuTemplates.ts`: Signature (#F2E5D1/#4B2C1D), Minimal (#FFFDF8/#2E2A25), Elegant (#2E251F/#E8C99A).
+- [x] Keuze tussen een eenvoudige afwerking en sierlijke dubbele rand met ornamenten, geschikt als ontwerp voor presentatie in een gouden fotolijst.
+- [x] Printmarges en sierlijsten worden in `src/EventDetail.css` geregeld; bestaande receptdata blijven ongewijzigd.
+- [ ] Exacte lijstmaat, fysieke afdrukproef en eventuele definitieve illustraties/ornamenten later bepalen.
+- [ ] Build en browserprint nog niet geverifieerd.

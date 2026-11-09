@@ -140,3 +140,19 @@
  .ed-frame-ornate:after{inset:15mm}
  .ed-frame-ornate .ed-menu-paper{padding:27mm!important}
 }
+
+/* Print size selection: matching aspect ratio, with physical frame-safe margins. */
+.ed-size-a5{max-width:326px}
+@page wanderingMenuA4{size:A4 portrait;margin:0}
+@page wanderingMenuA5{size:A5 portrait;margin:0}
+@media print{
+ .ed-menu-print.ed-size-a4{page:wanderingMenuA4;width:210mm!important;height:297mm!important}
+ .ed-menu-print.ed-size-a5{page:wanderingMenuA5;width:148mm!important;height:210mm!important}
+ .ed-size-a5 .ed-menu-paper{padding:18mm!important}
+ .ed-size-a5 .ed-menu-paper h2{font-size:26pt!important}
+ .ed-size-a5 .ed-menu-drink h3{font-size:16pt!important}
+ .ed-size-a5 .ed-menu-drink p{font-size:10pt!important}
+ .ed-size-a5.ed-frame-ornate:before{inset:9mm}
+ .ed-size-a5.ed-frame-ornate:after{inset:11mm}
+ .ed-size-a5.ed-frame-ornate .ed-menu-paper{padding:21mm!important}
+}

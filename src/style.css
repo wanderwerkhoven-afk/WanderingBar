@@ -168,3 +168,11 @@
 .dashboard-task .task-alert{display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;border-radius:50%;background:#efcf98;color:#55321e;font-weight:800;font-size:13px}
 .dashboard-tasks-intro{font-size:13px;line-height:1.5;color:#766457;margin:0 6px 14px}
 .preparation-tasks{margin-top:5px}
+
+/* Urgency indicators: event deadline is the primary ordering criterion. */
+.dashboard-task .task-urgency{display:inline-block;align-self:flex-start;font-size:10px;font-weight:800;padding:4px 8px;border-radius:99px;background:#eee5da;color:#654a38}
+.dashboard-task .task-urgency-kritiek{background:#f5d0c9;color:#8d2c21}
+.dashboard-task .task-urgency-zeer-hoog{background:#f8dfc3;color:#8b4818}
+.dashboard-task .task-urgency-hoog{background:#f8e8bc;color:#775016}
+.dashboard-task .task-urgency-gemiddeld{background:#e8e2d5;color:#63533c}
+.dashboard-task .task-urgency-laag,.dashboard-task .task-urgency-datum-ontbreekt{background:#ece9e4;color:#6e655c}

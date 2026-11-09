@@ -206,3 +206,9 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `nextEvent` | `src/main.tsx` | Dashboard | Selecteert het eerstvolgende actieve evenement op datum; geen aparte opslag |
 | `dashboardEvent` | `src/main.tsx` | Dashboardkaart en taken | Afgeleid van `events`-state |
 | `openTasks`, `toggleDashboardTask` | `src/main.tsx` | Dashboardtaken | Afgeleid van event-`schedule` en `packing`; schrijft wijzigingen terug naar `events` |
+
+## Canonieke evenementdatums (9 november 2026)
+| Symbool | Eigenaar | Consument | Betekenis |
+|---|---|---|---|
+| `parseEventDate`, `formatEventDate`, `nextUpcomingEvent` | `src/eventDates.ts` | `main.tsx`, `EventDetail.tsx`, `SwipeEventCard.tsx` | ISO-validatie, Nederlandse datumweergave en selectie op datum; vervangt lokale `eventDate`/`nextEvent` |
+| `EventData.date` | `src/types/event.ts` | Eventopslag en alle eventweergaven | String: nieuwe records `YYYY-MM-DD`; oude vrije tekst blijft bestaan tot gebruiker expliciet corrigeert |

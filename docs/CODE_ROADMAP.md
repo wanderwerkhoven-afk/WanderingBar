@@ -239,3 +239,11 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Dashboard en Voorbereiding tonen een urgentielabel en dagen tot het evenement.
 - [x] Datumloze evenementen blijven zichtbaar als 'Datum ontbreekt' met correctietaak, maar kunnen een gedateerd evenement deze week niet verdringen.
 - [ ] Build en browser-/regressietests nog niet geverifieerd.
+
+## Eventtaken met individuele deadlines — 9 november 2026
+- [x] `EventData.tasks?: EventActionTask[]` toegevoegd: titel, optionele ISO-deadline, afgerondstatus, id; oudere opgeslagen evenementen blijven compatibel.
+- [x] In evenement → Overzicht een apart onderdeel 'Acties & deadlines' om taken toe te voegen, te bewerken, af te vinken en te verwijderen.
+- [x] `getEventTasks` voegt individuele eventacties toe aan het dashboard en Voorbereiding; eigen deadline bepaalt de urgentie en kan de evenementdatum overrulen. Verlopen deadlines krijgen Kritiek.
+- [x] Direct afvinken op dashboard werkt ook voor `action`-taken en schrijft naar bestaande eventopslag.
+- [ ] Verlopen actieve evenementen worden nu nog uitgesloten uit het algemene taakoverzicht; latere afhandeling van oude onvoltooide acties onderzoeken.
+- [ ] Build en mobiele regressietests nog uitvoeren.

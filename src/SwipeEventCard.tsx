@@ -1,6 +1,7 @@
 import {useRef,useState} from 'react';
 import {CalendarDays,ChevronRight,Trash2,Users} from 'lucide-react';
-import type {EventData} from './EventDetail';
+import type {EventData} from './types/event';
+import {formatEventDate} from './eventDates';
 
 type Props={event:EventData;open:boolean;onOpen:()=>void;onReveal:()=>void;onClose:()=>void;onDelete:()=>void};
 const ACTION_WIDTH=88;
@@ -17,7 +18,7 @@ export default function SwipeEventCard({event,open,onOpen,onReveal,onClose,onDel
   <button type="button" className="event-swipe-delete" aria-label={event.title+' verwijderen'} onClick={onDelete}><Trash2 size={23}/><span>Verwijder</span></button>
   <button type="button" className="event-list-card card event-swipe-content" style={{transform:`translateX(${offset}px)`,transition:start.current&&horizontal.current?'none':undefined}} onClick={()=>{if(dragged.current){dragged.current=false;return}if(open){onClose();return}onOpen()}} aria-label={event.title+' openen. Veeg naar links om te verwijderen.'}>
    <div className="event-thumbnail">{event.photo?<img src={event.photo} alt="" loading="lazy"/>:<span>🍸</span>}</div>
-   <div className="event-card-details"><h2>{event.title}</h2><div className="event-meta"><CalendarDays size={17}/><span>{event.date} · {event.city}</span></div><div className="event-meta"><Users size={17}/><span>{event.guests} gasten</span></div><div className="event-progress"><div className="track"><span style={{width:event.progress+'%'}}/></div><strong>{event.progress}%</strong></div></div><ChevronRight className="event-chevron" size={23}/>
+   <div className="event-card-details"><h2>{event.title}</h2><div className="event-meta"><CalendarDays size={17}/><span>{formatEventDate(event.date)} · {event.city}</span></div><div className="event-meta"><Users size={17}/><span>{event.guests} gasten</span></div><div className="event-progress"><div className="track"><span style={{width:event.progress+'%'}}/></div><strong>{event.progress}%</strong></div></div><ChevronRight className="event-chevron" size={23}/>
   </button>
  </div>
 }

@@ -219,3 +219,10 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `getEventTasks`, `EventTask` | `src/planning/eventTasks.ts` | `src/main.tsx` dashboard en Voorbereiding | Niet-persistente afgeleide taken uit `EventData`; prioriteit, event-id, item-id, actie |
 | `getServiceConcept`, `ServiceConcept` | `src/planning/serviceConcepts.ts` | `eventTasks.ts` | Service-eisen afgeleid van `SERVICE_OPTIONS` en `serviceMenuKinds`; geen eigen catalogus |
 | `allTasks`, `openTasks`, `taskRows`, `toggleDashboardTask` | `src/main.tsx` | Dashboard en Voorbereiding | Afgeleide UI, top 5 vs alle taken, writes alleen op bestaande eventvelden |
+
+## Deadlineprioriteit (9 november 2026)
+| Symbool | Eigenaar | Consument | Betekenis |
+|---|---|---|---|
+| `TaskUrgency`, `EventTask.urgency`, `EventTask.daysUntil` | `src/planning/eventTasks.ts` | `src/main.tsx` | Dynamische urgentie op basis van resterende kalenderdagen; niet persistent |
+| `dateRank`, `base` | `src/planning/eventTasks.ts` | `getEventTasks` | Deadlineklasse en dagen domineren prioriteitsgetal; taaksoort is secundair |
+| `task-urgency-*` | `src/style.css` | Dashboard en Voorbereiding | Visuele labels voor Kritiek/Zeer hoog/Hoog/Gemiddeld/Laag/Datum ontbreekt |

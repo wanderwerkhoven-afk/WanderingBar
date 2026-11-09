@@ -204,3 +204,8 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Printmarges en sierlijsten worden in `src/EventDetail.css` geregeld; bestaande receptdata blijven ongewijzigd.
 - [ ] Exacte lijstmaat, fysieke afdrukproef en eventuele definitieve illustraties/ornamenten later bepalen.
 - [ ] Build en browserprint nog niet geverifieerd.
+
+## A4- en A5-fotolijstformaten (9 november 2026)
+- [x] Canonieke printformaten A4 (210 × 297 mm) en A5 (148 × 210 mm) in `src/data/menuTemplates.ts`.
+- [x] Formaatselector toegevoegd aan Event → Menukaart, met A5-preview, printpagina's en aangepaste ornament-/tekstmarges.
+- [ ] Browserprint op iOS/desktop en fysieke afdruk in gouden lijsten testen; printdialoog kan paginaformaat afhankelijk van browser/printer overschrijven.

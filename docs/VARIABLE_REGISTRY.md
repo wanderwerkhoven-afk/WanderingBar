@@ -226,3 +226,10 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `TaskUrgency`, `EventTask.urgency`, `EventTask.daysUntil` | `src/planning/eventTasks.ts` | `src/main.tsx` | Dynamische urgentie op basis van resterende kalenderdagen; niet persistent |
 | `dateRank`, `base` | `src/planning/eventTasks.ts` | `getEventTasks` | Deadlineklasse en dagen domineren prioriteitsgetal; taaksoort is secundair |
 | `task-urgency-*` | `src/style.css` | Dashboard en Voorbereiding | Visuele labels voor Kritiek/Zeer hoog/Hoog/Gemiddeld/Laag/Datum ontbreekt |
+
+## Individuele eventtaken en deadlines (9 november 2026)
+| Symbool | Eigenaar | Consument | Betekenis |
+|---|---|---|---|
+| `EventActionTask`, `EventData.tasks` | `src/types/event.ts` | `EventDetail.tsx`, `eventTasks.ts`, `main.tsx` | Persistente eventactie met optionele ISO-deadline, status en id; geen nieuwe storage key |
+| `newTaskTitle`, `newTaskDeadline` | `src/EventDetail.tsx` | Acties & deadlines | Tijdelijke formulierstate voor nieuwe taak |
+| `EventTask.kind='action'`, `EventTask.deadline` | `src/planning/eventTasks.ts` | Dashboard en Voorbereiding | Afgeleide taak en individuele prioriteit op eigen deadline |

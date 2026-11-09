@@ -6,3 +6,5 @@ export const MENU_TEMPLATES=[
 ] as const;
 export type MenuTemplateId=typeof MENU_TEMPLATES[number]['id'];
 export type MenuFrameStyle='plain'|'ornate';
+export const MENU_PRINT_SIZES=[{id:'A4',label:'A4 · 21 × 29,7 cm',widthMm:210,heightMm:297},{id:'A5',label:'A5 · 14,8 × 21 cm',widthMm:148,heightMm:210}] as const;
+export type MenuPrintSize=typeof MENU_PRINT_SIZES[number]['id'];

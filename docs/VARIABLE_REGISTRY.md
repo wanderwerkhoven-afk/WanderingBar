@@ -198,3 +198,11 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `MENU_PRINT_SIZES`, `MenuPrintSize` | `src/data/menuTemplates.ts` | `EventDetail.tsx` | Canonieke A4/A5 afmetingen in mm |
 | `menuSize`, `setMenuSize` | `src/EventDetail.tsx` | Menukaartontwerper | Tijdelijke keuze A4/A5, niet persistent |
 | `ed-size-a4`, `ed-size-a5` | `src/EventDetail.css` | Print en preview | Afdrukformaat, tekst- en ornamentmarges |
+
+## Dashboard-afgeleide gegevens (9 november 2026)
+| Symbool | Eigenaar | Gebruikt door | Betekenis |
+|---|---|---|---|
+| `eventDate` | `src/main.tsx` | `nextEvent` | Parseert ISO en bestaande Nederlandse weergavedatums; ontbrekend jaartal wordt als eerstvolgende kalenderdatum geïnterpreteerd |
+| `nextEvent` | `src/main.tsx` | Dashboard | Selecteert het eerstvolgende actieve evenement op datum; geen aparte opslag |
+| `dashboardEvent` | `src/main.tsx` | Dashboardkaart en taken | Afgeleid van `events`-state |
+| `openTasks`, `toggleDashboardTask` | `src/main.tsx` | Dashboardtaken | Afgeleid van event-`schedule` en `packing`; schrijft wijzigingen terug naar `events` |

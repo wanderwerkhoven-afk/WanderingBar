@@ -3,7 +3,7 @@ import {parseEventDate} from '../eventDates';
 import {getServiceConcept} from './serviceConcepts';
 import {normalizeBeerBarPlan,beerBarRequirements} from './beerBar';
 export type TaskUrgency='Kritiek'|'Zeer hoog'|'Hoog'|'Gemiddeld'|'Laag'|'Datum ontbreekt';
-export type EventTask={urgency:TaskUrgency;daysUntil:number|null;key:string;eventId:number;eventTitle:string;label:string;kind:'schedule'|'packing'|'missing'|'menu';itemId?:number;priority:number;date:string;action:'complete'|'open'};
+export type EventTask={urgency:TaskUrgency;daysUntil:number|null;key:string;eventId:number;eventTitle:string;label:string;kind:'schedule'|'packing'|'missing'|'menu'|'action';itemId?:number;priority:number;date:string;deadline?:string;action:'complete'|'open'};
 const missing=(value?:string)=>!value||!value.trim()||/^(datum|locatie) (nog invullen|onbekend)$/i.test(value.trim());
 export function getEventTasks(events:EventData[],today=new Date()):EventTask[]{
  const start=new Date(today.getFullYear(),today.getMonth(),today.getDate());
@@ -16,7 +16,9 @@ export function getEventTasks(events:EventData[],today=new Date()):EventTask[]{
   // Date priority dominates task type. An event this week always outranks a later event.
   const dateRank=days===null?5:days<=1?0:days<=3?1:days<=7?2:days<=14?3:4;
   const base=dateRank*10000+(days??999)*100;
-  const add=(kind:EventTask['kind'],key:string,label:string,priority:number,action:EventTask['action'],itemId?:number)=>result.push({key:event.id+':'+key,eventId:event.id,eventTitle:event.title,label,kind,itemId,priority,urgency,daysUntil:days,date:event.date,action});
+  const add=(kind:EventTask['kind'],key:string,label:string,priority:number,action:EventTask['action'],itemId?:number,deadline?:string)=>result.push({key:event.id+':'+key,eventId:event.id,eventTitle:event.title,label,kind,itemId,priority,urgency,daysUntil:days,date:event.date,deadline,action});
+  // Action deadlines are independent of the event date and override its urgency.
+  for(const task of event.tasks||[]){if(task.done||!task.title.trim())continue;const due=task.deadline?parseEventDate(task.deadline):null;const dueDays=due?Math.round((due.getTime()-start.getTime())/86400000):null;const rank=dueDays===null?dateRank:dueDays<=1?0:dueDays<=3?1:dueDays<=7?2:dueDays<=14?3:4;const priority=rank*10000+(dueDays===null?(days??999):Math.max(-30,dueDays))*100+2;add('action','action:'+task.id,task.title,priority,'complete',task.id,task.deadline);const entry=result[result.length-1];if(dueDays!==null){entry.daysUntil=dueDays;entry.urgency=dueDays<0?'Kritiek':dueDays<=1?'Kritiek':dueDays<=3?'Zeer hoog':dueDays<=7?'Hoog':dueDays<=14?'Gemiddeld':'Laag'}}
   if(!date)add('missing','date','Datum inclusief jaar bevestigen',base,'open');
   if(missing(event.city))add('missing','city','Locatie invullen',base+1,'open');
   if(!event.address?.trim())add('missing','address','Adres bevestigen',base+4,'open');

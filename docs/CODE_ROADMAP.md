@@ -209,3 +209,10 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Canonieke printformaten A4 (210 × 297 mm) en A5 (148 × 210 mm) in `src/data/menuTemplates.ts`.
 - [x] Formaatselector toegevoegd aan Event → Menukaart, met A5-preview, printpagina's en aangepaste ornament-/tekstmarges.
 - [ ] Browserprint op iOS/desktop en fysieke afdruk in gouden lijsten testen; printdialoog kan paginaformaat afhankelijk van browser/printer overschrijven.
+
+## Dashboard synchroniseren met evenementen — 9 november 2026
+- [x] Hardcoded dashboard-evenement vervangen door selectie uit dezelfde persistente `events`-state als de evenementenpagina.
+- [x] Kies het eerstvolgende niet-afgeronde evenement met geldige toekomstige datum; als geen gedateerd toekomstig evenement bestaat, toon een ongedateerd evenement of een lege toestand.
+- [x] Dashboard toont actuele titel, afbeelding, datum, locatie, gasten, status en voortgang; kaart opent het echte eventdetail.
+- [x] Voorbeeldtaken vervangen door maximaal vijf open draaiboek-/paklijsttaken van het geselecteerde evenement; afvinken schrijft terug naar het event.
+- [ ] Browsercontrole, build en tests van datuminterpretatie nog uitvoeren; oudere Nederlandstalige datums zonder jaartal blijven een migratierisico.

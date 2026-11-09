@@ -223,3 +223,12 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Evenementenlijst, dashboard en detailweergave gebruiken gedeelde formattering; detailbewerking gebruikt `input type=date`.
 - [x] Oude tekstuele datums worden bewaard en niet automatisch van een gegokt jaartal voorzien. Gebruiker kan ze in eventdetails expliciet bevestigen.
 - [ ] Build/browsercheck en test van oude datumrecords uitvoeren; oude ongedateerde records kunnen nog als fallback op het dashboard verschijnen.
+
+## Slimme eventtaken en eerste dienstconcept-koppelingen — 9 november 2026
+- [x] `src/planning/eventTasks.ts` leidt taken af uit alle actieve, niet-verlopen evenementen: ontbrekende datum/locatie/adres/contact/starttijd, niet-gekozen dranken en onafgeronde draaiboek-/paklijstitems.
+- [x] Urgentie gebruikt de ISO-evenementdatum en taaktype; dashboard toont top 5, Voorbereiding alle taken, inclusief eventnaam en doorklik.
+- [x] Handmatige draaiboek-/paklijsttaken worden in de bestaande eventopslag afgevinkt; automatische ontbrekende-gegevensmeldingen openen het event en verdwijnen zodra gegevens worden ingevuld.
+- [x] `src/planning/serviceConcepts.ts` hergebruikt `SERVICE_OPTIONS` en `serviceMenuKinds` als eerste conceptlaag voor cocktailworkshop/catering/mobiele bar, wijnbar, G&T en speciaalbierbar; geen dubbele receptcatalogus.
+- [ ] Inkooptekorten nog niet meegenomen: voorraadhoeveelheden zijn vaak onbekend; vermijd onterechte inkoopclaims.
+- [ ] Verdere dienstconcepten: centrale vereisten, service-specifieke paklijsten en draaiboeken, inkoop en voorraadreserveringen, capaciteit en echte taakdeadlines.
+- [ ] Productiebuild, mobile UI en datamigratie-/regressietests nog uitvoeren.

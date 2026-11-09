@@ -216,3 +216,10 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Dashboard toont actuele titel, afbeelding, datum, locatie, gasten, status en voortgang; kaart opent het echte eventdetail.
 - [x] Voorbeeldtaken vervangen door maximaal vijf open draaiboek-/paklijsttaken van het geselecteerde evenement; afvinken schrijft terug naar het event.
 - [ ] Browsercontrole, build en tests van datuminterpretatie nog uitvoeren; oudere Nederlandstalige datums zonder jaartal blijven een migratierisico.
+
+## Eenduidige evenementdatums — 9 november 2026
+- [x] Nieuwe events bewaren `date` als ISO-kalenderdatum `YYYY-MM-DD`, inclusief jaar.
+- [x] Canonieke `src/eventDates.ts` verzorgt ISO-validatie, Nederlandse weergave en chronologische selectie van het eerstvolgende event.
+- [x] Evenementenlijst, dashboard en detailweergave gebruiken gedeelde formattering; detailbewerking gebruikt `input type=date`.
+- [x] Oude tekstuele datums worden bewaard en niet automatisch van een gegokt jaartal voorzien. Gebruiker kan ze in eventdetails expliciet bevestigen.
+- [ ] Build/browsercheck en test van oude datumrecords uitvoeren; oude ongedateerde records kunnen nog als fallback op het dashboard verschijnen.

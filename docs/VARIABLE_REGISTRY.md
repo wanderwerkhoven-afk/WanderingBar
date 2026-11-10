@@ -256,3 +256,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `CATERING_MIN_HOURS`, `CATERING_BASE_PRICE`, `CATERING_EXTRA_HOURLY_RATE`, `CATERING_SECOND_BARTENDER_HOURLY_RATE`, `CATERING_MIN_COCKTAILS` | `src/planning/cateringPricing.ts` | calculator en UI | 3 uur, €175, €45, €45, 25 cocktails |
 | `CateringPlan`, `DEFAULT_CATERING_PLAN`, `normalizeCateringPlan`, `calculateCatering` | `src/planning/cateringPricing.ts` | `EventData.cateringPlan`, `EventDetail` | Persistente invoer en afgeleide live bedragen |
 | `EventData.cateringPlan?` | `src/types/event.ts` | eventrepository | Optionele cateringinstellingen per evenement; bestaande records compatibel |
+
+| `CateringPlan.extraCocktails`, `extraCocktailRate`, `extraCocktailsTotal` | `src/planning/cateringPricing.ts` | `EventDetail.tsx` | Extra geserveerde cocktails, Classic-prijs op basis van oorspronkelijk geboekte aantallen, afzonderlijke nacalculatie; optioneel veld compatibel met bestaande records |

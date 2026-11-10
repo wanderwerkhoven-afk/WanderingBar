@@ -15,7 +15,7 @@
 .ed-summary>div{background:#f5e9dd;border:1px solid #e8d6c5;border-radius:17px;padding:17px 15px;box-shadow:0 2px 8px rgba(82,48,28,.04)}
 .ed-summary small{color:#866e5e;font-size:12px;font-weight:700}
 .ed-summary strong{font-size:17px;color:#442819}
-.ed-tabs{position:sticky;top:-1px;z-index:3;background:#fffaf2;gap:7px;padding:17px 0 13px;margin:4px -2px 0;scrollbar-width:none}
+.ed-tabs{position:sticky;top:20px;z-index:30;background:#fffaf2;gap:7px;padding:17px 0 13px;margin:4px -2px 0;scrollbar-width:none}
 .ed-tabs::-webkit-scrollbar{display:none}
 .ed-tabs button,.ed-filter button{border-radius:999px;border-color:#e7d6c7;background:#f8eee4;color:#674633;padding:11px 15px;font-size:13px;transition:background .15s ease}
 .ed-tabs button.active,.ed-filter button.active{background:#4b2c1d;border-color:#4b2c1d;color:#fff;box-shadow:0 3px 8px rgba(75,44,29,.16)}

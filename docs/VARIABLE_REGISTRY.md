@@ -358,3 +358,6 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `.ed-menu-drinks.ed-menu-drinks-grid` | `src/EventDetail.css` | Menukaart preview + HTML-afdruk | `grid-auto-rows:auto`, `align-content:center`, `row-gap:28px`: compacte, verticaal gecentreerde cocktailgroep in plaats van over volledige hoogte uitgerekte rijen |
 
 | `.ed-menu-drinks.ed-menu-drinks-grid` `transform:translateY(-16px)` | `src/EventDetail.css` | Menukaart preview en HTML-print | Verplaatst de volledige cocktailsectie 16px omhoog zonder de afstand tussen cocktailrijen te veranderen |
+
+| `missingRecipes`, `importRecipes`, `importMessage` | `src/Catalog.tsx` | Instellingen → Catalogus | Tijdelijke niet-destructieve import van ontbrekende standaardcocktails/mocktails naar persistente catalogus, als voorbereiding op Firestore-migratie |
+| `COCKTAIL_RECIPES` | `src/data/menuCatalog.ts` | Tijdelijke migratiebron | 13 vaste cocktail/mocktailrecepten; pas verwijderen na bevestigde Firestore-sync en verificatie op tweede apparaat |

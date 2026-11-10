@@ -315,3 +315,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `downloadQuotePdf(CustomQuote)` | `src/documents/quotePdf.ts`, `src/EventDetail.tsx` | Offerte PDF bij dienst Anders | Hergebruikt vaste éénpagina-A4 PDF-opmaak van catering, toont `lines` en `total`, geen browserprint |
 
 | `downloadMenuPdf({eventTitle,heading,items,design,frame,size})` | `src/documents/menuPdf.ts` | Menukaart PDF-export in `src/EventDetail.tsx` | Native PDF, één pagina A4/A5; gebruikt `menuDesign`, `menuFrame`, `menuSize` en `printMenuItems`, zonder browserprint |
+
+| `printMenuItems.length` | `src/EventDetail.tsx`, `src/documents/menuPdf.ts` | Menukaart preview en PDF | Stuurt automatische 1- of 2-koloms indeling en compacte typografie; 5e item gecentreerd op derde rij |

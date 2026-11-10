@@ -51,7 +51,7 @@ export function downloadMenuPdf({eventTitle,heading,items,design,frame,size}:Men
   const center=x+columnWidth/2;
   const yTop=top-row*rowHeight-8*scale;
   let y=yTop;
-  const centeredText=(s:string,fontSize:number,bold:boolean,color:string)=>{const estimatedWidth=clean(s).length*fontSize*(bold?.54:.48);text(s,Math.max(x,center-estimatedWidth/2),y,fontSize,bold,color)};
+  const centeredText=(s:string,fontSize:number,bold:boolean,color:string)=>{const estimatedWidth=clean(s).length*fontSize*(bold ? 0.54 : 0.48);text(s,Math.max(x,center-estimatedWidth/2),y,fontSize,bold,color)};
   for(const line of item.name){centeredText(line,baseName*scale*factor,true,fg);y-=15*scale*factor}
   for(const line of item.description){centeredText(line,baseDescription*scale*factor,false,accent);y-=11*scale*factor}
  }

@@ -286,3 +286,5 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 
 - [x] iPhone-appicoon: geüploade bronafbeelding `F84641DF-7011-4AD4-8662-96A0AABA3DAC.png` wordt via Vite build als `apple-touch-icon.png` en `app-icon.png` uitgegeven. iOS bepaalt de afgeronde hoeken; HTML verwijst naar Apple touch icon en favicon. Manifest in `public/manifest.webmanifest`.
 - [ ] Controleer op iPhone of de bronafbeelding zelf geen lichte/ingebakken hoeken heeft en valideer de daadwerkelijke GitHub Pages-deploy.
+
+- [x] Desktop responsive enhancement (>=900px): sidebar navigation, constrained content width, compact event hero, two-column dashboard, responsive event grid; mobile-first rules below 900px unchanged. Verify visually on real desktop after deployment.

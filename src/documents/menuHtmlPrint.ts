@@ -19,7 +19,6 @@ export function printMenuHtml(preview:HTMLElement,size:MenuPrintSize):void{
  // The printed document is a scaled copy of the actual preview, not a reflow.
  const printCss=`
  @page{size:${pageWidth} ${pageHeight};margin:0}
- @page :first{size:${pageWidth} ${pageHeight};margin:0}
  html,body{width:${pageWidth}!important;height:${pageHeight}!important;margin:0!important;padding:0!important;background:white!important;overflow:hidden!important}
  *,*::before,*::after{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
  #print-root{width:${pageWidth};height:${pageHeight};position:relative;overflow:hidden}
@@ -35,16 +34,12 @@ export function printMenuHtml(preview:HTMLElement,size:MenuPrintSize):void{
  #print-root .ed-menu-paper{width:100%!important;min-width:0!important;max-width:100%!important;height:100%!important;max-height:100%!important;transform:none!important;padding:44px!important}
  #print-root .ed-menu-paper h2{font-size:34px!important}
  #print-root .ed-menu-drink h3{font-size:17px!important;line-height:1.12!important;margin:0 0 3px!important}
- #print-root .ed-menu-drinks-compact .ed-menu-drink h3{font-size:17px!important}
  #print-root .ed-menu-drink p{font-size:11px!important;line-height:1.22!important;margin:0!important}
- #print-root .ed-menu-drinks-compact .ed-menu-drink p{font-size:11px!important}
  #print-root .ed-menu-brand{font-size:14px!important;letter-spacing:.28em!important;line-height:1.35!important}
  #print-root .ed-menu-event{font-size:14px!important;line-height:1.4!important;margin:14px 0 12px!important}
  #print-root .ed-menu-footer{font-size:11px!important;line-height:1.4!important;margin-top:10px!important}
  #print-root .ed-menu-drinks{min-height:0!important;overflow:hidden!important}
  #print-root .ed-menu-drinks-grid .ed-menu-drink{overflow:hidden!important;min-width:0!important}
- #print-root .ed-menu-drinks-grid{row-gap:10px!important;column-gap:16px!important}
- #print-root .ed-menu-drinks-grid{grid-template-rows:repeat(3,minmax(0,1fr))!important}
  @media screen{
    html,body{width:auto!important;height:auto!important;min-height:100vh!important;overflow:auto!important;background:#e7e2dc!important}
    #print-root{margin:24px auto;box-shadow:0 8px 28px #0002}
@@ -53,7 +48,6 @@ export function printMenuHtml(preview:HTMLElement,size:MenuPrintSize):void{
    #print-toolbar button{border:0;border-radius:9px;padding:12px 22px;background:#4b2c1d;color:#fff;cursor:pointer}
  }
  @media print{
-  @page{size:${pageWidth} ${pageHeight};margin:0}
   html,body{width:${pageWidth}!important;height:${pageHeight}!important;max-width:${pageWidth}!important;max-height:${pageHeight}!important;overflow:hidden!important;}
   #print-toolbar{display:none!important}
   #print-root{position:fixed!important;inset:0!important;width:${pageWidth}!important;height:${pageHeight}!important;margin:0!important;padding:0!important;box-shadow:none!important;break-inside:avoid!important;page-break-inside:avoid!important}

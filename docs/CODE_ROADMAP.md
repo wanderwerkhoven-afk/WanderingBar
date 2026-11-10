@@ -331,3 +331,5 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] PDF-fix voor offertes bij dienst `Anders`: browserprint vervangen door dezelfde native A4-PDF-generator en Wandering Bar-huisstijl als Cocktail Catering. Handmatige posten, aantallen, prijzen en totaal verschijnen op één A4; maximaal 12 posten voor leesbaarheid. Geen lege printpagina's; foutmelding bij te veel inhoud. Bestaande opgeslagen offertes blijven intact.
 
 - [x] Menukaart-PDF: browserprint vervangen door native éénpagina-PDF-download (`src/documents/menuPdf.ts`) zoals bij offertes. Ondersteunt bestaande Signature/Minimal/Elegant kleuren, sierlijst aan/uit, A4/A5, evenementtitel, dranknamen en omschrijvingen. Schaal lay-out naar één pagina; geef melding wanneer de menukaart te vol is om leesbaar af te drukken. Bestaande menukaartselectie en eventdata blijven intact.
+
+- [x] Menukaart lay-out automatisch op aantal geselecteerde dranken: 1–3 onder elkaar; 4 in 2 kolommen × 2 rijen; 5 in 2 kolommen × 2 rijen plus vijfde gecentreerd op rij 3; 6 in 2 kolommen × 3 rijen. Bij >3 compactere typografie. Zowel live voorbeeld als native A4/A5-PDF aangepast.

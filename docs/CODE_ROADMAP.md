@@ -256,3 +256,11 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Tot 20 deelnemers één begeleider; 21–29 een suggestie, vanaf 30 advies voor twee. Geen automatische personeelskosten.
 - [ ] De pakketcocktails zijn nog niet automatisch gekoppeld aan de menukaart/receptcalculatie: voorkom overschrijven van bestaande menu's voordat de recepten zijn gevalideerd.
 - [ ] Btw, kilometervergoeding, offerte-export, build en mobiele regressietests nog verifiëren.
+
+## Automatische cocktailworkshopoffertes — 10 november 2026
+- [x] Canonieke offerteberekening in `src/planning/workshopQuotes.ts`: arrangement, aantal deelnemers, aangepaste prijs, losse reiskosten, geldigheidsdatum en totaal.
+- [x] `EventData.workshopQuotes?: WorkshopQuote[]`: gegenereerde offertes als onveranderlijke momentopnames bij het evenement opgeslagen; oude records compatibel.
+- [x] Event → Overzicht → Offerte aanmaken: opdrachtgever, reiskosten, geldigheid, opmerkingen, offertegeschiedenis, afdrukvoorbeeld en browserfunctie 'Opslaan als PDF'.
+- [x] A4-printstylesheet met offertegegevens, regels, totaal en waarschuwing voor ontbrekende btw-/bedrijfsgegevens.
+- [ ] Voor definitieve klantoffertes nog bedrijfsnaam-/adres-/KvK-/btw-gegevens, btw-tarief en algemene voorwaarden bevestigen; offerte is nu expliciet een concept.
+- [ ] Browserprint en productiebuild nog niet geverifieerd; geen directe PDF-library/export of e-mailverzending.

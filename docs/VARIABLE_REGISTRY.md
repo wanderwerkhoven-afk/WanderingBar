@@ -361,3 +361,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 
 | `missingRecipes`, `importRecipes`, `importMessage` | `src/Catalog.tsx` | Instellingen → Catalogus | Tijdelijke niet-destructieve import van ontbrekende standaardcocktails/mocktails naar persistente catalogus, als voorbereiding op Firestore-migratie |
 | `COCKTAIL_RECIPES` | `src/data/menuCatalog.ts` | Tijdelijke migratiebron | 13 vaste cocktail/mocktailrecepten; pas verwijderen na bevestigde Firestore-sync en verificatie op tweede apparaat |
+
+| `missingRecipes` / `importRecipes` (bron `MENU_CATALOG`) | `src/Catalog.tsx` | Catalogusimport | Niet-destructieve import van alle ontbrekende standaarddranken, waaronder drie G&T-recepten; vervangt eerdere beperkte `COCKTAIL_RECIPES`-import |

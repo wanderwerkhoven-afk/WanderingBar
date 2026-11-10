@@ -247,3 +247,12 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Direct afvinken op dashboard werkt ook voor `action`-taken en schrijft naar bestaande eventopslag.
 - [ ] Verlopen actieve evenementen worden nu nog uitgesloten uit het algemene taakoverzicht; latere afhandeling van oude onvoltooide acties onderzoeken.
 - [ ] Build en mobiele regressietests nog uitvoeren.
+
+## Cocktailworkshop arrangement- en prijstool — 10 november 2026
+- [x] `src/planning/workshopPricing.ts`: canonieke pakketten Classics (€35 p.p.; Woo Woo/Daiquiri/Mojito) en Times (€45 p.p.; Bee's Knees/Lychacha/Zombie), 3 cocktails p.p., circa 2 uur, minimaal 10 deelnemers, reiskosten apart.
+- [x] `EventData.workshopPricing` optioneel en per event persistent; oudere evenementen krijgen zonder migratie standaard Classics €35.
+- [x] Event → Overzicht toont voor cocktailworkshops pakketkeuze, deelnemerschuiver (10–60+), bewerkbare prijs per persoon, live omzet, aantal cocktails en personeelsindicatie.
+- [x] Deelnemerschuiver past canoniek `event.guests` aan, zodat overige evenementcalculaties dezelfde aantallen gebruiken.
+- [x] Tot 20 deelnemers één begeleider; 21–29 een suggestie, vanaf 30 advies voor twee. Geen automatische personeelskosten.
+- [ ] De pakketcocktails zijn nog niet automatisch gekoppeld aan de menukaart/receptcalculatie: voorkom overschrijven van bestaande menu's voordat de recepten zijn gevalideerd.
+- [ ] Btw, kilometervergoeding, offerte-export, build en mobiele regressietests nog verifiëren.

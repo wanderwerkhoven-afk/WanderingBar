@@ -292,3 +292,5 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Eventdetail desktopworkspace (>=900px): dialoog tot 1220px breed, verticale sticky tabnavigatie, compacte eventheader en 2-koloms invoer- en overzichtsvelden. Offerte- en factuurpreviews blijven afdrukbaar; mobiele horizontale tabnavigatie ongewijzigd. Visuele desktop- en iPhone-regressietest na deployment nog uitvoeren.
 
 - [x] Evenementtegel opent evenementdetail als volledige pagina in plaats van modal. Eventdetail behoudt mobiele tabs en desktopzijbalk; browsergeschiedenis en deep link `#/evenement/:id` ondersteund. Dashboard- en taaklinks openen dezelfde pagina. Controleer GitHub Actions-build en visuele weergave na deploy.
+
+- [x] Eventdetail: aparte tab `Offerte & factuur` toegevoegd naast Overzicht, Menukaart, Inkoop, Paklijst en Planning. Cateringofferte/factuurinstellingen, opgeslagen documenten en workshopoffertes verhuisd vanuit Overzicht. Prijscalculators blijven in Overzicht. Overige diensten tonen een duidelijke nog-niet-beschikbaarmelding. Bestaande offerte-/factuurdata blijven behouden.

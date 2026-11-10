@@ -3,6 +3,7 @@ import {calculateCustomLines,createCustomQuote,createCustomInvoice,type CustomQu
 import {printMenuHtml} from './documents/menuHtmlPrint';
 import {downloadQuotePdf} from './documents/quotePdf';
 import {useEffect,useMemo,useState,useRef} from 'react';
+import {flushSync} from 'react-dom';
 import {Beer} from 'lucide-react';
 import './EventDetail.css';
 import {MENU_TEMPLATES,MENU_PRINT_SIZES,type MenuTemplateId,type MenuFrameStyle,type MenuPrintSize} from './data/menuTemplates';
@@ -134,7 +135,7 @@ const swapBeerPositions=(source:string,target:string)=>{
  const from=next.indexOf(source),to=next.indexOf(target);
  if(from<0||to<0)return;
  [next[from],next[to]]=[next[to],next[from]];
- const apply=()=>patch({beerMenuOrder:next});
+ const apply=()=>flushSync(()=>patch({beerMenuOrder:next}));
  const transition=(document as Document & {startViewTransition?:(callback:()=>void)=>void}).startViewTransition;
  if(transition)transition.call(document,apply);else apply();
 };

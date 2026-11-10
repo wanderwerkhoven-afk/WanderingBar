@@ -326,3 +326,16 @@
 .ed-menu-print.ed-frame-ornate .ed-menu-brand:before{font-size:clamp(13px,3vw,22px);margin-bottom:3px}
 .ed-menu-print.ed-frame-ornate .ed-menu-footer:after{font-size:clamp(11px,2vw,17px);margin-top:2px}
 .ed-menu-print.ed-size-a5 .ed-menu-paper{padding:clamp(23px,6vw,34px)}
+
+/* A5 is a true 70.71% reproduction of the A4 preview, never a reflow. 
+   All typography, gutters, frame and drink positions are scaled together. */
+.ed-menu-print.ed-size-a5{width:326px!important;max-width:100%;height:auto!important;aspect-ratio:210/297!important;overflow:hidden}
+.ed-menu-print.ed-size-a5>.ed-menu-paper{width:460px!important;min-width:460px!important;max-width:none!important;height:650.57px!important;max-height:none!important;box-sizing:border-box!important;transform:scale(.7086956522);transform-origin:top left;flex-shrink:0}
+.ed-menu-print.ed-size-a5 .ed-menu-paper{padding:44px!important}
+.ed-menu-print.ed-size-a5.ed-frame-ornate .ed-menu-paper{padding:44px!important}
+.ed-menu-print.ed-size-a5 .ed-menu-paper h2{font-size:34px!important}
+.ed-menu-print.ed-size-a5 .ed-menu-drinks-compact .ed-menu-drink h3{font-size:17px!important}
+.ed-menu-print.ed-size-a5 .ed-menu-drinks-compact .ed-menu-drink p{font-size:11px!important}
+@media(max-width:360px){
+ .ed-menu-print.ed-size-a5{width: min(326px,100%)!important}
+}

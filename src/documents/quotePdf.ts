@@ -45,7 +45,7 @@ export function downloadQuotePdf(quote:Quote):void {
  text(w?'COCKTAILWORKSHOP':custom?'DIENSTVERLENING OP MAAT':'COCKTAILBAR CATERING',44,704,11,true,'0.89 0.74 0.53');
  section('Jullie evenement',640);
  text(clean(quote.eventTitle).slice(0,45),43,616,20,true);
- const intro='Bedankt voor jullie aanvraag! Met plezier verzorgen wij een sfeervolle en smaakvolle cocktailervaring op locatie.';
+ const intro=custom?'Bedankt voor jullie aanvraag! Hierbij ontvangen jullie ons voorstel voor '+clean(quote.eventTitle)+'. Hieronder vinden jullie de dienstverlening en bijbehorende kosten.':w?'Bedankt voor jullie aanvraag! Graag verzorgen wij een interactieve cocktailworkshop voor jullie evenement.':'Bedankt voor jullie aanvraag! Met plezier verzorgen wij een sfeervolle cocktailervaring op locatie.';
  for(const [i,l] of wrap(intro,48).slice(0,3).entries())text(l,43,594-i*13,9);
  text('Opdrachtgever',341,630,9,true);text(clean(quote.client).slice(0,35),427,630,9);
  text('Datum',341,611,9,true);text(date(quote.eventDate),427,611,9);
@@ -58,7 +58,7 @@ export function downloadQuotePdf(quote:Quote):void {
  const priceTop=451;
  // Keep the whole custom quotation on one A4; never print an empty extra sheet.
  if(customQuote&&rows.length>12)throw new Error('Deze offerte bevat meer dan 12 posten. Verdeel de werkzaamheden over minder regels voor een leesbare A4-offerte.');
- line(priceTop+8);section('Investering',priceTop-9);
+ line(priceTop+8);section('Kostenoverzicht',priceTop-9);
  text('Omschrijving',43,priceTop-30,8,true);text('Aantal',347,priceTop-30,8,true);text('Tarief',412,priceTop-30,8,true);text('Bedrag',491,priceTop-30,8,true);
  line(priceTop-38);
  let yy=priceTop-55;

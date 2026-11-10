@@ -8,5 +8,5 @@ export function createWorkshopQuote(event:EventData,settings:QuoteSettings,today
  const price=workshopPricing(event.workshopPricing),pkg=WORKSHOP_PACKAGES[price.packageId];
  const guests=Math.max(0,event.guests),travelCost=Math.max(0,Number(settings.travelCost)||0);
  const workshopTotal=guests*price.pricePerPerson;
- return {id:'WB-'+iso(today).replaceAll('-','')+'-'+String(event.id).slice(-6)+'-'+String(today.getTime()).slice(-5),createdAt:iso(today),validUntil:settings.validUntil||quoteDefaultValidity(today),client:settings.client.trim(),travelCost,notes:settings.notes.trim(),guests,eventDate:event.date,eventTitle:event.title,eventCity:event.city,eventAddress:event.address||'',packageName:pkg.name,cocktails:[...pkg.cocktails],pricePerPerson:price.pricePerPerson,workshopTotal,total:workshopTotal+travelCost};
+ return {id:'WB-'+iso(today).replace(/-/g,'')+'-'+String(event.id).slice(-6)+'-'+String(today.getTime()).slice(-5),createdAt:iso(today),validUntil:settings.validUntil||quoteDefaultValidity(today),client:settings.client.trim(),travelCost,notes:settings.notes.trim(),guests,eventDate:event.date,eventTitle:event.title,eventCity:event.city,eventAddress:event.address||'',packageName:pkg.name,cocktails:[...pkg.cocktails],pricePerPerson:price.pricePerPerson,workshopTotal,total:workshopTotal+travelCost};
 }

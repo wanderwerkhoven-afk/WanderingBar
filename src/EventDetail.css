@@ -184,3 +184,26 @@
 .ed-workshop-summary strong{font-size:16px;overflow-wrap:anywhere}
 .ed-workshop-warning{color:#a24623;font-weight:700}
 @media(max-width:420px){.ed-workshop-controls{grid-template-columns:1fr}.ed-workshop-options button{padding:10px}.ed-workshop-options button.is-selected{padding:9px}}
+
+/* Quote generator, immutable quote preview and browser print-to-PDF. */
+.ed-quote-actions{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:12px 0}
+.ed-quote-actions button,.ed-quote-toolbar button{border:0;border-radius:10px;background:#294634;color:#fff;padding:12px 16px;font:inherit;font-weight:700}
+.ed-quote-actions button:disabled{opacity:.5}
+.ed-quote-history{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.ed-quote-history button{background:#f4f0e9;border:1px solid #dedbd4;border-radius:9px;padding:11px;text-align:left;color:inherit}
+.ed-quote-overlay{position:fixed;inset:0;z-index:10000;background:#f0eee9;overflow:auto;padding:16px;color:#25352b}
+.ed-quote-toolbar{max-width:800px;margin:0 auto 12px;display:flex;justify-content:space-between;gap:10px}
+.ed-quote-paper{max-width:720px;min-height:800px;margin:auto;padding:45px;background:white;box-shadow:0 5px 28px #0002;font-size:14px;line-height:1.6;color:#26372e}
+.ed-quote-paper header{border-bottom:2px solid #314c3b;padding-bottom:18px;margin-bottom:24px}
+.ed-quote-paper header h1{font-size:27px;margin:0}
+.ed-quote-paper header p{letter-spacing:3px;font-size:10px}
+.ed-quote-paper h2{font-size:23px}
+.ed-quote-meta{display:grid;grid-template-columns:1fr 1fr;gap:3px 22px}
+.ed-quote-meta p{display:flex;flex-direction:column;gap:2px}
+.ed-quote-paper table{width:100%;border-collapse:collapse;margin-top:26px}
+.ed-quote-paper th,.ed-quote-paper td{padding:11px 6px;text-align:left;border-bottom:1px solid #d8ded6}
+.ed-quote-paper th:last-child,.ed-quote-paper td:last-child{text-align:right}
+.ed-quote-total{font-weight:800}
+.ed-quote-footnote{margin-top:50px;font-size:11px;color:#6e7069}
+@media(max-width:500px){.ed-quote-paper{padding:22px;min-height:0}.ed-quote-meta{grid-template-columns:1fr}.ed-quote-toolbar button{padding:10px;font-size:12px}.ed-quote-paper table{font-size:11px}}
+@media print{@page{size:A4;margin:12mm}body:has(.ed-quote-overlay) *{visibility:hidden!important}.ed-quote-overlay,.ed-quote-overlay *{visibility:visible!important}.ed-quote-overlay{position:absolute;inset:0;padding:0;background:white;overflow:visible}.ed-quote-toolbar{display:none!important}.ed-quote-paper{box-shadow:none;max-width:none;min-height:0;padding:0;margin:0;font-size:12px}.ed-quote-paper tr{break-inside:avoid}}

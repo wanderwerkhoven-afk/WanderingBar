@@ -248,3 +248,11 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `WorkshopQuote`, `QuoteSettings`, `createWorkshopQuote`, `quoteDefaultValidity` | `src/planning/workshopQuotes.ts` | `EventDetail.tsx` | Offerte-snapshot met berekende bedragen en 14 dagen standaardgeldigheid |
 | `EventData.workshopQuotes` | `src/types/event.ts` | Eventopslag, offertegeschiedenis | Optionele persistente offertehistorie, zonder extra opslagkey |
 | `quoteClient`, `quoteTravel`, `quoteNotes`, `quoteValidUntil`, `activeQuote` | `src/EventDetail.tsx` | Offerteformulier en printvoorbeeld | Tijdelijke invoer en geselecteerde snapshot voor browser-print/PDF |
+
+## Cocktail Catering calculator — 10 november 2026
+| Symbool / veld | Eigenaar | Consument | Betekenis |
+|---|---|---|---|
+| `CATERING_TIERS` | `src/planning/cateringPricing.ts` | `calculateCatering`, `EventDetail` | Staffels Classic/Signature bij totale afname |
+| `CATERING_MIN_HOURS`, `CATERING_BASE_PRICE`, `CATERING_EXTRA_HOURLY_RATE`, `CATERING_SECOND_BARTENDER_HOURLY_RATE`, `CATERING_MIN_COCKTAILS` | `src/planning/cateringPricing.ts` | calculator en UI | 3 uur, €175, €45, €45, 25 cocktails |
+| `CateringPlan`, `DEFAULT_CATERING_PLAN`, `normalizeCateringPlan`, `calculateCatering` | `src/planning/cateringPricing.ts` | `EventData.cateringPlan`, `EventDetail` | Persistente invoer en afgeleide live bedragen |
+| `EventData.cateringPlan?` | `src/types/event.ts` | eventrepository | Optionele cateringinstellingen per evenement; bestaande records compatibel |

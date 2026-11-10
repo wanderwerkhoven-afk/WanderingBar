@@ -339,3 +339,31 @@
 @media(max-width:360px){
  .ed-menu-print.ed-size-a5{width: min(326px,100%)!important}
 }
+
+/* A5 must scale the COMPLETE A4 canvas, not just its paper child.
+   CSS zoom participates in layout, keeping border, ornament, columns and padding aligned. */
+.ed-menu-print.ed-size-a5{
+ width:460px!important;
+ max-width:none!important;
+ height:650.57px!important;
+ min-height:0!important;
+ aspect-ratio:210/297!important;
+ zoom:.7086956522;
+ overflow:hidden;
+}
+.ed-menu-print.ed-size-a5>.ed-menu-paper{
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ height:100%!important;
+ max-height:100%!important;
+ transform:none!important;
+ padding:44px!important;
+}
+.ed-menu-print.ed-size-a5.ed-frame-ornate>.ed-menu-paper{padding:44px!important}
+.ed-menu-print.ed-size-a5 .ed-menu-paper h2{font-size:34px!important}
+.ed-menu-print.ed-size-a5 .ed-menu-drinks-compact .ed-menu-drink h3{font-size:17px!important}
+.ed-menu-print.ed-size-a5 .ed-menu-drinks-compact .ed-menu-drink p{font-size:11px!important}
+@media(max-width:360px){
+ .ed-menu-print.ed-size-a5{zoom:calc(.7086956522 * min(1, (100vw - 32px) / 326))}
+}

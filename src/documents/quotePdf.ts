@@ -43,10 +43,10 @@ export function downloadQuotePdf(quote:Quote):void{
  cmd('BT /F2 18 Tf 1 0 0 1 48 787 Tm (THE WANDERING BAR) Tj ET');
  cmd('BT /F1 10 Tf 1 0 0 1 48 732 Tm (EEN PERSOONLIJK VOORSTEL) Tj ET');
  cmd('0.98 0.97 0.93 rg');
- text('Cocktails die',48,655,39,true);
- text('bijblijven.',48,605,39,true);
+ cmd('BT /F2 39 Tf 0.98 0.97 0.93 rg 1 0 0 1 48 655 Tm (Cocktails die) Tj ET');
+ cmd('BT /F2 39 Tf 0.98 0.97 0.93 rg 1 0 0 1 48 605 Tm (bijblijven.) Tj ET');
  cmd('0.90 0.84 0.71 rg');
- for(const [i,l] of wrap('Een complete cocktailervaring voor '+quote.eventTitle+'.',38).entries())text(l,48,540-i*24,17);
+ for(const [i,l] of wrap('Een complete cocktailervaring voor '+quote.eventTitle+'.',38).entries())cmd('BT /F1 17 Tf 0.90 0.84 0.71 rg 1 0 0 1 48 '+(540-i*24)+' Tm ('+esc(l)+') Tj ET');
  cmd('0.70 0.56 0.37 RG 2 w 48 402 m 547 402 l S');
  cmd('0.11 0.20 0.17 rg');
  text('SAMEN MAKEN WE ER IETS BIJZONDERS VAN',48,281,12,true);

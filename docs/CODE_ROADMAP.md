@@ -2,6 +2,16 @@
 
 ## Firebase-synchronisatie — update 10 november 2026
 
+### Herstel tweede apparaat en dubbele inventaris-ID's (10 november 2026)
+
+- [x] Login met legacy-inventaris met dubbele ID (`starter-8`) blokkeert niet langer bij `prepareSync`.
+- [x] Bij upload/samenvoegen krijgen dubbele inventarisregels deterministisch unieke ID's, zonder de oorspronkelijke bron vóór synchronisatie te wijzigen.
+- [x] Conflictvenster biedt twee duidelijke keuzes na back-upexport: **Apparaatcache vervangen door Firebase** (aanbevolen voor tweede apparaat) of **Lokale gegevens samenvoegen met Firebase**.
+- [x] De cloudkeuze werkt ook bij onleesbare lokale records; samenvoegen is dan geblokkeerd om corruptie te vermijden.
+- [x] Alleen de vier BarBack-datasets worden vervangen, ook wanneer een cloudcollectie bewust leeg is. Geen verwijdering van Firebase-data of algemene browsergegevens.
+- [x] Regressietests voor dubbele `starter-8`, ID-collisie, dubbele event-ID's en ongeldige records via `npm test`.
+- [ ] **Gebruikerstest:** op laptop met oude cache Google-login → back-up downloaden → cloudcache laden → mobiel/laptop dezelfde event- en inventarisgegevens zien.
+
 - [x] Google Authentication en Firestore-adapter op `main` aangesloten; GitHub Pages blijft de hosting.
 - [x] Vier bestaande datasets (`events`, `deletedEvents`, `inventory`, `catalog`) per ingelogde Firebase UID onder `users/{uid}/{dataset}/{recordId}` opgeslagen.
 - [x] Eerste login: lokale data uploaden naar lege cloud; bij verschillende versies eerst back-up downloaden en expliciet kiezen tussen samenvoegen of cloudversie.

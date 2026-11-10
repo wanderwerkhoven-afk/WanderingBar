@@ -7,11 +7,11 @@ import { CATALOG_STORAGE_KEY } from '../data/menuCatalog';
 import {
   DELETED_EVENTS_STORAGE_KEY, EVENT_STORAGE_KEY, INVENTORY_STORAGE_KEY,
 } from '../repositories/storageKeys';
+import { rowsFromLocal, type Dataset, type Row } from './localRows';
 
 export const DATASETS = ['events', 'deletedEvents', 'inventory', 'catalog'] as const;
-export type Dataset = (typeof DATASETS)[number];
+export type { Dataset } from './localRows';
 export type RawLocal = Record<Dataset, string | null>;
-type Row = { id: string; value: string; position: number };
 type RemoteData = Record<Dataset, Row[]>;
 const KEYS: Record<Dataset, string> = {
   events: EVENT_STORAGE_KEY,
@@ -34,36 +34,6 @@ export function claimLocalOwner(uid: string): void {
 
 export function readLocal(): RawLocal {
   return Object.fromEntries(DATASETS.map(k => [k, localStorage.getItem(KEYS[k])])) as RawLocal;
-}
-
-function parsed(raw: string | null, dataset: Dataset): Record<string, unknown>[] {
-  if (raw === null) return [];
-  const records: unknown = JSON.parse(raw);
-  if (!Array.isArray(records)) throw new Error(`De lokale ${dataset}-gegevens zijn ongeldig; ze zijn niet gewijzigd.`);
-  return records as Record<string, unknown>[];
-}
-
-function recordId(dataset: Dataset, value: Record<string, unknown>): string {
-  const key = dataset === 'catalog' ? value.name
-    : dataset === 'deletedEvents' ? (value.event as Record<string, unknown> | undefined)?.id
-    : value.id;
-  if ((typeof key !== 'string' && typeof key !== 'number') || String(key).length === 0) {
-    throw new Error(`Een ${dataset}-record mist een geldige identificatie. Lokale gegevens zijn behouden.`);
-  }
-  return encodeURIComponent(String(key));
-}
-
-function rowsFromLocal(dataset: Dataset, raw: string | null): Row[] {
-  const ids = new Set<string>();
-  return parsed(raw, dataset).map((entry, position) => {
-    const id = recordId(dataset, entry);
-    if (ids.has(id)) throw new Error(`Dubbel ${dataset}-record (${id}); gegevens niet overschreven.`);
-    ids.add(id);
-    const value = JSON.stringify(entry);
-    // Firestore has a 1 MiB document limit. Images are already compressed by the app.
-    if (new Blob([value]).size > 900_000) throw new Error(`Een ${dataset}-record is te groot voor Firestore. De lokale kopie blijft behouden.`);
-    return { id, value, position };
-  });
 }
 
 function snapshotRows(snapshot: QuerySnapshot<DocumentData>): Row[] {
@@ -99,9 +69,8 @@ function markSynced(uid: string, expected?: RawLocal): void {
 function replaceLocal(remote: RemoteData): void {
   const values = remoteRaws(remote);
   for (const dataset of DATASETS) {
-    // No cloud records and no existing key means "use built-in starter data".
-    // This matters for the bundled cocktail catalog and inventory defaults.
-    if (!remote[dataset].length && localStorage.getItem(KEYS[dataset]) === null) continue;
+    // Cloud-only must reproduce an intentionally empty workspace as [] too.
+    // Leaving a missing key would re-seed sample records on this device.
     localStorage.setItem(KEYS[dataset], values[dataset] ?? '[]');
   }
 }
@@ -152,30 +121,35 @@ export type PreparedSync = {
   uid: string;
   remote: RemoteData;
   hasConflict: boolean;
+  canMerge: boolean;
+  localProblem: string | null;
   exportBackup: () => void;
   activate: (choice?: 'cloud' | 'merge') => Promise<RemoteData>;
 };
 
 export async function prepareSync(uid: string): Promise<PreparedSync> {
-  if (localOwner() && localOwner() !== uid) {
-    throw new Error('De lokale BarBack-gegevens horen bij een ander Google-account. Gebruik dat account of een ander browserprofiel.');
-  }
+  const differentOwner = Boolean(localOwner() && localOwner() !== uid);
   const local = readLocal();
-  for (const dataset of DATASETS) rowsFromLocal(dataset, local[dataset]);
+  // Do not validate or normalize local rows before offering a cloud-only choice.
+  // Legacy/corrupt browser records must not lock users out of their cloud data.
   const [remote, workspace] = await Promise.all([
     fetchRemote(uid), getDocFromServer(doc(db, 'users', uid, 'meta', 'workspace')),
   ]);
   // Keep a permanent initialization marker. Without this, an intentionally
   // empty workspace could be mistaken for a new account and old events revived.
   const cloudHasData = workspace.exists() || DATASETS.some(dataset => remote[dataset].length > 0);
-  const localHasData = DATASETS.some(dataset => parsed(local[dataset], dataset).length > 0);
+  const localHasData = DATASETS.some(dataset => local[dataset] !== null && local[dataset] !== '[]');
+  let localProblem: string | null = null;
+  try { for (const dataset of DATASETS) rowsFromLocal(dataset, local[dataset]); }
+  catch (error) { localProblem = error instanceof Error ? error.message : 'Onleesbare lokale gegevens.'; }
   const cloudRaw = remoteRaws(remote);
   const same = DATASETS.every(dataset => (local[dataset] ?? '[]') === cloudRaw[dataset]);
   const lastSynced = localStorage.getItem(SYNC_PREFIX + uid) === fingerprint(local);
-  const hasConflict = cloudHasData && localHasData && !same && !lastSynced;
+  const hasConflict = differentOwner || Boolean(localProblem) || (cloudHasData && localHasData && !same && !lastSynced);
 
   return {
-    uid, remote, hasConflict,
+    uid, remote, hasConflict, canMerge: !differentOwner && !localProblem,
+    localProblem: differentOwner ? 'Dit apparaat heeft lokale gegevens van een ander Google-account.' : localProblem,
     exportBackup() {
       const file = { format: 'WanderingBarBack-backup-v1', exportedAt: new Date().toISOString(),
         project: 'barback-20df5', local: readLocal(), cloud: remoteRaws(remote) };
@@ -186,11 +160,19 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     },
     async activate(choice = 'cloud') {
-      if (!cloudHasData) {
+      if (hasConflict && choice === 'merge' && (differentOwner || localProblem)) {
+        throw new Error('Deze lokale gegevens kunnen niet veilig worden samengevoegd. Download de back-up en kies daarna dit apparaat opnieuw instellen.');
+      }
+      if (!cloudHasData && !(hasConflict && choice === 'cloud')) {
         for (const dataset of DATASETS) {
           const wanted = rowsFromLocal(dataset, local[dataset]);
           await writeDataset(uid, dataset, wanted, []);
           remote[dataset] = wanted;
+          // Correct duplicate legacy inventory IDs in the local working copy
+          // only after the cloud upload has completed successfully.
+          if (local[dataset] !== null && toRaw(wanted) !== local[dataset]) {
+            localStorage.setItem(KEYS[dataset], toRaw(wanted));
+          }
         }
       } else if (choice === 'merge' && hasConflict) {
         for (const dataset of DATASETS) {
@@ -209,6 +191,7 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
       // The old inventory screen has a one-time migration that resets quantities
       // to zero. Do not run that on restored cloud inventory on a new device.
       localStorage.setItem(INVENTORY_MIGRATION_KEY, 'yes');
+      if (differentOwner && choice === 'cloud') localStorage.setItem(OWNER_KEY, uid);
       claimLocalOwner(uid);
       markSynced(uid);
       return remote;

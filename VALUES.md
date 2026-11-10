@@ -23,6 +23,8 @@ De definitieve catalogussleutel wordt in `src/data/menuCatalog.ts` beheerd; wijz
 
 ## Synchronisatieregels
 
+**Tweede apparaat met bestaande lokale cache:** na een downloadbare back-up mag de gebruiker kiezen tussen de vier lokale BarBack-datasets vervangen door de Firebase-versie of beide versies samenvoegen. Dit raakt de Firebase-gegevens op andere apparaten niet. Legacy-inventarisregels met dezelfde ID worden bij samenvoegen afzonderlijk behouden met unieke ID's. Bij onleesbare lokale records is alleen de cloudoptie beschikbaar. Er worden geen algemene browsergegevens gewist.
+
 - Eerste aanmelding met een lege Firestore-workspace: aanwezige browsergegevens uploaden.
 - Een bestaande cloudversie met andere lokale gegevens: back-up downloaden en daarna expliciet samenvoegen of cloudversie kiezen.
 - Na aanmelden: lokale wijzigingen ongeveer elke 1,2 seconde naar Firestore; via het synchronisatie-icoon kan de controle direct plaatsvinden.

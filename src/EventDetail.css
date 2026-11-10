@@ -308,3 +308,21 @@
 .ed-menu-drinks-compact .ed-menu-drink h3{font-size:clamp(12px,2.5vw,17px)}
 .ed-menu-drinks-compact .ed-menu-drink p{font-size:clamp(9px,1.7vw,11px)!important;line-height:1.35}
 .ed-menu-drinks-five .ed-menu-drink:last-child{grid-column:1/-1;justify-self:center;width:calc(50% - 8px)}
+
+/* Keep the entire menu, including six drinks, inside the A4/A5 ornamental frame. */
+.ed-menu-print{position:relative;overflow:hidden;aspect-ratio:210/297;min-height:0}
+.ed-menu-paper{height:100%;max-height:100%;min-height:0;overflow:hidden;justify-content:flex-start}
+.ed-menu-print .ed-menu-brand{flex:0 0 auto}
+.ed-menu-print .ed-menu-rule{flex:0 0 auto;margin:clamp(8px,2.3vw,18px) 0 clamp(7px,1.7vw,12px)}
+.ed-menu-print .ed-menu-paper h2{flex:0 0 auto;font-size:clamp(20px,5.1vw,34px)!important}
+.ed-menu-print .ed-menu-event{flex:0 0 auto;margin:clamp(8px,1.8vw,14px) 0 clamp(7px,1.6vw,12px)!important}
+.ed-menu-print .ed-menu-drinks{flex:1 1 0;min-height:0;max-height:100%;overflow:hidden}
+.ed-menu-print .ed-menu-footer{flex:0 0 auto;margin-top:clamp(5px,1vw,10px)}
+.ed-menu-print .ed-menu-drinks-grid{grid-template-rows:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);row-gap:clamp(5px,1.2vw,11px)}
+.ed-menu-print .ed-menu-drinks-grid .ed-menu-drink{max-height:100%;overflow:hidden}
+.ed-menu-print .ed-menu-drinks-compact .ed-menu-drink h3{font-size:clamp(11px,2.5vw,17px);line-height:1.12;margin-bottom:3px}
+.ed-menu-print .ed-menu-drinks-compact .ed-menu-drink p{font-size:clamp(8px,1.7vw,11px)!important;line-height:1.22}
+.ed-menu-print.ed-frame-ornate .ed-menu-paper{padding:clamp(26px,7.5vw,44px)}
+.ed-menu-print.ed-frame-ornate .ed-menu-brand:before{font-size:clamp(13px,3vw,22px);margin-bottom:3px}
+.ed-menu-print.ed-frame-ornate .ed-menu-footer:after{font-size:clamp(11px,2vw,17px);margin-top:2px}
+.ed-menu-print.ed-size-a5 .ed-menu-paper{padding:clamp(23px,6vw,34px)}

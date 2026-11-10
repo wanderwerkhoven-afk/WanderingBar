@@ -137,6 +137,11 @@ export const DEFAULT_BEER_ABV:Record<string,number>={
  "Two Chefs Brewing Funky Falcon": 5.2,
  "Brouwerij Kees Caramel Fudge Stout": 11.5,
  "De Molen Hel & Verdoemenis": 9,
+ "Uiltje Wit": 6,
+ "Brouwerij 't IJ Zatte": 8,
+ "Jopen Adriaan Wit": 5,
+ "Frontaal Juice Punch": 5.8,
+ "Brouwerij Noordt Noordtsingle": 4.5,
  "Speciaalbier alcoholvrij": 0,
 };
 export const CATALOG_STORAGE_KEY='wandering-barback-catalog-v1';

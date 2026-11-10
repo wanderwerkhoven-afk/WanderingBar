@@ -55,7 +55,7 @@ const cateringPlan=normalizeCateringPlan(event.cateringPlan);
 const catering=calculateCatering(cateringPlan);
 const updateCatering=(updates:Partial<typeof cateringPlan>)=>patch({cateringPlan:{...cateringPlan,...updates}});
 const updateCateringPrice=(key:keyof CateringPriceEndpoints,value:number)=>updateCatering({prices:{...catering.prices!,[key]:Math.max(0,Number(value)||0)}});
-const cateringQuoteForInvoice=(event.cateringQuotes||[]).find(q=>q.id===cateringQuoteId)||(event.cateringQuotes||[]).at(-1);
+const cateringQuoteForInvoice=(event.cateringQuotes||[]).find(q=>q.id===cateringQuoteId)||(event.cateringQuotes||[])[(event.cateringQuotes||[]).length-1];
 const isWorkshop=isCocktailWorkshop(event.service);
 const workshop=workshopPricing(event.workshopPricing);
 const workshopPackage=WORKSHOP_PACKAGES[workshop.packageId];

@@ -92,7 +92,8 @@ const maxMenuItems=!isBeerBar&&allowedKinds.every(kind=>kind==='Cocktail'||kind=
 const activeMenu=menu.filter(name=>availableMenu.some(entry=>entry.name===name));
 const visibleMenu=availableMenu.filter(entry=>filter==='Alles'||!allowedKinds.includes(filter)||entry.type===filter);
 const menuTitle=allowedKinds.length===1?({Wijn:'Wijnkaart',Speciaalbier:'Bierkaart','G&T':'Gin & tonic-kaart',Cocktail:'Cocktailmenu',Mocktail:'Mocktailmenu'} as Record<MenuKind,string>)[allowedKinds[0]]:'Menukaart';
-const printMenuItems=isBeerBar?[...beerPlan.taps.filter(t=>t.glasses>0).map(t=>({name:t.beer.replace(/ BLADE 8 L$/,''),description:'Vers getapt speciaalbier'})),...Object.entries(beerPlan.bottles).filter(([,n])=>n>0).map(([name])=>({name,description:'Gekoeld geserveerd'}))]:activeMenu.map(name=>({name,description:catalogEntries.find(item=>item.name===name)?.ingredients.map(([ingredient])=>ingredient).slice(0,4).join(' · ')||''}));
+const beerDescription=(name:string)=>catalogEntries.find(item=>item.type==='Speciaalbier'&&item.name.toLocaleLowerCase('nl')===name.toLocaleLowerCase('nl'))?.tasteProfile?.trim()||'Smaakprofiel nog niet ingevuld';
+const printMenuItems=isBeerBar?[...beerPlan.taps.filter(t=>t.glasses>0).map(t=>({name:t.beer.replace(/ BLADE 8 L$/,''),description:beerDescription(t.beer)})),...Object.entries(beerPlan.bottles).filter(([,n])=>n>0).map(([name])=>({name,description:beerDescription(name)}))]:activeMenu.map(name=>({name,description:catalogEntries.find(item=>item.name===name)?.ingredients.map(([ingredient])=>ingredient).slice(0,4).join(' · ')||''}));
 const quantities=event.quantities||{};
 const schedule=event.schedule||[];
 const packing=event.packing||[];

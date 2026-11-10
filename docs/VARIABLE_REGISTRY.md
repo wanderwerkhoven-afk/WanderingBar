@@ -366,3 +366,7 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 
 | `editing`, `closeEditor`, `original` | `src/Catalog.tsx` | Catalogus | Regelen full-page recepteditor en terugkeer naar catalogus zonder modal |
 | `.catalog-editor-page`, `.catalog-editor-heading`, `.catalog-back`, `.catalog-editor` | `src/Catalog.css` | Catalogus | Responsieve editor als pagina-inhoud in plaats van fixed overlay |
+
+| `paths`, `getRoute()`, `go(path)` | `src/main.tsx` | Appnavigatie | Centrale hashroute-tabel en browsergeschiedenis voor GitHub Pages |
+| `tab`, `settingsPage`, `selected` | `src/main.tsx` | Appnavigatie | Afgeleid van hashroute bij eerste render en bij popstate/hashchange |
+| `.more-route-page`, `.more-route-content` | `src/style.css` | Catalogus en verwijderde evenementen | Normale paginalayout in plaats van overlay |

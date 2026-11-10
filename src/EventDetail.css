@@ -224,3 +224,11 @@
 .ed-catering-totals>div span{flex:1}
 .ed-catering-totals .ed-catering-grand{border-top:1px solid #c9c9c0;padding-top:14px;font-size:18px;font-weight:800}
 @media(max-width:480px){.ed-catering-fields{grid-template-columns:1fr}}
+
+.ed-catering-prices{margin:18px 0;padding:14px;border:1px solid #dedbd4;border-radius:12px}
+.ed-catering-prices h3{margin-top:0}
+.ed-catering-extra{margin:16px 0}
+.ed-catering-booked-tier{background:#e6f0e7;font-weight:800;color:#294634}
+.ed-catering-documents{display:flex;flex-direction:column;gap:12px}
+.ed-catering-documents .ed-quote-history{display:flex;flex-wrap:wrap;gap:8px}
+@media print{.ed-catering-booked-tier{background:#e6f0e7!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}}

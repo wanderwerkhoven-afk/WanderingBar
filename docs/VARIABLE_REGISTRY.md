@@ -325,3 +325,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `.ed-menu-print .ed-menu-drinks-grid` | `src/EventDetail.css` | Menukaart-preview | Drie begrensde rijen en compacte typografie om zes dranken binnen de sierlijst te houden |
 
 | `.ed-menu-print.ed-size-a5 > .ed-menu-paper` | `src/EventDetail.css` | Menukaart A5-preview | A4-canvas 460×650,57 px, `transform:scale(326/460)` met vaste oorsprong; geen reflow van drankblokken |
+
+| `.ed-menu-print.ed-size-a5` | `src/EventDetail.css` | A5-preview | Complete A4-canvas 460×650,57 met CSS `zoom:326/460`, in plaats van alleen child-transform; behoudt uitlijning van rand en inhoud |

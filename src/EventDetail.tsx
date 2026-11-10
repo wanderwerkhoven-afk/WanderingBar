@@ -111,14 +111,16 @@ const beerAlcoholLabel=(name:string)=>{
 const formatBeerSubtitle=(name:string,description:string)=>{
  if(beerSubtitleStyle==='none')return '';
  if(beerSubtitleStyle==='full')return description;
- const match=description.match(/^(\\d+(?:[.,]\\d+)?%)(?:\\s*[·-]\\s*)?(.*)$/);
- const abv=match?.[1]||'';
- const profile=(match?.[2]||description).trim();
+ // Read ABV from the beer catalog directly; don't depend on parsing the subtitle.
+ const abv=beerAlcoholLabel(name);
+ const profile=description.replace(/^\s*\d+(?:[.,]\d+)?%\s*(?:[·–-]\s*)?/,'').trim();
  if(beerSubtitleStyle==='short'){
-  const words=profile.split(/\\s+/);
-  return [abv,words.slice(0,Math.min(words.length,9)).join(' ').replace(/[,.\\s]+$/,'')].filter(Boolean).join(' · ');
+  const words=profile.split(/\s+/);
+  return [abv,words.slice(0,Math.min(words.length,9)).join(' ').replace(/[,\.\s]+$/,'')].filter(Boolean).join(' · ');
  }
- const keywords=(LEGACY_BEER_TASTE_PROFILES[name]||profile).split(/[·,;]|\\s+en\\s+/i).map(word=>word.trim()).filter(Boolean).filter(word=>!/^\\d+(?:[.,]\\d+)?%$/.test(word)).slice(0,3);
+ const keywords=(LEGACY_BEER_TASTE_PROFILES[name]||profile)
+  .split(/[·,;]|\s+en\s+/i).map(word=>word.trim()).filter(Boolean)
+  .filter(word=>!/^\d+(?:[.,]\d+)?%$/.test(word)).slice(0,3);
  return [abv,...keywords].filter(Boolean).join(' · ');
 };
 const printMenuItems=isBeerBar?[...beerPlan.taps.filter(t=>t.glasses>0).map(t=>({name:t.beer.replace(/ BLADE 8 L$/,''),description:formatBeerSubtitle(t.beer,beerDescription(t.beer)),abv:beerAlcoholLabel(t.beer),beerType:'tap' as const})),...Object.entries(beerPlan.bottles).filter(([,n])=>n>0).map(([name])=>({name,description:formatBeerSubtitle(name,beerDescription(name)),abv:beerAlcoholLabel(name),beerType:'bottle' as const}))]:activeMenu.map(name=>({name,description:catalogEntries.find(item=>item.name===name)?.ingredients.map(([ingredient])=>ingredient).slice(0,4).join(' · ')||'',abv:'',beerType:null}));

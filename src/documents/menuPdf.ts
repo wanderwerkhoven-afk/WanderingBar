@@ -65,6 +65,7 @@ export function downloadMenuPdf({eventTitle,heading,items,design,frame,size}:Men
   y-=4*scale*factor;
   for(const line of item.description){centerText(line,itemCenter,y,baseDescription*scale*factor,false,accent);y-=12*scale*factor}
  }
+ centerText('CRAFTED FOR YOUR OCCASION',center,55*scale,8*scale,false,accent);
  const stream=commands.join('\n')+'\n';
  const objects=['','<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Count 1 /Kids [6 0 R] >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>','<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold /Encoding /WinAnsiEncoding >>','<< /Length '+bytes(stream).length+' >>\nstream\n'+stream+'endstream','<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+width+' '+height+'] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>'];
  let pdf='%PDF-1.4\n%\xE2\xE3\xCF\xD3\n';const offsets=[0];

@@ -30,24 +30,45 @@ export function downloadQuotePdf(quote:Quote):void{
  const cmd=(s:string)=>pages[pages.length-1].push(s);
  const line=(x1:number,yy:number,x2:number)=>cmd('0.82 G 0.6 w '+x1+' '+yy+' m '+x2+' '+yy+' l S');
  const text=(s:string,x:number,yy:number,size=10,bold=false)=>cmd('BT /'+(bold?'F2':'F1')+' '+size+' Tf 0.15 g 1 0 0 1 '+x+' '+yy+' Tm ('+esc(s)+') Tj ET');
- const newPage=()=>{pages.push([]);y=780;header(false)};
+ const newPage=()=>{pages.push([]);y=758;header(false)};
  const ensure=(height:number)=>{if(y-height<75)newPage()};
  const paragraph=(value:string,max=92)=>{for(const l of wrap(value,max)){ensure(15);text(l,48,y,10);y-=15}};
  const heading=(value:string)=>{ensure(35);y-=12;text(value,48,y,12,true);y-=22};
- const header=(first:boolean)=>{text('WANDERING BAR',48,802,16,true);text('OFFERTE  /  CONCEPT',410,804,9,true);line(48,787,547);if(first){text('Een helder voorstel voor uw evenement',48,757,14,true);y=732}};
- header(true);
+ const header=(_first:boolean)=>{cmd('0.11 0.20 0.17 rg 0 782 595.28 60 re f');cmd('1 1 1 rg');cmd('BT /F2 16 Tf 1 0 0 1 48 804 Tm (THE WANDERING BAR) Tj ET');cmd('0.86 0.79 0.65 rg');cmd('BT /F1 9 Tf 1 0 0 1 460 806 Tm (OFFERTE) Tj ET');cmd('0.15 g');};
+ // Cover: deliberately separate from the financial specification.
+ cmd('0.965 0.95 0.91 rg 0 0 595.28 841.89 re f');
+ cmd('0.11 0.20 0.17 rg 0 322 595.28 520 re f');
+ cmd('0.70 0.56 0.37 RG 1.5 w 48 759 m 547 759 l S');
+ cmd('0.90 0.84 0.71 rg');
+ cmd('BT /F2 18 Tf 1 0 0 1 48 787 Tm (THE WANDERING BAR) Tj ET');
+ cmd('BT /F1 10 Tf 1 0 0 1 48 732 Tm (EEN PERSOONLIJK VOORSTEL) Tj ET');
+ cmd('0.98 0.97 0.93 rg');
+ text('Cocktails die',48,655,39,true);
+ text('bijblijven.',48,605,39,true);
+ cmd('0.90 0.84 0.71 rg');
+ for(const [i,l] of wrap('Een complete cocktailervaring voor '+quote.eventTitle+'.',38).entries())text(l,48,540-i*24,17);
+ cmd('0.70 0.56 0.37 RG 2 w 48 402 m 547 402 l S');
+ cmd('0.11 0.20 0.17 rg');
+ text('SAMEN MAKEN WE ER IETS BIJZONDERS VAN',48,281,12,true);
+ cmd('0.15 g');
+ for(const [i,l] of wrap('Beste '+(quote.client||'opdrachtgever')+', bedankt voor uw interesse in The Wandering Bar. Met dit voorstel verzorgen wij een gastvrije cocktailbeleving, afgestemd op uw evenement.',78).entries())text(l,48,248-i*18,11);
+ text('EVENEMENT',48,138,9,true);text('DATUM',340,138,9,true);
+ text(quote.eventTitle.slice(0,37),48,117,12,true);text(date(quote.eventDate),340,117,12,true);
+ text('Offerte '+quote.id,48,63,9);text('Geldig tot '+date(quote.validUntil),380,63,9);
+ newPage();
+ heading('Uw arrangement');paragraph(isWorkshop?'Een interactieve cocktailworkshop waarin uw gasten zelf cocktails bereiden onder begeleiding.':'Een professionele mobiele cocktailbar met bartenders en cocktails op locatie.');y-=8;
  const meta:[string,string][]=[['Offertenummer',quote.id],['Offertedatum',date(quote.createdAt)],['Geldig tot',date(quote.validUntil)],['Opdrachtgever',quote.client],['Evenement',quote.eventTitle],['Evenementdatum',date(quote.eventDate)],['Locatie',[quote.eventAddress,quote.eventCity].filter(Boolean).join(', ')||'Nog te bevestigen']];
  for(const [label,value] of meta){ensure(20);text(label,48,y,9,true);for(const [i,l] of wrap(value,55).entries()){if(i)ensure(15);text(l,190,y,9);y-=i?14:0}y-=19}
- heading('Specificatie');
+ heading('Investering en prijsopbouw');
  if(isWorkshop){const q=quote as WorkshopQuote;paragraph('Arrangement: '+q.packageName);paragraph('Cocktails: '+q.cocktails.join(', '))}
  else{const q=quote as CateringQuote;paragraph('Geboekte hoeveelheid: '+q.plan.cocktails+' cocktails. Staffel: '+q.bookedTierMin+(q.bookedTierMax===null?'+':' - '+q.bookedTierMax)+'.')}
  y-=10;ensure(30);text('Omschrijving',48,y,9,true);text('Aantal',324,y,9,true);text('Tarief',395,y,9,true);text('Bedrag',481,y,9,true);y-=12;line(48,y,547);y-=19;
  for(const r of rows){for(const [i,l] of wrap(r.description,43).entries()){ensure(19);text(l,48,y,9);if(i===0){text(r.quantity,324,y,9);text(r.rate,395,y,9);text(r.amount,481,y,9)}y-=17}y-=5;line(48,y+8,547)}
  ensure(55);y-=18;text('Totaal (btw niet uitgesplitst)',48,y,11,true);text(money(quote.total),449,y,11,true);y-=32;
- if(!isWorkshop){const q=quote as CateringQuote;heading('Aanvullende afspraken');paragraph('Extra cocktails worden achteraf berekend tegen '+money(q.extraCocktailRate)+' per cocktail volgens de oorspronkelijk geboekte staffel, tenzij schriftelijk anders overeengekomen.')}
+ if(!isWorkshop){const q=quote as CateringQuote;heading('Prijsafspraken en meerwerk');paragraph('Extra cocktails worden achteraf berekend tegen '+money(q.extraCocktailRate)+' per cocktail volgens de oorspronkelijk geboekte staffel, tenzij schriftelijk anders overeengekomen.')}
  if(quote.notes){heading('Opmerkingen');paragraph(quote.notes)}
- ensure(75);y-=18;line(48,y,547);y-=17;paragraph('Conceptofferte. Controleer voor verzending de btw-behandeling, bedrijfsgegevens en toepasselijke voorwaarden.',94);
- pages.forEach((p,i)=>{p.push('BT /F1 8 Tf 0.45 g 1 0 0 1 48 42 Tm ('+esc('Wandering Bar  |  '+quote.id)+') Tj ET');p.push('BT /F1 8 Tf 0.45 g 1 0 0 1 500 42 Tm ('+esc((i+1)+' / '+pages.length)+') Tj ET')});
+ ensure(95);heading('De volgende stap');paragraph('Wilt u deze cocktailervaring vastleggen? Neem contact met ons op onder vermelding van het offertenummer. We bespreken graag de laatste details.');y-=8;paragraph('Conceptofferte: btw is niet uitgesplitst. Controleer voor verzending de btw-behandeling, bedrijfsgegevens en toepasselijke voorwaarden.',90);
+ pages.forEach((p,i)=>{if(i===0)return;p.push('BT /F1 8 Tf 0.45 g 1 0 0 1 48 42 Tm ('+esc('Wandering Bar  |  '+quote.id)+') Tj ET');p.push('BT /F1 8 Tf 0.45 g 1 0 0 1 500 42 Tm ('+esc((i+1)+' / '+pages.length)+') Tj ET')});
  const objects:string[]=['','<< /Type /Catalog /Pages 2 0 R >>','','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>'];
  const pageIds:number[]=[];
  for(const page of pages){const stream=page.join('\n')+'\n';const contentId=objects.length;objects.push('<< /Length '+bytes(stream).length+' >>\nstream\n'+stream+'endstream');const pageId=objects.length;objects.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents '+contentId+' 0 R >>');pageIds.push(pageId)}

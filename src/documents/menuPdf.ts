@@ -49,7 +49,7 @@ export function downloadMenuPdf({eventTitle,heading,items,design,frame,size}:Men
  rule(59*scale);
  text('CRAFTED FOR YOUR OCCASION',margin,44*scale,8*scale,false,accent);
  const stream=commands.join('\n')+'\n';
- const objects=['','<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Count 1 /Kids [7 0 R] >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>','<< /Length '+bytes(stream).length+' >>\nstream\n'+stream+'endstream','<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+width+' '+height+'] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>'];
+ const objects=['','<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Count 1 /Kids [6 0 R] >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>','<< /Length '+bytes(stream).length+' >>\nstream\n'+stream+'endstream','<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+width+' '+height+'] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 5 0 R >>'];
  let pdf='%PDF-1.4\n%\xE2\xE3\xCF\xD3\n';const offsets=[0];
  for(let i=1;i<objects.length;i++){offsets[i]=bytes(pdf).length;pdf+=i+' 0 obj\n'+objects[i]+'\nendobj\n'}
  const xref=bytes(pdf).length;pdf+='xref\n0 '+objects.length+'\n0000000000 65535 f \n';

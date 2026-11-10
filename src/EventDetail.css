@@ -125,27 +125,7 @@
 .ed-frame-ornate .ed-menu-paper{position:relative;z-index:1;padding:clamp(35px,9vw,60px)}
 .ed-frame-ornate .ed-menu-brand:before{content:"❦";display:block;font-family:Georgia,serif;font-size:25px;line-height:1.3;letter-spacing:0;margin-bottom:8px}
 .ed-frame-ornate .ed-menu-footer:after{content:"❦";display:block;font-family:Georgia,serif;font-size:22px;letter-spacing:0;margin-top:8px;transform:rotate(180deg)}
-@media print{
- .ed-frame-ornate:before{inset:12mm}
- .ed-frame-ornate:after{inset:15mm}
- .ed-frame-ornate .ed-menu-paper{padding:27mm!important}
-}
-
-/* Print size selection: matching aspect ratio, with physical frame-safe margins. */
 .ed-size-a5{max-width:326px}
-@page wanderingMenuA4{size:A4 portrait;margin:0}
-@page wanderingMenuA5{size:A5 portrait;margin:0}
-@media print{
- .ed-menu-print.ed-size-a4{page:wanderingMenuA4;width:210mm!important;height:297mm!important}
- .ed-menu-print.ed-size-a5{page:wanderingMenuA5;width:148mm!important;height:210mm!important}
- .ed-size-a5 .ed-menu-paper{padding:18mm!important}
- .ed-size-a5 .ed-menu-paper h2{font-size:26pt!important}
- .ed-size-a5 .ed-menu-drink h3{font-size:16pt!important}
- .ed-size-a5 .ed-menu-drink p{font-size:10pt!important}
- .ed-size-a5.ed-frame-ornate:before{inset:9mm}
- .ed-size-a5.ed-frame-ornate:after{inset:11mm}
- .ed-size-a5.ed-frame-ornate .ed-menu-paper{padding:21mm!important}
-}
 
 /* Per-event action tasks with their own deadlines. */
 .ed-action-task{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid #e9d9ca}
@@ -292,68 +272,24 @@
  .ed-custom-line button{grid-column:3;grid-row:2/4}
 }
 
-/* Menu layout: 1-3 stacked, 4 = 2x2, 5 = 2x2 plus centered, 6 = 2x3. */
-.ed-menu-drinks.ed-menu-drinks-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);align-content:center;align-items:center;justify-items:center;column-gap:clamp(10px,3vw,24px);row-gap:clamp(10px,2.2vw,20px);width:100%;min-width:0}
-.ed-menu-drinks-grid .ed-menu-drink{width:100%;min-width:0;text-align:center}
-.ed-menu-drinks-compact .ed-menu-drink h3{font-size:clamp(12px,2.5vw,17px)}
-.ed-menu-drinks-compact .ed-menu-drink p{font-size:clamp(9px,1.7vw,11px)!important;line-height:1.35}
+/* Menukaart: one layout source for preview and HTML print.
+   A5 scales the complete A4 canvas (including its ornamental frame). */
+.ed-menu-drinks.ed-menu-drinks-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));align-items:center;justify-items:center;column-gap:16px;row-gap:10px;width:100%;min-width:0}
+.ed-menu-drinks-grid .ed-menu-drink{width:100%;min-width:0;max-height:100%;overflow:hidden;text-align:center}
 .ed-menu-drinks-five .ed-menu-drink:last-child{grid-column:1/-1;justify-self:center;width:calc(50% - 8px)}
-
-/* Keep the entire menu, including six drinks, inside the A4/A5 ornamental frame. */
 .ed-menu-print{position:relative;overflow:hidden;aspect-ratio:210/297;min-height:0}
-.ed-menu-paper{height:100%;max-height:100%;min-height:0;overflow:hidden;justify-content:flex-start}
+.ed-menu-print .ed-menu-paper{height:100%;max-height:100%;min-height:0;overflow:hidden;justify-content:flex-start}
 .ed-menu-print .ed-menu-brand{flex:0 0 auto}
-.ed-menu-print .ed-menu-rule{flex:0 0 auto;margin:clamp(8px,2.3vw,18px) 0 clamp(7px,1.7vw,12px)}
-.ed-menu-print .ed-menu-paper h2{flex:0 0 auto;font-size:clamp(20px,5.1vw,34px)!important}
-.ed-menu-print .ed-menu-event{flex:0 0 auto;margin:clamp(8px,1.8vw,14px) 0 clamp(7px,1.6vw,12px)!important}
+.ed-menu-print .ed-menu-rule{flex:0 0 auto;margin:18px 0 12px}
+.ed-menu-print .ed-menu-paper h2{flex:0 0 auto;font-size:34px!important}
+.ed-menu-print .ed-menu-event{flex:0 0 auto;margin:14px 0 12px!important}
 .ed-menu-print .ed-menu-drinks{flex:1 1 0;min-height:0;max-height:100%;overflow:hidden}
-.ed-menu-print .ed-menu-footer{flex:0 0 auto;margin-top:clamp(5px,1vw,10px)}
-.ed-menu-print .ed-menu-drinks-grid{grid-template-rows:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);row-gap:clamp(5px,1.2vw,11px)}
-.ed-menu-print .ed-menu-drinks-grid .ed-menu-drink{max-height:100%;overflow:hidden}
-.ed-menu-print .ed-menu-drinks-compact .ed-menu-drink h3{font-size:clamp(11px,2.5vw,17px);line-height:1.12;margin-bottom:3px}
-.ed-menu-print .ed-menu-drinks-compact .ed-menu-drink p{font-size:clamp(8px,1.7vw,11px)!important;line-height:1.22}
-.ed-menu-print.ed-frame-ornate .ed-menu-paper{padding:clamp(26px,7.5vw,44px)}
-.ed-menu-print.ed-frame-ornate .ed-menu-brand:before{font-size:clamp(13px,3vw,22px);margin-bottom:3px}
-.ed-menu-print.ed-frame-ornate .ed-menu-footer:after{font-size:clamp(11px,2vw,17px);margin-top:2px}
-.ed-menu-print.ed-size-a5 .ed-menu-paper{padding:clamp(23px,6vw,34px)}
-
-/* A5 is a true 70.71% reproduction of the A4 preview, never a reflow. 
-   All typography, gutters, frame and drink positions are scaled together. */
-.ed-menu-print.ed-size-a5{width:326px!important;max-width:100%;height:auto!important;aspect-ratio:210/297!important;overflow:hidden}
-.ed-menu-print.ed-size-a5>.ed-menu-paper{width:460px!important;min-width:460px!important;max-width:none!important;height:650.57px!important;max-height:none!important;box-sizing:border-box!important;transform:scale(.7086956522);transform-origin:top left;flex-shrink:0}
-.ed-menu-print.ed-size-a5 .ed-menu-paper{padding:44px!important}
-.ed-menu-print.ed-size-a5.ed-frame-ornate .ed-menu-paper{padding:44px!important}
-.ed-menu-print.ed-size-a5 .ed-menu-paper h2{font-size:34px!important}
-.ed-menu-print.ed-size-a5 .ed-menu-drinks-compact .ed-menu-drink h3{font-size:17px!important}
-.ed-menu-print.ed-size-a5 .ed-menu-drinks-compact .ed-menu-drink p{font-size:11px!important}
-@media(max-width:360px){
- .ed-menu-print.ed-size-a5{width: min(326px,100%)!important}
-}
-
-/* A5 must scale the COMPLETE A4 canvas, not just its paper child.
-   CSS zoom participates in layout, keeping border, ornament, columns and padding aligned. */
-.ed-menu-print.ed-size-a5{
- width:460px!important;
- max-width:none!important;
- height:650.57px!important;
- min-height:0!important;
- aspect-ratio:210/297!important;
- zoom:.7086956522;
- overflow:hidden;
-}
-.ed-menu-print.ed-size-a5>.ed-menu-paper{
- width:100%!important;
- min-width:0!important;
- max-width:100%!important;
- height:100%!important;
- max-height:100%!important;
- transform:none!important;
- padding:44px!important;
-}
-.ed-menu-print.ed-size-a5.ed-frame-ornate>.ed-menu-paper{padding:44px!important}
-.ed-menu-print.ed-size-a5 .ed-menu-paper h2{font-size:34px!important}
-.ed-menu-print.ed-size-a5 .ed-menu-drinks-compact .ed-menu-drink h3{font-size:17px!important}
-.ed-menu-print.ed-size-a5 .ed-menu-drinks-compact .ed-menu-drink p{font-size:11px!important}
-@media(max-width:360px){
- .ed-menu-print.ed-size-a5{zoom:calc(.7086956522 * min(1, (100vw - 32px) / 326))}
-}
+.ed-menu-print .ed-menu-footer{flex:0 0 auto;margin-top:10px}
+.ed-menu-print .ed-menu-drinks-compact .ed-menu-drink h3{font-size:17px;line-height:1.12;margin-bottom:3px}
+.ed-menu-print .ed-menu-drinks-compact .ed-menu-drink p{font-size:11px!important;line-height:1.22}
+.ed-menu-print.ed-frame-ornate .ed-menu-paper{padding:44px}
+.ed-menu-print.ed-frame-ornate .ed-menu-brand:before{font-size:22px;margin-bottom:3px}
+.ed-menu-print.ed-frame-ornate .ed-menu-footer:after{font-size:17px;margin-top:2px}
+.ed-menu-print.ed-size-a5{width:460px;max-width:none;height:650.57px;aspect-ratio:210/297;zoom:.7086956522}
+.ed-menu-print.ed-size-a5>.ed-menu-paper{width:100%;min-width:0;max-width:100%;height:100%;max-height:100%;transform:none;padding:44px}
+@media(max-width:360px){.ed-menu-print.ed-size-a5{zoom:calc(.7086956522 * min(1, (100vw - 32px) / 326))}}

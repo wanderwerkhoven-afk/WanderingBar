@@ -304,3 +304,10 @@
 
 /* Seven or more beer rows (13+ items): hide only the printed taste profiles to preserve room for names and icons. */
 .ed-menu-drinks.ed-beer-menu-seven-plus-rows .ed-menu-drink p{display:none!important}
+
+/* Beer cards: reduce the empty space before the first beer from seven selections onward.
+   From eight beers, show only the beer names and tap/bottle icons. */
+.ed-menu-print .ed-menu-drinks.ed-beer-menu-dense{align-content:start;row-gap:16px;transform:none;padding-top:6px;box-sizing:border-box}
+.ed-menu-print .ed-menu-drinks.ed-beer-menu-names-only .ed-menu-drink p{display:none!important}
+.ed-menu-print .ed-menu-drinks.ed-beer-menu-names-only{row-gap:18px}
+.ed-menu-print:has(.ed-beer-menu-dense) .ed-menu-event{margin-bottom:6px!important}

@@ -241,3 +241,10 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `WorkshopPricing`, `workshopPricing` | `src/planning/workshopPricing.ts` | `EventData.workshopPricing`, `EventDetail.tsx` | Per-event pakket en optionele aangepaste prijs; fallback op standaardprijs |
 | `MIN_WORKSHOP_GUESTS`, `isCocktailWorkshop`, `workshopStaffSuggestion` | `src/planning/workshopPricing.ts` | `EventDetail.tsx` | Minimum 10, detectie workshopdienst en personeelssuggestie |
 | `workshopTotal`, `setWorkshopPackage` | `src/EventDetail.tsx` | Overzicht prijskaart | Live omzet uit `event.guests` × prijs p.p.; pakketwissel reset prijs naar pakketstandaard |
+
+## Offertes — 10 november 2026
+| Symbool | Eigenaar | Consument | Betekenis |
+|---|---|---|---|
+| `WorkshopQuote`, `QuoteSettings`, `createWorkshopQuote`, `quoteDefaultValidity` | `src/planning/workshopQuotes.ts` | `EventDetail.tsx` | Offerte-snapshot met berekende bedragen en 14 dagen standaardgeldigheid |
+| `EventData.workshopQuotes` | `src/types/event.ts` | Eventopslag, offertegeschiedenis | Optionele persistente offertehistorie, zonder extra opslagkey |
+| `quoteClient`, `quoteTravel`, `quoteNotes`, `quoteValidUntil`, `activeQuote` | `src/EventDetail.tsx` | Offerteformulier en printvoorbeeld | Tijdelijke invoer en geselecteerde snapshot voor browser-print/PDF |

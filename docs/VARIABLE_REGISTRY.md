@@ -270,3 +270,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `CateringInvoice`, `createCateringInvoice` | `src/planning/cateringDocuments.ts` | `EventData.cateringInvoices?` | Factuurmomentopname met uitsluitend financiële regels |
 
 | `uploadedIcon`, `apple-touch-icon.png`, `app-icon.png` | `vite.config.ts` | `index.html`, `manifest.webmanifest` | Geüploade root-PNG wordt als webappiconen gepubliceerd bij build; iOS rondt het beginschermicoon zelf af |
+
+| Desktop responsive breakpoints (900px, 1100px, 1250px) | `src/style.css` | Dashboard, Events, navigation | CSS-only layout changes; no persisted variables or changes to mobile behavior |

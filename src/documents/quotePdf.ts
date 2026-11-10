@@ -12,63 +12,83 @@ const esc=(s:string)=>encode(s).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').repla
 const bytes=(s:string)=>Uint8Array.from(s,c=>c.charCodeAt(0));
 const wrap=(text:string,max:number)=>{const words=clean(text).split(' '),lines:string[]=[];let line='';for(const word of words){if((line+' '+word).trim().length>max&&line){lines.push(line);line=''}if(word.length>max){if(line){lines.push(line);line=''}for(let i=0;i<word.length;i+=max)lines.push(word.slice(i,i+max));continue}line=(line+' '+word).trim()}if(line)lines.push(line);return lines.length?lines:['']};
 
-export function downloadQuotePdf(quote:Quote):void{
- const isWorkshop='packageName' in quote;
- const rows:{description:string;quantity:string;rate:string;amount:string}[]=[];
- if(isWorkshop){
-  const q=quote as WorkshopQuote;
-  rows.push({description:q.packageName,quantity:String(q.guests),rate:money(q.pricePerPerson),amount:money(q.workshopTotal)});
- }else{
-  const q=quote as CateringQuote;
-  rows.push({description:'Mobiele bar + bartender ('+q.plan.hours+' uur)',quantity:'1',rate:money(q.barTotal),amount:money(q.barTotal)});
-  if(q.classicCount)rows.push({description:'Classic cocktails',quantity:String(q.classicCount),rate:money(q.classicRate),amount:money(q.classicTotal)});
-  if(q.signatureCount)rows.push({description:'Signature cocktails',quantity:String(q.signatureCount),rate:money(q.signatureRate),amount:money(q.signatureTotal)});
-  if(q.plan.secondBartender)rows.push({description:'Tweede bartender ('+q.plan.secondBartenderHours+' uur)',quantity:String(q.plan.secondBartenderHours),rate:money(45),amount:money(q.secondBartenderTotal)});
+export function downloadQuotePdf(quote:Quote):void {
+ const workshop='packageName' in quote;
+ const q=workshop?null:quote as CateringQuote;
+ const w=workshop?quote as WorkshopQuote:null;
+ const rows:{label:string;qty:string;rate:string;sum:string}[]=[];
+ if(w)rows.push({label:w.packageName,qty:String(w.guests),rate:money(w.pricePerPerson),sum:money(w.workshopTotal)});
+ if(q){
+  rows.push({label:'Mobiele bar + bartender ('+q.plan.hours+' uur)',qty:'1',rate:money(q.barTotal),sum:money(q.barTotal)});
+  if(q.classicCount)rows.push({label:'Classic cocktails',qty:String(q.classicCount),rate:money(q.classicRate),sum:money(q.classicTotal)});
+  if(q.signatureCount)rows.push({label:'Signature cocktails',qty:String(q.signatureCount),rate:money(q.signatureRate),sum:money(q.signatureTotal)});
+  if(q.plan.secondBartender)rows.push({label:'Tweede bartender ('+q.plan.secondBartenderHours+' uur)',qty:String(q.plan.secondBartenderHours),rate:money(45),sum:money(q.secondBartenderTotal)});
  }
- if(quote.travelCost)rows.push({description:'Reiskosten',quantity:'1',rate:money(quote.travelCost),amount:money(quote.travelCost)});
- const pages:string[][]=[[]];let y=0;
- const cmd=(s:string)=>pages[pages.length-1].push(s);
- const line=(x1:number,yy:number,x2:number)=>cmd('0.82 G 0.6 w '+x1+' '+yy+' m '+x2+' '+yy+' l S');
- const text=(s:string,x:number,yy:number,size=10,bold=false)=>cmd('BT /'+(bold?'F2':'F1')+' '+size+' Tf 0.15 g 1 0 0 1 '+x+' '+yy+' Tm ('+esc(s)+') Tj ET');
- const newPage=()=>{pages.push([]);y=758;header(false)};
- const ensure=(height:number)=>{if(y-height<75)newPage()};
- const paragraph=(value:string,max=92)=>{for(const l of wrap(value,max)){ensure(15);text(l,48,y,10);y-=15}};
- const heading=(value:string)=>{ensure(35);y-=12;text(value,48,y,12,true);y-=22};
- const header=(_first:boolean)=>{cmd('0.11 0.20 0.17 rg 0 782 595.28 60 re f');cmd('1 1 1 rg');cmd('BT /F2 16 Tf 1 0 0 1 48 804 Tm (THE WANDERING BAR) Tj ET');cmd('0.86 0.79 0.65 rg');cmd('BT /F1 9 Tf 1 0 0 1 460 806 Tm (OFFERTE) Tj ET');cmd('0.15 g');};
- // Cover: deliberately separate from the financial specification.
- cmd('0.965 0.95 0.91 rg 0 0 595.28 841.89 re f');
- cmd('0.11 0.20 0.17 rg 0 322 595.28 520 re f');
- cmd('0.70 0.56 0.37 RG 1.5 w 48 759 m 547 759 l S');
- cmd('0.90 0.84 0.71 rg');
- cmd('BT /F2 18 Tf 1 0 0 1 48 787 Tm (THE WANDERING BAR) Tj ET');
- cmd('BT /F1 10 Tf 1 0 0 1 48 732 Tm (EEN PERSOONLIJK VOORSTEL) Tj ET');
- cmd('0.98 0.97 0.93 rg');
- cmd('BT /F2 39 Tf 0.98 0.97 0.93 rg 1 0 0 1 48 655 Tm (Cocktails die) Tj ET');
- cmd('BT /F2 39 Tf 0.98 0.97 0.93 rg 1 0 0 1 48 605 Tm (bijblijven.) Tj ET');
- cmd('0.90 0.84 0.71 rg');
- for(const [i,l] of wrap('Een complete cocktailervaring voor '+quote.eventTitle+'.',38).entries())cmd('BT /F1 17 Tf 0.90 0.84 0.71 rg 1 0 0 1 48 '+(540-i*24)+' Tm ('+esc(l)+') Tj ET');
- cmd('0.70 0.56 0.37 RG 2 w 48 402 m 547 402 l S');
- cmd('0.11 0.20 0.17 rg');
- text('SAMEN MAKEN WE ER IETS BIJZONDERS VAN',48,281,12,true);
- cmd('0.15 g');
- for(const [i,l] of wrap('Beste '+(quote.client||'opdrachtgever')+', bedankt voor uw interesse in The Wandering Bar. Met dit voorstel verzorgen wij een gastvrije cocktailbeleving, afgestemd op uw evenement.',78).entries())text(l,48,248-i*18,11);
- text('EVENEMENT',48,138,9,true);text('DATUM',340,138,9,true);
- text(quote.eventTitle.slice(0,37),48,117,12,true);text(date(quote.eventDate),340,117,12,true);
- text('Offerte '+quote.id,48,63,9);text('Geldig tot '+date(quote.validUntil),380,63,9);
- newPage();
- heading('Uw arrangement');paragraph(isWorkshop?'Een interactieve cocktailworkshop waarin uw gasten zelf cocktails bereiden onder begeleiding.':'Een professionele mobiele cocktailbar met bartenders en cocktails op locatie.');y-=8;
- const meta:[string,string][]=[['Offertenummer',quote.id],['Offertedatum',date(quote.createdAt)],['Geldig tot',date(quote.validUntil)],['Opdrachtgever',quote.client],['Evenement',quote.eventTitle],['Evenementdatum',date(quote.eventDate)],['Locatie',[quote.eventAddress,quote.eventCity].filter(Boolean).join(', ')||'Nog te bevestigen']];
- for(const [label,value] of meta){ensure(20);text(label,48,y,9,true);for(const [i,l] of wrap(value,55).entries()){if(i)ensure(15);text(l,190,y,9);y-=i?14:0}y-=19}
- heading('Investering en prijsopbouw');
- if(isWorkshop){const q=quote as WorkshopQuote;paragraph('Arrangement: '+q.packageName);paragraph('Cocktails: '+q.cocktails.join(', '))}
- else{const q=quote as CateringQuote;paragraph('Geboekte hoeveelheid: '+q.plan.cocktails+' cocktails. Staffel: '+q.bookedTierMin+(q.bookedTierMax===null?'+':' - '+q.bookedTierMax)+'.')}
- y-=10;ensure(30);text('Omschrijving',48,y,9,true);text('Aantal',324,y,9,true);text('Tarief',395,y,9,true);text('Bedrag',481,y,9,true);y-=12;line(48,y,547);y-=19;
- for(const r of rows){for(const [i,l] of wrap(r.description,43).entries()){ensure(19);text(l,48,y,9);if(i===0){text(r.quantity,324,y,9);text(r.rate,395,y,9);text(r.amount,481,y,9)}y-=17}y-=5;line(48,y+8,547)}
- ensure(55);y-=18;text('Totaal (btw niet uitgesplitst)',48,y,11,true);text(money(quote.total),449,y,11,true);y-=32;
- if(!isWorkshop){const q=quote as CateringQuote;heading('Prijsafspraken en meerwerk');paragraph('Extra cocktails worden achteraf berekend tegen '+money(q.extraCocktailRate)+' per cocktail volgens de oorspronkelijk geboekte staffel, tenzij schriftelijk anders overeengekomen.')}
- if(quote.notes){heading('Opmerkingen');paragraph(quote.notes)}
- ensure(95);heading('De volgende stap');paragraph('Wilt u deze cocktailervaring vastleggen? Neem contact met ons op onder vermelding van het offertenummer. We bespreken graag de laatste details.');y-=8;paragraph('Conceptofferte: btw is niet uitgesplitst. Controleer voor verzending de btw-behandeling, bedrijfsgegevens en toepasselijke voorwaarden.',90);
- pages.forEach((p,i)=>{if(i===0)return;p.push('BT /F1 8 Tf 0.45 g 1 0 0 1 48 42 Tm ('+esc('Wandering Bar  |  '+quote.id)+') Tj ET');p.push('BT /F1 8 Tf 0.45 g 1 0 0 1 500 42 Tm ('+esc((i+1)+' / '+pages.length)+') Tj ET')});
+ if(quote.travelCost)rows.push({label:'Reiskosten',qty:'1',rate:money(quote.travelCost),sum:money(quote.travelCost)});
+ const pages:string[][]=[[]];
+ const cmd=(s:string)=>pages[0].push(s);
+ const rect=(x:number,y:number,width:number,height:number,r:number,g:number,b:number)=>cmd(r+' '+g+' '+b+' rg '+x+' '+y+' '+width+' '+height+' re f');
+ const text=(s:string,x:number,y:number,size=9,bold=false,color='0.15 0.12 0.10')=>cmd('BT /'+(bold?'F2':'F1')+' '+size+' Tf '+color+' rg 1 0 0 1 '+x+' '+y+' Tm ('+esc(s)+') Tj ET');
+ const line=(y:number)=>cmd('0.85 0.79 0.68 RG 0.5 w 42 '+y+' m 553 '+y+' l S');
+ const section=(s:string,y:number)=>text(s.toUpperCase(),43,y,9,true,'0.61 0.40 0.15');
+ // Fixed single-page A4. Sections scale vertically to accommodate full stored tier table.
+ rect(0,0,595.28,841.89,0.982,0.969,0.945);
+ rect(0,660,595.28,181.89,0.15,0.10,0.075);
+ rect(43,688,55,3,0.77,0.52,0.24);
+ text('WANDERING BAR',43,803,21,true,'0.98 0.94 0.87');
+ text('COCKTAIL EXPERIENCE ON LOCATION',44,785,8,false,'0.87 0.71 0.48');
+ text('OFFERTE',43,725,36,true,'1 1 1');
+ text(w?'COCKTAILWORKSHOP':'COCKTAILBAR CATERING',44,704,11,true,'0.89 0.74 0.53');
+ section('Jullie evenement',640);
+ text(clean(quote.eventTitle).slice(0,45),43,616,20,true);
+ const intro='Bedankt voor jullie aanvraag! Met plezier verzorgen wij een sfeervolle en smaakvolle cocktailervaring op locatie.';
+ for(const [i,l] of wrap(intro,72).slice(0,3).entries())text(l,43,594-i*13,9);
+ text('Opdrachtgever',341,630,9,true);text(clean(quote.client).slice(0,35),427,630,9);
+ text('Datum',341,611,9,true);text(date(quote.eventDate),427,611,9);
+ text('Locatie',341,592,9,true);text(clean([quote.eventAddress,quote.eventCity].filter(Boolean).join(', ')||'Nog te bevestigen').slice(0,28),427,592,8);
+ text(w?'Deelnemers':'Cocktails',341,573,9,true);text(String(w?.guests??q?.plan.cocktails),427,573,9);
+ line(550);
+ section('Wat wij verzorgen',530);
+ const inclusions=w?['Professionele cocktailworkshop','Begeleiding bij het bereiden','Drie cocktails per deelnemer','Benodigde ingredienten en materialen']:['Mobiele cocktailbar op locatie','Professionele bartender'+(q?.plan.secondBartender?'s':''),'Classic en Signature cocktails','Ingredienten, ijs en garnering','Barbenodigdheden en glaswerk','Op- en afbouw'];
+ inclusions.forEach((item,i)=>{const col=i%2,row=Math.floor(i/2);text('+',43+col*259,509-row*18,12,true,'0.69 0.45 0.19');text(item,59+col*259,510-row*18,9)});
+ const priceTop=442;
+ line(priceTop+8);section('Investering',priceTop-9);
+ text('Omschrijving',43,priceTop-30,8,true);text('Aantal',347,priceTop-30,8,true);text('Tarief',412,priceTop-30,8,true);text('Bedrag',491,priceTop-30,8,true);
+ line(priceTop-38);
+ let yy=priceTop-55;
+ for(const row of rows){
+  text(row.label.slice(0,47),43,yy,8.5);text(row.qty,347,yy,8.5);text(row.rate,412,yy,8.5);text(row.sum,491,yy,8.5);yy-=18;
+ }
+ line(yy+7);
+ rect(38,yy-43,519,40,0.94,0.88,0.79);
+ text('TOTAAL (btw niet uitgesplitst)',49,yy-28,11,true);
+ text(money(quote.total),432,yy-28,17,true);
+ yy-=64;
+ if(q){
+  section('Cocktailstaffel',yy);
+  yy-=19;
+  text('Aantal cocktails',44,yy,8,true);text('Classic',350,yy,8,true);text('Signature',462,yy,8,true);yy-=14;
+  for(const tier of q.tiers){
+   const selected=tier.min===q.bookedTierMin;
+   if(selected)rect(39,yy-5,517,17,0.94,0.88,0.79);
+   text(tier.min+(tier.max===null?'+':' - '+tier.max)+(selected?'  (geboekt)':''),44,yy,8,selected);
+   text(money(tier.classic),350,yy,8,selected);text(money(tier.signature),462,yy,8,selected);yy-=17;
+  }
+  yy-=8;
+  for(const [i,l] of wrap('Extra cocktails: '+money(q.extraCocktailRate)+' per stuk volgens de geboekte staffel. Extra afname wijzigt de afgesproken staffel niet.',100).slice(0,2).entries())text(l,44,yy-i*12,8);
+  yy-=32;
+ }else{
+  section('Cocktailselectie',yy);
+  yy-=17;
+  for(const l of wrap((w?.cocktails||[]).join('  /  '),94).slice(0,2)){text(l,44,yy,8);yy-=12}
+  yy-=10;
+ }
+ if(quote.notes){section('Aanvullende afspraken',yy);yy-=15;for(const l of wrap(quote.notes,108).slice(0,3)){text(l,44,yy,8);yy-=11}}
+ // Never silently clip the tier table or notes. Warn rather than issuing a misleading document.
+ if(yy<78)throw new Error('De offerte bevat te veel informatie voor een leesbare A4. Verkort de opmerkingen of controleer de staffel.');
+ line(66);
+ text('Offerte '+quote.id,43,50,7.5);text('Geldig tot '+date(quote.validUntil),430,50,7.5);
+ text('Concept: btw, bedrijfsgegevens en voorwaarden controleren voor verzending.',43,34,7);
  const objects:string[]=['','<< /Type /Catalog /Pages 2 0 R >>','','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>'];
  const pageIds:number[]=[];
  for(const page of pages){const stream=page.join('\n')+'\n';const contentId=objects.length;objects.push('<< /Length '+bytes(stream).length+' >>\nstream\n'+stream+'endstream');const pageId=objects.length;objects.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents '+contentId+' 0 R >>');pageIds.push(pageId)}

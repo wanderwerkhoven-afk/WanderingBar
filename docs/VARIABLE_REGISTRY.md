@@ -378,3 +378,7 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 
 | `LEGACY_BEER_TASTE_PROFILES` | `src/data/menuCatalog.ts` | Biercatalogus migratie | Vorige korte standaardteksten voor veilige detectie en vervanging zonder overschrijven van eigen teksten |
 | `BEER_TASTE_PROFILES` | `src/data/menuCatalog.ts` | Biercatalogus | 35 nieuwe uitgebreide indicatieve smaakomschrijvingen, bewerkbaar en te synchroniseren |
+
+| `printMenuItems[].beerType` | `src/EventDetail.tsx` | Speciaalbierbar-menukaart | `tap`, `bottle` of `null` bepaalt pictogram naast de naam in preview/print |
+| `beerPlan.taps[].glasses`, `beerPlan.bottles[name]` | `src/EventDetail.tsx` | Bierselectie | Aantal > 0 betekent aangevinkt voor menukaart; bestaande inkoopberekeningen behouden |
+| `.ed-beer-icon` | `src/EventDetail.css` | Menukaart | Bier-/flespictogram in kopregel met behoud van smaakprofiel |

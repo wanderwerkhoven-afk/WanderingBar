@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Each Google account has its own private BarBack workspace.
+    match /users/{userId}/{dataset}/{recordId} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == userId
+        && dataset in ['events', 'deletedEvents', 'inventory', 'catalog', 'meta'];
+    }
+  }
+}

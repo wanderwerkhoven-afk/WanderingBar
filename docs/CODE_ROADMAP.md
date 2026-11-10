@@ -296,3 +296,5 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Eventdetail: aparte tab `Offerte & factuur` toegevoegd naast Overzicht, Menukaart, Inkoop, Paklijst en Planning. Cateringofferte/factuurinstellingen, opgeslagen documenten en workshopoffertes verhuisd vanuit Overzicht. Prijscalculators blijven in Overzicht. Overige diensten tonen een duidelijke nog-niet-beschikbaarmelding. Bestaande offerte-/factuurdata blijven behouden.
 
 - [x] Tab `Offerte & factuur` hernoemd naar `Financiën`. Zowel de cateringstaffelcalculator als de workshopprijscalculator zijn vanuit Overzicht naar Financiën verplaatst, vóór de bestaande offerte- en factuurfuncties. Geen wijzigingen aan berekeningen of opgeslagen data.
+
+- [x] Overzicht toont sectie `Offertes & facturen` uitsluitend wanneer het evenement ten minste één opgeslagen cateringofferte, workshopofferte of cateringfactuur heeft. Documentregels tonen type, nummer, klant, datum en totaal; klikken opent bestaande documentpreview. Geen lege sectie voor nieuwe evenementen. Documentbeheer blijft onder Financiën.

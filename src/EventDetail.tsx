@@ -16,7 +16,7 @@ import {calculateCatering,normalizeCateringPlan,CATERING_MIN_COCKTAILS,type Cate
 import {createCateringQuote,createCateringInvoice,type CateringQuote,type CateringInvoice} from './planning/cateringDocuments';
 import {createWorkshopQuote,createWorkshopInvoice,quoteDefaultValidity,type WorkshopQuote,type WorkshopInvoice} from './planning/workshopQuotes';
 import {WORKSHOP_PACKAGES,MIN_WORKSHOP_GUESTS,isCocktailWorkshop,workshopPricing,workshopStaffSuggestion,type WorkshopPackageId} from './planning/workshopPricing';
-import {readMenuCatalog,getMenuEntry,serviceMenuKinds,SERVICE_OPTIONS,MENU_CATALOG,DEFAULT_BEER_ABV,LEGACY_BEER_TASTE_PROFILES,type MenuKind} from './data/menuCatalog';
+import {readMenuCatalog,getMenuEntry,serviceMenuKinds,SERVICE_OPTIONS,DEFAULT_BEER_ABV,LEGACY_BEER_TASTE_PROFILES,type MenuKind} from './data/menuCatalog';
 import {BLADE_BEERS,BOTTLED_BEER_CATALOG,normalizeBeerBarPlan,beerBarRequirements,beerBarPacking} from './planning/beerBar';
 export type {EventData} from './types/event';
 const DEFAULT_PACK=[['Cocktailshakers',8,'stuks'],['Jiggers',8,'stuks'],['Strainers',8,'stuks'],['Barlepels',8,'stuks'],['Muddlers',8,'stuks'],['Cocktailglazen',48,'stuks'],['Receptkaarten',16,'stuks'],['IJsblokjes',12,'kg'],['Koelboxen',2,'stuks'],['Snijplanken en messen',4,'sets'],['Servetten',60,'stuks'],['Theedoeken',6,'stuks'],['Afvalzakken',3,'stuks']] as const;
@@ -89,8 +89,6 @@ const updateBeerPlan=(updates:Partial<typeof beerPlan>)=>patch({beerBarPlan:{...
 const menu=event.menu||[];
 const allowedKinds=serviceMenuKinds(event.service);
 const catalogEntries=[...catalog];
-// Recover missing built-in drinks from incomplete saved catalogs without overwriting custom entries.
-for(const builtin of MENU_CATALOG){if(!catalogEntries.some(entry=>entry.name===builtin.name))catalogEntries.push(builtin)}
 const availableMenu=catalogEntries.filter(entry=>allowedKinds.includes(entry.type)&&!isBeerBar);
 const maxMenuItems=!isBeerBar&&allowedKinds.every(kind=>kind==='Cocktail'||kind==='Mocktail')?6:undefined;
 const activeMenu=menu.filter(name=>availableMenu.some(entry=>entry.name===name));

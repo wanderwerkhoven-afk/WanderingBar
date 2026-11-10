@@ -111,12 +111,33 @@ export const LEGACY_BEER_TASTE_PROFILES:Record<string,string>={
 };
 // Verified default ABV values. Unknown or edition-dependent beers are intentionally omitted.
 export const DEFAULT_BEER_ABV:Record<string,number>={
- 'Affligem Blond BLADE 8 L':6.8,'Affligem Blond fles':6.8,
- 'Lagunitas IPA BLADE 8 L':6.2,'Birra Moretti BLADE 8 L':4.6,'Birra Moretti fles':4.6,
- 'Moersleutel Crank the Juice':5.5,'Two Chefs Brewing Funky Falcon':5.2,
- 'BrewDog Punk IPA':5.4,'Uiltje Bird of Prey':5.8,'Jopen Mooie Nel IPA':6.5,
- 'Texels Skuumkoppe':6,'Liefmans Fruitesse':3.8,'Desperados Original':6,
- 'Corona Extra':4.6,'Speciaalbier alcoholvrij':0
+ "Affligem Blond BLADE 8 L": 6.8,
+ "Affligem Blond fles": 6.8,
+ "Lagunitas IPA BLADE 8 L": 6.2,
+ "Birra Moretti BLADE 8 L": 4.6,
+ "Birra Moretti fles": 4.6,
+ "Desperados Original": 5.9,
+ "Corona Extra": 4.5,
+ "Sol": 4.5,
+ "Liefmans Fruitesse": 3.8,
+ "Hoegaarden Wit": 4.9,
+ "Vedett Extra White": 4.7,
+ "Oedipus Mannenliefde": 6,
+ "Kasteel Rouge": 8,
+ "Texels Skuumkoppe": 6,
+ "La Chouffe": 8,
+ "Tripel Karmeliet": 8.4,
+ "Jopen Mooie Nel IPA": 6.5,
+ "BrewDog Punk IPA": 5.4,
+ "vandeStreek Playground IPA 0.5": 0.5,
+ "Moersleutel Motor Oil": 12,
+ "Moersleutel Crank the Juice": 5.5,
+ "Uiltje Bird of Prey": 5.8,
+ "Brouwerij 't IJ IJwit": 6.5,
+ "Two Chefs Brewing Funky Falcon": 5.2,
+ "Brouwerij Kees Caramel Fudge Stout": 11.5,
+ "De Molen Hel & Verdoemenis": 9,
+ "Speciaalbier alcoholvrij": 0,
 };
 export const CATALOG_STORAGE_KEY='wandering-barback-catalog-v1';
 export function readMenuCatalog():MenuEntry[]{try{const raw=localStorage.getItem(CATALOG_STORAGE_KEY);if(!raw)return MENU_CATALOG;const saved=JSON.parse(raw);return Array.isArray(saved)?saved:MENU_CATALOG}catch{return MENU_CATALOG}}

@@ -1,0 +1,39 @@
+# Wandering BarBack — Values & Data
+
+Dit document beschrijft de vaste waarden, opslagafspraken en principes voor de Firebase-integratie. De volledige technische symbolenlijst staat in [`docs/VARIABLE_REGISTRY.md`](docs/VARIABLE_REGISTRY.md); de uitvoering en resterende tests in [`docs/CODE_ROADMAP.md`](docs/CODE_ROADMAP.md).
+
+## Kernwaarden
+
+1. **Geen gegevensverlies:** bestaande browsergegevens worden nooit stilzwijgend gewist; bij conflicten is eerst een export van lokale én cloudgegevens nodig.
+2. **Eén persoonlijke workspace:** alle Firestore-documenten vallen onder de UID van de Google-gebruiker. Firestore Security Rules blokkeren toegang tot de gegevens van andere UID's.
+3. **App werkt via GitHub Pages:** Firebase levert authenticatie en Firestore, geen vervangende hosting.
+4. **Zichtbare synchronisatie:** gebruikers zien of de lokale wijzigingen zijn gesynchroniseerd, nog worden geüpload of een fout hebben veroorzaakt.
+5. **Compatibel blijven:** bestaande localStorage-sleutels en gegevensvormen blijven in gebruik tot een expliciet geteste migratie.
+
+## Gegevenssets
+
+| Dataset | Browseropslag | Firestore-pad |
+|---|---|---|
+| Evenementen | `wandering-barback-events-v1` | `users/{uid}/events/{recordId}` |
+| Verwijderde evenementen | `wandering-barback-deleted-events-v1` | `users/{uid}/deletedEvents/{recordId}` |
+| Inventaris | `wandering-barback-inventory-v1` | `users/{uid}/inventory/{recordId}` |
+| Cocktail- en drankcatalogus | `wandering-barback-catalog-v1` | `users/{uid}/catalog/{recordId}` |
+
+De definitieve catalogussleutel wordt in `src/data/menuCatalog.ts` beheerd; wijzigingen daarin vereisen een migratie. Ieder cloudrecord bewaart de JSON-inhoud (`value`) en sorteervolgorde (`position`). Een meta-document registreert dat de workspace ooit is geïnitialiseerd, ook als alle records later worden verwijderd.
+
+## Synchronisatieregels
+
+- Eerste aanmelding met een lege Firestore-workspace: aanwezige browsergegevens uploaden.
+- Een bestaande cloudversie met andere lokale gegevens: back-up downloaden en daarna expliciet samenvoegen of cloudversie kiezen.
+- Na aanmelden: lokale wijzigingen ongeveer elke 1,2 seconde naar Firestore; via het synchronisatie-icoon kan de controle direct plaatsvinden.
+- Externe wijzigingen: verversmelding tonen, zodat open formulieren niet ongemerkt oude waarden terugschrijven.
+- Bij verbindingsfouten: lokale gegevens laten staan, fout tonen en later opnieuw synchroniseren.
+
+## Validatie die nog door de eigenaar moet gebeuren
+
+- Google-login op GitHub Pages, en `users/{uid}` in Firebase Console controleren.
+- Een evenement toevoegen en wijzigen; controleren of dit na herladen en op een tweede apparaat zichtbaar is.
+- Een inventarisartikel en catalogusitem wijzigen; dezelfde controle uitvoeren.
+- Conflictscenario en back-up export testen met twee verschillende versies.
+
+**Let op:** de aanwezigheid van de synchronisatiecode bewijst nog niet dat het Firebase-project in de Console de juiste Auth-provider, database en Security Rules heeft. De eerste echte upload vindt plaats wanneer de eigenaar op het apparaat met lokale gegevens inlogt.

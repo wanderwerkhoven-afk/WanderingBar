@@ -219,6 +219,7 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
 export function startLiveSync(
   uid: string, initial: RemoteData,
   onRemote: () => void, onError: (message: string) => void,
+  onStatus: (status: 'synced' | 'syncing' | 'error') => void,
 ): () => void {
   let stopped = false;
   let conflict = false;
@@ -226,6 +227,7 @@ export function startLiveSync(
   const baseline = readLocal();
   const remote: RemoteData = initial;
   const unsubscribers: Unsubscribe[] = [];
+  onStatus('synced');
 
   for (const dataset of DATASETS) {
     const unsubscribe = onSnapshot(collectionRef(uid, dataset), snapshot => {
@@ -235,7 +237,8 @@ export function startLiveSync(
         if (JSON.stringify(next) === JSON.stringify(remote[dataset])) return;
         if (readLocal()[dataset] !== baseline[dataset]) {
           conflict = true;
-          onError('Er zijn tegelijkertijd lokale en online wijzigingen. Download eerst een back-up en herlaad de pagina om ze samen te voegen.');
+          onStatus('error');
+          onError('Er zijn tegelijkertijd lokale en online wijzigingen. Maak een back-up en herlaad de pagina om ze samen te voegen.');
           return;
         }
         remote[dataset] = next;
@@ -246,17 +249,18 @@ export function startLiveSync(
         // edit in a stale screen from silently overwriting these remote changes.
         conflict = true;
         onRemote();
-      } catch (error) { onError(error instanceof Error ? error.message : 'Cloudgegevens lezen mislukt.'); }
-    }, error => onError(`Firestore: ${error.message}`));
+      } catch (error) { onStatus('error'); onError(error instanceof Error ? error.message : 'Cloudgegevens lezen mislukt.'); }
+    }, error => { onStatus('error'); onError(`Firestore: ${error.message}`); });
     unsubscribers.push(unsubscribe);
   }
 
-  const poll = window.setInterval(() => {
+  const flush = () => {
     if (stopped || conflict) return;
     const current = readLocal();
     for (const dataset of DATASETS) {
       if (busy.has(dataset) || current[dataset] === baseline[dataset]) continue;
       busy.add(dataset);
+      onStatus('syncing');
       const raw = current[dataset];
       void (async () => {
         try {
@@ -266,15 +270,23 @@ export function startLiveSync(
           baseline[dataset] = raw;
           markSynced(uid, baseline);
         } catch (error) {
+          onStatus('error');
           onError(error instanceof Error ? error.message : 'Synchroniseren mislukt. Lokale gegevens zijn behouden.');
-        } finally { busy.delete(dataset); }
+        } finally {
+          busy.delete(dataset);
+          if (!stopped && !conflict && busy.size === 0 &&
+              DATASETS.every(key => readLocal()[key] === baseline[key])) onStatus('synced');
+        }
       })();
     }
-  }, 1200);
+  };
+  const poll = window.setInterval(flush, 1200);
+  window.addEventListener('barback-sync-request', flush);
 
   return () => {
     stopped = true;
     window.clearInterval(poll);
+    window.removeEventListener('barback-sync-request', flush);
     unsubscribers.forEach(unsubscribe => unsubscribe());
   };
 }

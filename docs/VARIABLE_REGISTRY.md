@@ -1,5 +1,24 @@
 # Wandering BarBack — Variable Registry
 
+## Firebase en synchronisatie — 10 november 2026
+
+| Symbool / opslag | Eigenaar | Betekenis |
+|---|---|---|
+| `firebaseConfig`, `auth`, `db` | `src/firebase.ts` | Firebase webconfiguratie, Google Authentication en Firestore-instantie (`barback-20df5`) |
+| `DATASETS`, `Dataset` | `src/cloud/storageSync.ts` | `events`, `deletedEvents`, `inventory`, `catalog`; overeenkomstige lokale keys en Firestore-subcollecties |
+| `RawLocal`, `readLocal()` | `src/cloud/storageSync.ts` | Momentopname van de vier ongewijzigde legacy-localStorage JSON-waarden |
+| `users/{uid}/{dataset}/{recordId}` | Firestore / `storageSync.ts` | Accountgebonden records met `value` (JSON-string) en `position` (lijstvolgorde) |
+| `users/{uid}/meta/workspace` | Firestore / `storageSync.ts` | Initialisatiemarker: onderscheid tussen nieuw account en bewust lege datasets |
+| `barback-firebase-local-owner-v1` | `storageSync.ts` | UID-eigenaar van de browserkopie; voorkomt accountvermenging |
+| `barback-firebase-synced-v1-{uid}` | `storageSync.ts` | Fingerprint van laatst gesynchroniseerde lokale dataset; voorkomt onbedoelde conflictkeuzes |
+| `prepareSync()`, `PreparedSync.activate()` | `storageSync.ts` | Servergegevens ophalen, conflict detecteren, lokale upload / back-up / merge / cloudkeuze |
+| `startLiveSync()` | `storageSync.ts` | Firestore listeners, periodieke lokale upload, voortgang en conflictstop |
+| `barback-sync-request` | `CloudGate.tsx` → `storageSync.ts` | Browser-event: controleer lokale gegevens direct op nog niet geüploade wijzigingen |
+| `syncStatus` | `CloudGate.tsx` | React-state `synced`, `syncing` of `error`; getoond in de verbindingsbalk |
+| `remoteChange` | `CloudGate.tsx` | React-state: externe wijziging ontvangen; gebruiker moet verversen |
+
+**Belangrijk:** browserdata kunnen pas naar Firestore worden geüpload nadat de betreffende gebruiker met Google is aangemeld. De code kan geen lokaal opgeslagen gegevens uit de browser van de eigenaar op afstand uitlezen. De daadwerkelijke upload vereist daarom een eerste ingelogde sessie op dat apparaat.
+
 Status: 2026-11-08. Bron: code op `main`. Dit is een register van **gedeelde, persistente en domeinbepalende** variabelen, niet van iedere tijdelijke callback- of loopvariabele. Bestandsnamen en symbolen zijn hoofdlettergevoelig.
 
 | Symbool / veld | Gedefinieerd in | Gebruikt door | Betekenis / opslag |

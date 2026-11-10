@@ -354,3 +354,8 @@
 /* Gall & Gall wine metadata stays readable without crowding selection rows. */
 .ed-wine-details{display:block;margin-top:4px;font-size:11px;line-height:1.45;font-weight:400;color:#866e5e}
 .ed-wine-details a{display:inline-block;margin-left:8px;color:#6b402b;text-decoration:underline;text-underline-offset:2px}
+
+.ed-wine-filters{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin:14px 0 18px}
+.ed-wine-filters label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:650;color:#654837}
+.ed-wine-filters select{min-width:150px;max-width:100%;padding:10px 12px;border:1px solid #e1cebc;border-radius:9px;background:#fffaf5;color:#4b2c1d}
+.ed-wine-filters>span{font-size:12px;color:#806b5d;padding-bottom:10px}

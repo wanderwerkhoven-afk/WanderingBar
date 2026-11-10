@@ -15,7 +15,7 @@ import {calculateCatering,normalizeCateringPlan,CATERING_MIN_COCKTAILS,type Cate
 import {createCateringQuote,createCateringInvoice,type CateringQuote,type CateringInvoice} from './planning/cateringDocuments';
 import {createWorkshopQuote,createWorkshopInvoice,quoteDefaultValidity,type WorkshopQuote,type WorkshopInvoice} from './planning/workshopQuotes';
 import {WORKSHOP_PACKAGES,MIN_WORKSHOP_GUESTS,isCocktailWorkshop,workshopPricing,workshopStaffSuggestion,type WorkshopPackageId} from './planning/workshopPricing';
-import {readMenuCatalog,getMenuEntry,serviceMenuKinds,SERVICE_OPTIONS,MENU_CATALOG,type MenuKind} from './data/menuCatalog';
+import {readMenuCatalog,getMenuEntry,serviceMenuKinds,SERVICE_OPTIONS,MENU_CATALOG,DEFAULT_BEER_ABV,type MenuKind} from './data/menuCatalog';
 import {BLADE_BEERS,BOTTLED_BEER_CATALOG,normalizeBeerBarPlan,beerBarRequirements,beerBarPacking} from './planning/beerBar';
 export type {EventData} from './types/event';
 const DEFAULT_PACK=[['Cocktailshakers',8,'stuks'],['Jiggers',8,'stuks'],['Strainers',8,'stuks'],['Barlepels',8,'stuks'],['Muddlers',8,'stuks'],['Cocktailglazen',48,'stuks'],['Receptkaarten',16,'stuks'],['IJsblokjes',12,'kg'],['Koelboxen',2,'stuks'],['Snijplanken en messen',4,'sets'],['Servetten',60,'stuks'],['Theedoeken',6,'stuks'],['Afvalzakken',3,'stuks']] as const;
@@ -93,7 +93,14 @@ const maxMenuItems=!isBeerBar&&allowedKinds.every(kind=>kind==='Cocktail'||kind=
 const activeMenu=menu.filter(name=>availableMenu.some(entry=>entry.name===name));
 const visibleMenu=availableMenu.filter(entry=>filter==='Alles'||!allowedKinds.includes(filter)||entry.type===filter);
 const menuTitle=allowedKinds.length===1?({Wijn:'Wijnkaart',Speciaalbier:'Bierkaart','G&T':'Gin & tonic-kaart',Cocktail:'Cocktailmenu',Mocktail:'Mocktailmenu'} as Record<MenuKind,string>)[allowedKinds[0]]:'Menukaart';
-const beerDescription=(name:string)=>catalogEntries.find(item=>item.type==='Speciaalbier'&&item.name.toLocaleLowerCase('nl')===name.toLocaleLowerCase('nl'))?.tasteProfile?.trim()||'Smaakprofiel nog niet ingevuld';
+const beerDescription=(name:string)=>{
+ const entry=catalogEntries.find(item=>item.type==='Speciaalbier'&&item.name.toLocaleLowerCase('nl')===name.toLocaleLowerCase('nl'));
+ const profile=entry?.tasteProfile?.trim()||'Smaakprofiel nog niet ingevuld';
+ const abv=entry?.alcoholPercentage??DEFAULT_BEER_ABV[name];
+ if(abv==null||!Number.isFinite(abv)||abv<0)return profile;
+ const formatted=abv.toLocaleString('nl-NL',{maximumFractionDigits:2})+'%';
+ return formatted+' · '+profile.replace(/^\\s*(?:<?\\d+(?:[.,]\\d+)?\\s*%\\s*[·|–-]?\\s*)/,'');
+};
 const printMenuItems=isBeerBar?[...beerPlan.taps.filter(t=>t.glasses>0).map(t=>({name:t.beer.replace(/ BLADE 8 L$/,''),description:beerDescription(t.beer),beerType:'tap' as const})),...Object.entries(beerPlan.bottles).filter(([,n])=>n>0).map(([name])=>({name,description:beerDescription(name),beerType:'bottle' as const}))]:activeMenu.map(name=>({name,description:catalogEntries.find(item=>item.name===name)?.ingredients.map(([ingredient])=>ingredient).slice(0,4).join(' · ')||'',beerType:null}));
 // Group beers by their measured title line count so neighboring columns look balanced.
 const menuGridRef=useRef<HTMLDivElement|null>(null);

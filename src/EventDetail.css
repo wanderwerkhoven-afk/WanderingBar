@@ -298,3 +298,6 @@
 .ed-menu-drink h3{display:flex;align-items:center;justify-content:center;gap:8px}
 .ed-menu-drink .ed-beer-icon{display:inline-block;flex:none;vertical-align:middle;stroke:currentColor}
 @media print{.ed-menu-drink .ed-beer-icon{width:17px;height:17px}}
+
+/* Eleven or twelve beers occupy six grid rows: tighten only their vertical spacing. */
+.ed-menu-drinks.ed-menu-drinks-grid.ed-beer-menu-six-rows{row-gap:16px}

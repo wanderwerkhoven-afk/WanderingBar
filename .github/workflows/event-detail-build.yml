@@ -13,4 +13,8 @@ jobs:
         with:
           node-version: '22'
       - run: npm install
+      - name: Prepare iPhone app icons
+        run: |
+          cp F84641DF-7011-4AD4-8662-96A0AABA3DAC.png public/apple-touch-icon.png
+          cp F84641DF-7011-4AD4-8662-96A0AABA3DAC.png public/app-icon.png
       - run: npm run build

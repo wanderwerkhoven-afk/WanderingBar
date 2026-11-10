@@ -384,3 +384,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `.ed-beer-icon` | `src/EventDetail.css` | Menukaart | Bier-/flespictogram in kopregel met behoud van smaakprofiel |
 
 | `ed-beer-menu-six-rows` | `src/EventDetail.tsx`, `src/EventDetail.css` | Speciaalbier-menukaart | Voor 11–12 geselecteerde bieren: `row-gap:16px` in plaats van standaard 28px |
+
+| `ed-beer-menu-seven-plus-rows` | `src/EventDetail.tsx`, `src/EventDetail.css` | Speciaalbier-menukaart | Vanaf 13 bieren (7+ rijen) worden smaakprofielregels alleen in de menukaart verborgen; 16px row-gap blijft via `ed-beer-menu-six-rows` |

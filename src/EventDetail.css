@@ -293,3 +293,8 @@
 .ed-menu-print.ed-size-a5{width:460px;max-width:none;height:650.57px;aspect-ratio:210/297;zoom:.7086956522}
 .ed-menu-print.ed-size-a5>.ed-menu-paper{width:100%;min-width:0;max-width:100%;height:100%;max-height:100%;transform:none;padding:44px}
 @media(max-width:360px){.ed-menu-print.ed-size-a5{zoom:calc(.7086956522 * min(1, (100vw - 32px) / 326))}}
+
+/* Beer menu: compact inline tap/bottle icon beside each printed name. */
+.ed-menu-drink h3{display:flex;align-items:center;justify-content:center;gap:8px}
+.ed-menu-drink .ed-beer-icon{display:inline-block;flex:none;vertical-align:middle;stroke:currentColor}
+@media print{.ed-menu-drink .ed-beer-icon{width:17px;height:17px}}

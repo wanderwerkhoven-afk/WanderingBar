@@ -1,5 +1,25 @@
 # Wandering BarBack — Variable Registry
 
+## Actuele menukaart-architectuur — 10 november 2026
+
+**Deze tabel is leidend.** Oudere verwijzingen naar `menuPdf.ts`, `downloadMenuPdf`, `sourceNodes` en `cloneNodes` zijn vervallen en zijn uit het historische register verwijderd.
+
+| Variabele / symbool | Bestand | Actuele functie |
+|---|---|---|
+| `menuDesign`, `menuFrame`, `menuSize` | `src/EventDetail.tsx` | Geselecteerde menukaartstijl, sierlijst en A4/A5-formaat |
+| `printMenuItems` | `src/EventDetail.tsx` | Te tonen dranknamen en omschrijvingen; bepaalt kolom-/rij-indeling |
+| `printMenuHtml(preview,size)` | `src/documents/menuHtmlPrint.ts` | Enige actieve menukaart-afdrukroute; kloont HTML-preview naar apart printvenster |
+| `pageWidth`, `pageHeight`, `scale` | `src/documents/menuHtmlPrint.ts` | A4/A5-printschaal en fysieke pagina-afmetingen |
+| `#print-root`, `#print-toolbar` | `src/documents/menuHtmlPrint.ts` | Printcanvas en knop voor browserafdruk |
+| `.ed-menu-print`, `.ed-menu-paper` | `src/EventDetail.css` | Basisontwerp van de menukaart |
+| `.ed-menu-drinks-grid`, `.ed-menu-drinks-five` | `src/EventDetail.css` | Twee kolommen vanaf vier dranken; vijfde drank gecentreerd |
+| `.ed-menu-print.ed-size-a5` | `src/EventDetail.css` | Proportionele schaal van volledige A4-preview met `zoom:326/460` |
+| `catalogEntries` | `src/EventDetail.tsx` | Niet-destructieve aanvulling van ontbrekende standaarddranken |
+| `maxMenuItems` | `src/EventDetail.tsx` | Selectielimiet van zes bij cocktail/mocktail-diensten |
+
+**Verwijderd:** `src/documents/menuPdf.ts` en de oude globale A4/A5-printregels uit `EventDetail.css`. De offerte- en factuur-PDF-generatoren zijn aparte functionaliteiten en vallen buiten deze menukaartopschoning.
+
+
 ## Firebase en synchronisatie — 10 november 2026
 
 **Dubbele-ID-herstel:** `src/cloud/localRows.ts` bezit `Dataset`, `Row`, `parsed()` en `rowsFromLocal()`. Bij hergebruik van een `inventory.id` genereert `rowsFromLocal` een unieke `-local-N`-suffix in de cloudrepresentatie; de overige datasets blokkeren onveilige duplicaten. `PreparedSync.canMerge` en `PreparedSync.localProblem` sturen de beschikbare keuzes op het inlogscherm. `PreparedSync.activate('cloud')` vervangt uitsluitend de vier gegevenssets van de browser; geen algemene cacheclear. Regressietests: `tests/localRows.test.mjs`, uitgevoerd met `npm test`.
@@ -314,17 +334,13 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 
 | `downloadQuotePdf(CustomQuote)` | `src/documents/quotePdf.ts`, `src/EventDetail.tsx` | Offerte PDF bij dienst Anders | Hergebruikt vaste éénpagina-A4 PDF-opmaak van catering, toont `lines` en `total`, geen browserprint |
 
-| `downloadMenuPdf({eventTitle,heading,items,design,frame,size})` | `src/documents/menuPdf.ts` | Menukaart PDF-export in `src/EventDetail.tsx` | Native PDF, één pagina A4/A5; gebruikt `menuDesign`, `menuFrame`, `menuSize` en `printMenuItems`, zonder browserprint |
 
-| `printMenuItems.length` | `src/EventDetail.tsx`, `src/documents/menuPdf.ts` | Menukaart preview en PDF | Stuurt automatische 1- of 2-koloms indeling en compacte typografie; 5e item gecentreerd op derde rij |
 
 | `catalogEntries` | `src/EventDetail.tsx` | Evenement > Menukaart | Niet-destructieve combinatie van opgeslagen catalogus en ontbrekende `MENU_CATALOG`-items; bewaart eigen recepten en toont standaarddranken |
 | `maxMenuItems` | `src/EventDetail.tsx` | Cocktail- en mocktailselectie | Maximaal 6 items bij uitsluitend Cocktail/Mocktail, passend bij PDF-layout |
 
-| `downloadMenuPdf` PDF font object refs and centered layout | `src/documents/menuPdf.ts` | PDF-menukaart | Correcte `/F1 3 0 R` en `/F2 4 0 R`, Times-Bold voor koppen, centrering van alle drankblokken en dynamische 1-/2-kolomsverdeling |
 | `.ed-menu-print .ed-menu-drinks-grid` | `src/EventDetail.css` | Menukaart-preview | Drie begrensde rijen en compacte typografie om zes dranken binnen de sierlijst te houden |
 
-| `.ed-menu-print.ed-size-a5 > .ed-menu-paper` | `src/EventDetail.css` | Menukaart A5-preview | A4-canvas 460×650,57 px, `transform:scale(326/460)` met vaste oorsprong; geen reflow van drankblokken |
 
 | `.ed-menu-print.ed-size-a5` | `src/EventDetail.css` | A5-preview | Complete A4-canvas 460×650,57 met CSS `zoom:326/460`, in plaats van alleen child-transform; behoudt uitlijning van rand en inhoud |
 
@@ -333,10 +349,8 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 
 | `pageWidth`, `pageHeight`, `paperLabel` | `src/documents/menuHtmlPrint.ts` | Menukaart printvenster | Bepaalt vaste A4/A5-papierafmetingen, `@page`, marges 0 en zichtbare formaatindicatie; browser behoudt uiteindelijke printercontrole |
 
-| `sourceWidth`, `sourceHeight`, `sourceNodes`, `cloneNodes`, `scale` | `src/documents/menuHtmlPrint.ts` | HTML-menukaart print | Kopieert werkelijke previewafmetingen en computed styles; proportioneel schalen naar A4/A5 zonder tekstherflow |
 
 | Legacy `@media print` verwijderd | `src/EventDetail.css` | Menukaart afdrukken | Voorkomt conflict met `menuHtmlPrint.ts`: geen geforceerde A4 of 21pt cocktailkoppen meer |
 
-| `src/documents/menuPdf.ts` | Verwijderd | Menukaart | Ongebruikte legacy PDF-renderer; geen actieve import meer in EventDetail |
 | `.ed-menu-print`, `.ed-menu-print.ed-size-a5`, `.ed-menu-drinks-grid` | `src/EventDetail.css` | Menukaart preview | Geconsolideerde layoutregels; geen dubbele A5 transform/zoom-blokken of legacy named print pages |
 | `printMenuHtml` | `src/documents/menuHtmlPrint.ts` | Menukaart print | Enige actieve menukaart-afdrukroute, gebruikt HTML-clone en één `@page`-regel |

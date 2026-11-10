@@ -275,3 +275,11 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [ ] Volumestaffel past één tarief op alle cocktails toe; omzet kan dalen op staffelgrenzen. Later zakelijke keuze voor progressieve staffel of minimumbedrag.
 
 - [x] Extra cocktailafname: `cateringPlan.extraCocktails` optioneel; alle extra cocktails worden tegen het Classic-tarief van de vooraf geboekte staffel verrekend, zonder herstaffeling. Eventcalculator toont aparte nacalculatieregel en verhoogd totaal. Geen factuurautomatisering.
+
+## Dynamische cateringstaffel en documenten — 10 november 2026
+- [x] Vier instelbare endpoints per evenement: Classic standaard €6,50 → €4,50 en Signature €7,50 → €5,50. Vaste grenzen 25–49, 50–99, 100–149, 150–199, 200+; lineaire interpolatie per staffelniveau met afronding op centen.
+- [x] `src/planning/cateringDocuments.ts`: offerte-snapshot van alle vier endpoints, vijf berekende staffels, geselecteerde staffel, afgesproken meerwerktarief, klant, reiskosten en prijsregels.
+- [x] Offertepreview markeert geboekte staffel en vermeldt de Classic-meerwerkregel tenzij afwijkend tarief vastgelegd; opslag per evenement in `cateringQuotes`.
+- [x] Factuur vanuit opgeslagen offerte met alleen posten en totalen, inclusief eventueel extra cocktails; opslag per evenement in `cateringInvoices`.
+- [ ] Documenten zijn concepten: KvK-, btw-, adres- en betaalgegevens, btw-berekening, nummerreeks en juridische factuurcontrole moeten nog worden ingericht. Geen verzendintegratie.
+- [ ] Productiebuild en PDF-printcontrole nog niet uitgevoerd.

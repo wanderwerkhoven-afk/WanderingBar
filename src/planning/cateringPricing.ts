@@ -1,7 +1,7 @@
 /** Fixed quantity thresholds; independently configurable endpoint prices, interpolated in cents. */
 export const CATERING_TIER_RANGES=[{min:25,max:49},{min:50,max:99},{min:100,max:149},{min:150,max:199},{min:200,max:null}] as const;
 export type CateringPriceEndpoints={classicStart:number;classicEnd:number;signatureStart:number;signatureEnd:number};
-export const DEFAULT_CATERING_PRICES:CateringPriceEndpoints={classicStart:5.5,classicEnd:4,signatureStart:7.5,signatureEnd:5.5};
+export const DEFAULT_CATERING_PRICES:CateringPriceEndpoints={classicStart:6.5,classicEnd:4.5,signatureStart:7.5,signatureEnd:5.5};
 const money=(n:number)=>Math.round((n+Number.EPSILON)*100)/100;
 const safePrice=(n:number,fallback:number)=>Number.isFinite(Number(n))?Math.max(0,money(Number(n))):fallback;
 export function normalizeCateringPrices(input?:Partial<CateringPriceEndpoints>):CateringPriceEndpoints{

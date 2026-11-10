@@ -333,3 +333,5 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Menukaart-PDF: browserprint vervangen door native éénpagina-PDF-download (`src/documents/menuPdf.ts`) zoals bij offertes. Ondersteunt bestaande Signature/Minimal/Elegant kleuren, sierlijst aan/uit, A4/A5, evenementtitel, dranknamen en omschrijvingen. Schaal lay-out naar één pagina; geef melding wanneer de menukaart te vol is om leesbaar af te drukken. Bestaande menukaartselectie en eventdata blijven intact.
 
 - [x] Menukaart lay-out automatisch op aantal geselecteerde dranken: 1–3 onder elkaar; 4 in 2 kolommen × 2 rijen; 5 in 2 kolommen × 2 rijen plus vijfde gecentreerd op rij 3; 6 in 2 kolommen × 3 rijen. Bij >3 compactere typografie. Zowel live voorbeeld als native A4/A5-PDF aangepast.
+
+- [x] Fix lege cocktail-/drankselectie bij evenementen: bij onvolledige of lege lokaal opgeslagen drankencatalogus worden ontbrekende standaarddranken alleen voor weergave toegevoegd, zonder opgeslagen eigen recepten of evenementselecties te overschrijven. Cocktail catering/workshop ondersteunt maximaal 6 geselecteerde cocktails/mocktails, aansluitend op de 1-/2-koloms menukaart-PDF.

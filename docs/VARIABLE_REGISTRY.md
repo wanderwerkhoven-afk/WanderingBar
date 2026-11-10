@@ -370,3 +370,8 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `paths`, `getRoute()`, `go(path)` | `src/main.tsx` | Appnavigatie | Centrale hashroute-tabel en browsergeschiedenis voor GitHub Pages |
 | `tab`, `settingsPage`, `selected` | `src/main.tsx` | Appnavigatie | Afgeleid van hashroute bij eerste render en bij popstate/hashchange |
 | `.more-route-page`, `.more-route-content` | `src/style.css` | Catalogus en verwijderde evenementen | Normale paginalayout in plaats van overlay |
+
+| `MenuEntry.tasteProfile?` | `src/data/menuCatalog.ts` | Biercatalogus / menukaart | Optionele bewerkbare smaakomschrijving, compatibel met bestaande records |
+| `BEER_TASTE_PROFILES` | `src/data/menuCatalog.ts` | Bierimport | Voorlopige smaakprofielen per biernaam; alleen gebruikt voor ontbrekende profielen |
+| `missingBeers`, `importBeers()` | `src/Catalog.tsx` | Catalogus → Bieren | Niet-destructief opslaan van BLADE-/flesbieren en aanvullen van lege smaakprofielen |
+| `beerDescription(name)` | `src/EventDetail.tsx` | Speciaalbierbar-menukaart | Leest opgeslagen smaakprofiel voor bier uit catalogus en toont dit onder de titel |

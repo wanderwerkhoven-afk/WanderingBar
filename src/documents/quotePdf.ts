@@ -66,9 +66,16 @@ export function downloadQuotePdf(quote:Quote):void {
   text(row.label.slice(0,47),43,yy,8.5);text(row.qty,347,yy,8.5);text(row.rate,412,yy,8.5);text(row.sum,491,yy,8.5);yy-=15;
  }
  line(yy+7);
+ const vat=quote.vat;
+ if(vat){
+  yy-=10;
+  text('Subtotaal excl. btw',43,yy,8);text(money(vat.subtotal),491,yy,8);yy-=13;
+  if(vat.vat9){text('Btw 9%',43,yy,8);text(money(vat.vat9),491,yy,8);yy-=13}
+  if(vat.vat21){text('Btw 21%',43,yy,8);text(money(vat.vat21),491,yy,8);yy-=13}
+ }
  rect(38,yy-43,519,40,0.94,0.88,0.79);
- text('TOTAAL (btw niet uitgesplitst)',49,yy-28,11,true);
- text(money(quote.total),432,yy-28,17,true);
+ text(vat?'TOTAAL INCL. BTW':'TOTAAL (btw nog niet vastgesteld)',49,yy-28,11,true);
+ text(money(vat?.totalIncludingVat??quote.total),432,yy-28,17,true);
  yy-=53;
  if(q){
   section('Cocktailstaffel',yy);
@@ -95,7 +102,7 @@ export function downloadQuotePdf(quote:Quote):void {
  if(yy<70)throw new Error('De offerte bevat te veel informatie voor een leesbare A4. Verkort de opmerkingen of controleer de staffel.');
  line(66);
  text('Offerte '+quote.id,43,50,7.5);text('Geldig tot '+date(quote.validUntil),430,50,7.5);
- text('Concept: btw, bedrijfsgegevens en voorwaarden controleren voor verzending.',43,34,7);
+ text('Concept: btw-tarieven, bedrijfsgegevens en voorwaarden controleren voor verzending.',43,34,7);
  const objects:string[]=['','<< /Type /Catalog /Pages 2 0 R >>','','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>'];
  const pageIds:number[]=[];
  for(const page of pages){const stream=page.join('\n')+'\n';const contentId=objects.length;objects.push('<< /Length '+bytes(stream).length+' >>\nstream\n'+stream+'endstream');const pageId=objects.length;objects.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents '+contentId+' 0 R >>');pageIds.push(pageId)}

@@ -207,3 +207,20 @@
 .ed-quote-footnote{margin-top:50px;font-size:11px;color:#6e7069}
 @media(max-width:500px){.ed-quote-paper{padding:22px;min-height:0}.ed-quote-meta{grid-template-columns:1fr}.ed-quote-toolbar button{padding:10px;font-size:12px}.ed-quote-paper table{font-size:11px}}
 @media print{@page{size:A4;margin:12mm}body:has(.ed-quote-overlay) *{visibility:hidden!important}.ed-quote-overlay,.ed-quote-overlay *{visibility:visible!important}.ed-quote-overlay{position:absolute;inset:0;padding:0;background:white;overflow:visible}.ed-quote-toolbar{display:none!important}.ed-quote-paper{box-shadow:none;max-width:none;min-height:0;padding:0;margin:0;font-size:12px}.ed-quote-paper tr{break-inside:avoid}}
+
+/* Cocktail catering event pricing tool */
+.ed-catering-tool{padding-bottom:20px}
+.ed-catering-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ed-catering-tool input[type=range]{width:100%;padding:0;accent-color:#294634}
+.ed-catering-check{display:flex;align-items:center;gap:10px;margin:16px 0;font-size:14px;font-weight:600}
+.ed-catering-check input{width:18px;height:18px;accent-color:#294634}
+.ed-catering-tiers{border:1px solid #dedbd4;border-radius:12px;overflow:hidden;margin:16px 0}
+.ed-catering-tiers h3{padding:0 12px}
+.ed-catering-tier-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 12px;font-size:13px;border-top:1px solid #e7e4dc}
+.ed-catering-tier-head{font-weight:700;background:#f4f0e9}
+.ed-catering-tier-row.is-active{background:#e6f0e7;font-weight:800;color:#294634}
+.ed-catering-totals{display:flex;flex-direction:column;gap:12px;padding:15px;border-radius:12px;background:#f4f0e9}
+.ed-catering-totals>div{display:flex;justify-content:space-between;gap:12px;font-size:13px}
+.ed-catering-totals>div span{flex:1}
+.ed-catering-totals .ed-catering-grand{border-top:1px solid #c9c9c0;padding-top:14px;font-size:18px;font-weight:800}
+@media(max-width:480px){.ed-catering-fields{grid-template-columns:1fr}}

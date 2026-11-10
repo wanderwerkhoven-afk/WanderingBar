@@ -323,3 +323,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 
 | `downloadMenuPdf` PDF font object refs and centered layout | `src/documents/menuPdf.ts` | PDF-menukaart | Correcte `/F1 3 0 R` en `/F2 4 0 R`, Times-Bold voor koppen, centrering van alle drankblokken en dynamische 1-/2-kolomsverdeling |
 | `.ed-menu-print .ed-menu-drinks-grid` | `src/EventDetail.css` | Menukaart-preview | Drie begrensde rijen en compacte typografie om zes dranken binnen de sierlijst te houden |
+
+| `.ed-menu-print.ed-size-a5 > .ed-menu-paper` | `src/EventDetail.css` | Menukaart A5-preview | A4-canvas 460×650,57 px, `transform:scale(326/460)` met vaste oorsprong; geen reflow van drankblokken |

@@ -294,3 +294,5 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Evenementtegel opent evenementdetail als volledige pagina in plaats van modal. Eventdetail behoudt mobiele tabs en desktopzijbalk; browsergeschiedenis en deep link `#/evenement/:id` ondersteund. Dashboard- en taaklinks openen dezelfde pagina. Controleer GitHub Actions-build en visuele weergave na deploy.
 
 - [x] Eventdetail: aparte tab `Offerte & factuur` toegevoegd naast Overzicht, Menukaart, Inkoop, Paklijst en Planning. Cateringofferte/factuurinstellingen, opgeslagen documenten en workshopoffertes verhuisd vanuit Overzicht. Prijscalculators blijven in Overzicht. Overige diensten tonen een duidelijke nog-niet-beschikbaarmelding. Bestaande offerte-/factuurdata blijven behouden.
+
+- [x] Tab `Offerte & factuur` hernoemd naar `Financiën`. Zowel de cateringstaffelcalculator als de workshopprijscalculator zijn vanuit Overzicht naar Financiën verplaatst, vóór de bestaande offerte- en factuurfuncties. Geen wijzigingen aan berekeningen of opgeslagen data.

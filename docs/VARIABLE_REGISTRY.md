@@ -309,3 +309,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `customFinancialLines?: CustomFinancialLine[]` | `src/types/event.ts`, `src/planning/customDocuments.ts` | Financiën bij Anders/overige diensten | Per-evenement handmatige posten: `id`, `description`, `quantity`, `unitPrice` |
 | `customQuotes?: CustomQuote[]`, `customInvoices?: CustomInvoice[]` | `src/types/event.ts`, `src/planning/customDocuments.ts` | Financiën en Overzicht | Persistente document-snapshots met regels en totaal, factuur gekoppeld via `quoteId`; optioneel en backward compatible |
 | `activeCustomQuote`, `activeCustomInvoice`, `customQuoteId` | `src/EventDetail.tsx` | Financiële documentpreview | Tijdelijke UI-state voor gekozen document |
+
+| `downloadQuotePdf(CustomQuote)` | `src/documents/quotePdf.ts`, `src/EventDetail.tsx` | Offerte PDF bij dienst Anders | Hergebruikt vaste éénpagina-A4 PDF-opmaak van catering, toont `lines` en `total`, geen browserprint |

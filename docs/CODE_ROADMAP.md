@@ -273,3 +273,5 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [ ] Cocktails per recept/menukaart en automatische inkoop zijn nog niet verbonden aan de prijsverdeling; percentage is voorlopig een begrotingsinstrument.
 - [ ] Btw, reiskosten, offerte-export en productiebuild/mobiele regressietests nog te valideren.
 - [ ] Volumestaffel past één tarief op alle cocktails toe; omzet kan dalen op staffelgrenzen. Later zakelijke keuze voor progressieve staffel of minimumbedrag.
+
+- [x] Extra cocktailafname: `cateringPlan.extraCocktails` optioneel; alle extra cocktails worden tegen het Classic-tarief van de vooraf geboekte staffel verrekend, zonder herstaffeling. Eventcalculator toont aparte nacalculatieregel en verhoogd totaal. Geen factuurautomatisering.

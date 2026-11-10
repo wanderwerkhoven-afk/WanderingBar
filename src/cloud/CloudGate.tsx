@@ -26,6 +26,7 @@ export default function CloudGate({ children }: { children: ReactNode }) {
   const [error, setError] = useState('');
   const [exported, setExported] = useState(false);
   const [remoteChange, setRemoteChange] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<'synced' | 'syncing' | 'error'>('syncing');
   const [retry, setRetry] = useState(0);
   const [signingIn, setSigningIn] = useState(false);
 
@@ -55,7 +56,7 @@ export default function CloudGate({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!user || phase !== 'ready' || !initial) return;
-    return startLiveSync(user.uid, initial, () => setRemoteChange(true), e => setError(e));
+    return startLiveSync(user.uid, initial, () => setRemoteChange(true), e => setError(e), setSyncStatus);
   }, [user, phase, initial]);
 
   async function logIn() {
@@ -135,7 +136,8 @@ export default function CloudGate({ children }: { children: ReactNode }) {
 
   return <>
     <div className="cloud-status-bar" role="status">
-      <span><Cloud size={15}/> Firebase verbonden · {user?.displayName || user?.email}</span>
+      <span><Cloud size={15}/> {syncStatus === 'synced' ? 'Gesynchroniseerd' : syncStatus === 'syncing' ? 'Synchroniseren…' : 'Synchronisatie controleren'} · {user?.displayName || user?.email}</span>
+      <button type="button" disabled={syncStatus === 'syncing' || remoteChange} onClick={() => window.dispatchEvent(new Event('barback-sync-request'))} aria-label="Nu synchroniseren" title="Nu synchroniseren"><RefreshCw size={16}/></button>
       <button type="button" onClick={() => void signOut(auth)} aria-label="Uitloggen"><LogOut size={16}/></button>
     </div>
     {(error || remoteChange) && <div className="cloud-notice" role="alert">

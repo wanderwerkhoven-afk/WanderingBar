@@ -1,5 +1,20 @@
 # Wandering BarBack — Code Roadmap
 
+## Firebase-synchronisatie — update 10 november 2026
+
+- [x] Google Authentication en Firestore-adapter op `main` aangesloten; GitHub Pages blijft de hosting.
+- [x] Vier bestaande datasets (`events`, `deletedEvents`, `inventory`, `catalog`) per ingelogde Firebase UID onder `users/{uid}/{dataset}/{recordId}` opgeslagen.
+- [x] Eerste login: lokale data uploaden naar lege cloud; bij verschillende versies eerst back-up downloaden en expliciet kiezen tussen samenvoegen of cloudversie.
+- [x] Live synchronisatie: lokale wijzigingen worden periodiek (ca. 1,2 seconde) naar Firestore geschreven; externe wijzigingen geven een verversmelding om verouderde React-state niet stilzwijgend terug te schrijven.
+- [x] Expliciete synchronisatiestatus en handmatige synchronisatieknop toegevoegd. De knop forceert controle op lokale wijzigingen; een gewijzigde dataset wordt alleen na geslaagde Firestore-write als gesynchroniseerd beschouwd.
+- [x] Bestaande localStorage-sleutels en lokale gegevens blijven behouden; geen destructieve schemawijziging.
+- [ ] **Handmatig met echte account verifiëren:** Google-login, eerste upload, Firestore-documenten, wijzigingen na herladen, twee apparaten, fout bij offline verbinding en conflictkeuze. Deze controles vereisen de browser en Firebase-toegang van de eigenaar.
+- [ ] Firestore Security Rules in Firebase Console verifiëren tegen `firestore.rules`.
+- [ ] Verbetering: directe repository-events in plaats van polling; transactie/versiebeheer voor gelijktijdige edits; automatische tests met Firestore Emulator.
+- [ ] Grotere afbeeldingen naar Firebase Storage migreren en maximale documentgrootte bewaken.
+
+**Bron van waarheid:** Firestore is de gedeelde opslag na Google-login; localStorage blijft een lokale werk-/herstelkopie. `src/cloud/storageSync.ts` regelt migratie, conflictkeuze en synchronisatie; `src/cloud/CloudGate.tsx` regelt toegang en zichtbare status. Zie `docs/VARIABLE_REGISTRY.md` en `VALUES.md`.
+
 Status: 2026-11-08 · branch: main · eerste compatibele model- en opslagrefactor uitgevoerd; verdere fasen open.
 
 ## Doel en werkafspraken

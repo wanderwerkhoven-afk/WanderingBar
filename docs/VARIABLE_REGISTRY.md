@@ -2,6 +2,8 @@
 
 ## Firebase en synchronisatie — 10 november 2026
 
+**Dubbele-ID-herstel:** `src/cloud/localRows.ts` bezit `Dataset`, `Row`, `parsed()` en `rowsFromLocal()`. Bij hergebruik van een `inventory.id` genereert `rowsFromLocal` een unieke `-local-N`-suffix in de cloudrepresentatie; de overige datasets blokkeren onveilige duplicaten. `PreparedSync.canMerge` en `PreparedSync.localProblem` sturen de beschikbare keuzes op het inlogscherm. `PreparedSync.activate('cloud')` vervangt uitsluitend de vier gegevenssets van de browser; geen algemene cacheclear. Regressietests: `tests/localRows.test.mjs`, uitgevoerd met `npm test`.
+
 | Symbool / opslag | Eigenaar | Betekenis |
 |---|---|---|
 | `firebaseConfig`, `auth`, `db` | `src/firebase.ts` | Firebase webconfiguratie, Google Authentication en Firestore-instantie (`barback-20df5`) |

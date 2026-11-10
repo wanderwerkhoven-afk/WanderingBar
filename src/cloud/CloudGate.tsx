@@ -108,18 +108,19 @@ export default function CloudGate({ children }: { children: ReactNode }) {
         </>}
         {phase === 'loading' && <p role="status">Je gegevens veilig controleren en synchroniseren…</p>}
         {phase === 'conflict' && <>
-          <h2>Er zijn twee versies gevonden</h2>
-          <p>Op dit apparaat staan lokale gegevens die verschillen van Firebase. Kies welke versie je wilt gebruiken. Download eerst een back-up van <strong>beide</strong> versies.</p>
+          <h2>Welke gegevens wil je gebruiken?</h2>
+          <p>Dit apparaat bevat nog lokale BarBack-gegevens. Je kunt de Firebase-gegevens van je andere apparaat gebruiken of beide versies samenvoegen. Download eerst een back-up van <strong>beide</strong> versies.</p>
+          {prepared?.localProblem && <p role="status">{prepared.localProblem} Je kunt wel veilig verdergaan met de gegevens uit Firebase.</p>}
           <button className="cloud-secondary" type="button" onClick={() => {
             prepared?.exportBackup(); setExported(true);
           }}><Download size={18}/> Back-up downloaden</button>
-          <button className="cloud-primary" disabled={!exported} type="button" onClick={() => void choose('merge')}>
+          <button className="cloud-primary" disabled={!exported} type="button" onClick={() => void choose('cloud')}>
+            Apparaatcache vervangen door Firebase
+          </button>
+          <button className="cloud-secondary" disabled={!exported || !prepared?.canMerge} type="button" onClick={() => void choose('merge')}>
             Lokale gegevens samenvoegen met Firebase
           </button>
-          <button className="cloud-secondary" disabled={!exported} type="button" onClick={() => void choose('cloud')}>
-            Alleen Firebase-gegevens gebruiken
-          </button>
-          <small>Bij samenvoegen blijven unieke records behouden. Bij gelijke ID's krijgt de lokale versie voorrang. De back-up bevat de originele versies.</small>
+          <small>De eerste optie vervangt alleen de BarBack-gegevens in deze browser, niet je account of gegevens op je telefoon. De gedownloade back-up bewaart beide originele versies. Bij samenvoegen blijven unieke records behouden; bij gelijke ID's krijgt de lokale versie voorrang.</small>
         </>}
         {phase === 'error' && <>
           <p>De cloudverbinding is nog niet gereed. Je bestaande gegevens zijn niet verwijderd.</p>

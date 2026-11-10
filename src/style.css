@@ -176,3 +176,79 @@
 .dashboard-task .task-urgency-hoog{background:#f8e8bc;color:#775016}
 .dashboard-task .task-urgency-gemiddeld{background:#e8e2d5;color:#63533c}
 .dashboard-task .task-urgency-laag,.dashboard-task .task-urgency-datum-ontbreekt{background:#ece9e4;color:#6e655c}
+
+
+/* Desktop enhancement — mobile layout remains unchanged below 900px.
+   Navigation becomes a quiet side rail, content is constrained to readable widths. */
+@media (min-width:900px){
+ :root{background:#f2eae1}
+ body{background:radial-gradient(circle at 85% 0%,#fff8ef 0,#f2eae1 58%,#ede3d8 100%)}
+ .shell{max-width:none;width:100%;min-height:100dvh;margin:0;padding:0 0 0 236px;background:transparent}
+ .header{padding:30px clamp(30px,4vw,70px) 24px;background:transparent;border-bottom:1px solid #e6d8c9}
+ .header .top{max-width:1360px;margin:auto}
+ .header h1{max-width:1360px;margin:22px auto 0;font-size:clamp(29px,2.5vw,37px)}
+ .brand{font-size:23px;letter-spacing:-.4px}
+ .brand span{font-size:18px}
+ .avatar{height:40px;width:40px;font-size:14px}
+ .actions{gap:18px}
+ .shell>main{width:100%;max-width:1490px;margin:0 auto;padding:30px clamp(30px,4vw,70px) 60px}
+ .bottom-nav{position:fixed;inset:0 auto 0 0;left:0;bottom:0;transform:none;width:236px;height:100dvh;padding:154px 14px 24px;background:#fffaf4;border:0;border-right:1px solid #e8dacc;box-shadow:4px 0 24px #4b2c1d08;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;gap:7px;z-index:5}
+ .bottom-nav:before{content:'BARBACK';position:absolute;top:48px;left:26px;font:700 13px 'DM Sans',sans-serif;letter-spacing:.2em;color:#a87855}
+ .bottom-nav button{width:100%;min-width:0;min-height:48px;flex-direction:row;justify-content:flex-start;gap:15px;padding:11px 15px;border-radius:12px;text-align:left;font-size:13px;font-weight:700;transition:background .15s ease,color .15s ease}
+ .bottom-nav button svg{width:19px;height:19px;flex-shrink:0}
+ .bottom-nav button:hover{background:#f3e7db;color:#4b2c1d}
+ .bottom-nav button.active{background:#f0e1d2;color:#4b2c1d}
+ .card{border:1px solid #efe4d9;border-radius:18px;box-shadow:0 8px 25px #65412a0a}
+ .shell>main:has(> .event){display:grid;grid-template-columns:minmax(0,1.2fr) minmax(330px,.8fr);gap:22px 26px;align-items:start}
+ .shell>main:has(> .event)> .event{grid-column:1;grid-row:1;margin:0}
+ .shell>main:has(> .event)> .tasks{grid-column:2;grid-row:1 / span 2;margin:0}
+ .shell>main:has(> .event)> .new-event{grid-column:1;grid-row:2;margin:0;max-width:100%;align-self:start}
+ .section-title{font-size:15px;padding:15px 20px}
+ .section-title svg{width:20px;height:20px}
+ .event-content{padding:20px;gap:20px;align-items:flex-start}
+ .event-image{width:42%;max-width:255px;min-height:0;height:190px;flex-shrink:0;border-radius:13px;overflow:hidden;font-size:45px}
+ .dashboard-event-photo{width:100%;height:100%;object-fit:cover}
+ .event-info h2{font-size:19px;margin:0 0 13px}
+ .event-info>div:not(.progress-line){font-size:13px;margin:8px 0}
+ .progress-line{margin:15px 0 12px}
+ .status{padding:7px 12px;font-size:11px}
+ .tasks-heading{margin:2px 3px 13px}
+ .tasks-heading h2{font-size:21px}
+ .count{width:29px;height:29px;font-size:12px}
+ .task-list{padding:6px 17px}
+ .task{min-height:62px}
+ .dashboard-task .task-link{padding:10px 0}
+ .dashboard-task .task-link strong{font-size:13px}
+ .dashboard-task .task-link small{font-size:11px}
+ .new-event{padding:14px 18px;font-size:14px;border-radius:13px}
+ .new-event:hover{background:#62402e}
+ .events-header{padding-bottom:20px}
+ .events-header .top{display:flex}
+ .events-page-title{max-width:1360px;margin:18px auto 0;padding:0}
+ .events-page-title h1{font-size:32px}
+ .events-page{min-height:0;padding-bottom:30px}
+ .event-filters{margin-bottom:22px}
+ .event-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+ .event-list-card{height:100%;padding:16px;gap:16px;transition:transform .15s ease,box-shadow .15s ease}
+ .event-list-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px #65412a14}
+ .event-thumbnail{width:100px;max-width:100px}
+ .event-add{right:34px;bottom:32px}
+ .preparation-tasks{max-width:1000px;margin:0 auto}
+ .settings-page{max-width:1000px;margin:0 auto}
+ .overlay{padding:30px}
+ .modal.event-form{max-width:480px;width:min(480px,100%);padding:28px}
+ .more-fullscreen{padding:35px 35px 35px 260px}
+ .more-fullscreen-inner{max-width:1100px}
+}
+@media (min-width:1250px){
+ .shell>main:has(> .event){grid-template-columns:minmax(0,1.25fr) minmax(380px,.75fr)}
+ .event-image{height:215px}
+ .event-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (min-width:900px) and (max-width:1100px){
+ .shell{padding-left:198px}
+ .bottom-nav{width:198px}
+ .shell>main:has(> .event){grid-template-columns:minmax(0,1fr)}
+ .shell>main:has(> .event)> .event,.shell>main:has(> .event)> .tasks,.shell>main:has(> .event)> .new-event{grid-column:1;grid-row:auto}
+ .event-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

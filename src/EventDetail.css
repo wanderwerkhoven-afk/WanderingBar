@@ -314,3 +314,9 @@
 
 /* Keep paired beer titles aligned at the top of each grid row. */
 .ed-menu-print .ed-menu-drinks-grid .ed-menu-drink{align-self:start}
+
+/* Event-level beer tasting-note length: preserve font and layout, cap visible lines. */
+.ed-menu-print .ed-beer-subtitle-full .ed-menu-drink p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.ed-menu-print.ed-beer-subtitle-full .ed-menu-drink p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.ed-menu-print.ed-beer-subtitle-short .ed-menu-drink p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.ed-menu-print.ed-beer-subtitle-keywords .ed-menu-drink p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}

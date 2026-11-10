@@ -258,3 +258,13 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `EventData.cateringPlan?` | `src/types/event.ts` | eventrepository | Optionele cateringinstellingen per evenement; bestaande records compatibel |
 
 | `CateringPlan.extraCocktails`, `extraCocktailRate`, `extraCocktailsTotal` | `src/planning/cateringPricing.ts` | `EventDetail.tsx` | Extra geserveerde cocktails, Classic-prijs op basis van oorspronkelijk geboekte aantallen, afzonderlijke nacalculatie; optioneel veld compatibel met bestaande records |
+
+## Dynamische cateringprijzen en documenten
+| Symbool / veld | Gedefinieerd in | Gebruikt door | Betekenis / opslag |
+|---|---|---|---|
+| `CATERING_TIER_RANGES` | `src/planning/cateringPricing.ts` | `cateringTiers` | Vaste aantalsgrenzen van de vijf niveaus |
+| `CateringPriceEndpoints`, `DEFAULT_CATERING_PRICES` | `src/planning/cateringPricing.ts` | `CateringPlan.prices` | Classic start/eind €6,50/€4,50, Signature start/eind €7,50/€5,50 |
+| `cateringTiers`, `calculateCatering` | `src/planning/cateringPricing.ts` | `EventDetail`, documentgenerator | Interpolatie en berekening; geboekte staffel bepaalt Classic-meerwerktarief |
+| `CateringPlan.extraCocktailRateOverride?` | `src/planning/cateringPricing.ts` | `EventDetail`, `createCateringQuote` | Afwijkend meerwerktarief, anders Classic-staffeltarief |
+| `CateringQuote`, `createCateringQuote` | `src/planning/cateringDocuments.ts` | `EventData.cateringQuotes?` | Vaste offerte-snapshot inclusief prijzen, staffels en klantafspraken |
+| `CateringInvoice`, `createCateringInvoice` | `src/planning/cateringDocuments.ts` | `EventData.cateringInvoices?` | Factuurmomentopname met uitsluitend financiële regels |

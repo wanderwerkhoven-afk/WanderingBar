@@ -350,3 +350,7 @@
 /* Sticky tabs must use the event modal as scroll container. An overflow-x:hidden
    ancestor creates an unintended scroll container and disables sticky behavior. */
 .ed-page{overflow-x:clip}
+
+/* Gall & Gall wine metadata stays readable without crowding selection rows. */
+.ed-wine-details{display:block;margin-top:4px;font-size:11px;line-height:1.45;font-weight:400;color:#866e5e}
+.ed-wine-details a{display:inline-block;margin-left:8px;color:#6b402b;text-decoration:underline;text-underline-offset:2px}

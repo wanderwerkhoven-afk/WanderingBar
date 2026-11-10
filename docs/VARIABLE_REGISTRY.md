@@ -317,3 +317,6 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `downloadMenuPdf({eventTitle,heading,items,design,frame,size})` | `src/documents/menuPdf.ts` | Menukaart PDF-export in `src/EventDetail.tsx` | Native PDF, één pagina A4/A5; gebruikt `menuDesign`, `menuFrame`, `menuSize` en `printMenuItems`, zonder browserprint |
 
 | `printMenuItems.length` | `src/EventDetail.tsx`, `src/documents/menuPdf.ts` | Menukaart preview en PDF | Stuurt automatische 1- of 2-koloms indeling en compacte typografie; 5e item gecentreerd op derde rij |
+
+| `catalogEntries` | `src/EventDetail.tsx` | Evenement > Menukaart | Niet-destructieve combinatie van opgeslagen catalogus en ontbrekende `MENU_CATALOG`-items; bewaart eigen recepten en toont standaarddranken |
+| `maxMenuItems` | `src/EventDetail.tsx` | Cocktail- en mocktailselectie | Maximaal 6 items bij uitsluitend Cocktail/Mocktail, passend bij PDF-layout |

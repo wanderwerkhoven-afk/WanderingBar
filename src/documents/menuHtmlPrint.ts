@@ -8,32 +8,13 @@ export function printMenuHtml(preview:HTMLElement,size:MenuPrintSize):void{
  const popup=window.open('','_blank');
  if(!popup){window.alert('Sta pop-ups toe om de menukaart af te drukken.');return}
  const clone=preview.cloneNode(true) as HTMLElement;
- // Preserve the preview's actual rendered canvas and typography instead of
- // forcing it into a narrower 460px layout during printing.
- const sourceWidth=preview.offsetWidth;
- const sourceHeight=preview.offsetHeight;
- if(sourceWidth<=0||sourceHeight<=0){popup.close();window.alert('Menukaart heeft geen geldige afmetingen.');return}
- const sourceNodes=[preview,...Array.from(preview.querySelectorAll<HTMLElement>('*'))];
- const cloneNodes=[clone,...Array.from(clone.querySelectorAll<HTMLElement>('*'))];
- sourceNodes.forEach((source,index)=>{
-  const target=cloneNodes[index];if(!target)return;
-  const computed=window.getComputedStyle(source);
-  for(let i=0;i<computed.length;i++){
-   const property=computed.item(i);
-   // Copy computed typography, spacing and layout to avoid viewport-based
-   // clamp()/media-query changes between app preview and print window.
-   target.style.setProperty(property,computed.getPropertyValue(property),computed.getPropertyPriority(property));
-  }
- });
  clone.classList.remove('ed-size-a5');
  clone.classList.add('ed-size-a4');
  const styleLinks=Array.from(document.querySelectorAll('link[rel="stylesheet"],style'))
   .map(node=>node.outerHTML).join('\n');
  const pageWidth=size==='A5'?'148mm':'210mm';
  const pageHeight=size==='A5'?'210mm':'297mm';
- const pagePixelWidth=size==='A5'?559.3701:793.7008;
- const pagePixelHeight=size==='A5'?793.7008:1122.5197;
- const scale=Math.min(pagePixelWidth/sourceWidth,pagePixelHeight/sourceHeight);
+ const scale=size==='A5'?559.3701/460:793.7008/460;
  const paperLabel=size==='A5'?'A5 · 148 × 210 mm':'A4 · 210 × 297 mm';
  // The printed document is a scaled copy of the actual preview, not a reflow.
  const printCss=`
@@ -44,14 +25,18 @@ export function printMenuHtml(preview:HTMLElement,size:MenuPrintSize):void{
  #print-root{width:${pageWidth};height:${pageHeight};position:relative;overflow:hidden}
  #print-root>.ed-menu-print{
    position:absolute!important;top:0!important;left:0!important;
-   width:${sourceWidth}px!important;max-width:none!important;min-width:${sourceWidth}px!important;
-   height:${sourceHeight}px!important;max-height:none!important;min-height:${sourceHeight}px!important;
+   width:460px!important;max-width:none!important;min-width:460px!important;
+   height:650.57px!important;max-height:none!important;min-height:650.57px!important;
    aspect-ratio:auto!important;margin:0!important;
    zoom:1!important;transform:scale(${scale})!important;transform-origin:top left!important;
    box-shadow:none!important;display:flex!important;overflow:hidden!important;
    print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important;
  }
- /* All child measurements are frozen from the live preview above. */
+ #print-root .ed-menu-paper{width:100%!important;min-width:0!important;max-width:100%!important;height:100%!important;max-height:100%!important;transform:none!important;padding:44px!important}
+ #print-root .ed-menu-paper h2{font-size:34px!important}
+ #print-root .ed-menu-drinks-compact .ed-menu-drink h3{font-size:17px!important}
+ #print-root .ed-menu-drinks-compact .ed-menu-drink p{font-size:11px!important}
+ #print-root .ed-menu-drinks-grid{grid-template-rows:repeat(3,minmax(0,1fr))!important}
  @media screen{
    html,body{width:auto!important;height:auto!important;min-height:100vh!important;overflow:auto!important;background:#e7e2dc!important}
    #print-root{margin:24px auto;box-shadow:0 8px 28px #0002}

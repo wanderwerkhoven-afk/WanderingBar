@@ -298,3 +298,5 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Tab `Offerte & factuur` hernoemd naar `Financiën`. Zowel de cateringstaffelcalculator als de workshopprijscalculator zijn vanuit Overzicht naar Financiën verplaatst, vóór de bestaande offerte- en factuurfuncties. Geen wijzigingen aan berekeningen of opgeslagen data.
 
 - [x] Overzicht toont sectie `Offertes & facturen` uitsluitend wanneer het evenement ten minste één opgeslagen cateringofferte, workshopofferte of cateringfactuur heeft. Documentregels tonen type, nummer, klant, datum en totaal; klikken opent bestaande documentpreview. Geen lege sectie voor nieuwe evenementen. Documentbeheer blijft onder Financiën.
+
+- [x] Facturen genereren voor Cocktailworkshop: kies bestaande workshopofferte, genereer opgeslagen factuur met snapshot van arrangement, deelnemers, prijs p.p. en reiskosten. Factuurweergave, print/PDF via browser, factuurhistorie en conditionele Overzicht-weergave toegevoegd. Cateringfacturen blijven beschikbaar. Conceptfacturen hebben nog geen verplichte btw-/bedrijfs-/betaalgegevens; niet verzendklaar.

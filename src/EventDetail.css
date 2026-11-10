@@ -274,7 +274,7 @@
 
 /* Menukaart: one layout source for preview and HTML print.
    A5 scales the complete A4 canvas (including its ornamental frame). */
-.ed-menu-drinks.ed-menu-drinks-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));align-items:center;justify-items:center;column-gap:16px;row-gap:10px;width:100%;min-width:0}
+.ed-menu-drinks.ed-menu-drinks-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;grid-auto-rows:auto;align-content:center;align-items:center;justify-items:center;column-gap:16px;row-gap:28px;width:100%;min-width:0}
 .ed-menu-drinks-grid .ed-menu-drink{width:100%;min-width:0;max-height:100%;overflow:hidden;text-align:center}
 .ed-menu-drinks-five .ed-menu-drink:last-child{grid-column:1/-1;justify-self:center;width:calc(50% - 8px)}
 .ed-menu-print{position:relative;overflow:hidden;aspect-ratio:210/297;min-height:0}

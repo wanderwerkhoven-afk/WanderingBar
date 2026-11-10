@@ -1,5 +1,25 @@
 # Wandering BarBack — Code Roadmap
 
+## Actuele technische status — 10 november 2026
+
+Deze sectie beschrijft de **huidige implementatie**; oudere afgeronde regels verderop zijn een historisch wijzigingslog en beschrijven soms inmiddels vervangen technieken.
+
+### Menukaart: één actieve afdrukroute
+- [x] React-preview in `src/EventDetail.tsx`, opmaak in `src/EventDetail.css`.
+- [x] Afdrukken vanuit `src/documents/menuHtmlPrint.ts`: HTML-kopie van de preview in een apart printvenster; browser kan afdrukken of opslaan als PDF.
+- [x] Oude native menukaart-PDF-generator `src/documents/menuPdf.ts` verwijderd.
+- [x] Historische A4/A5 named print pages en tegenstrijdige CSS-blokken verwijderd.
+- [x] 1–3 dranken verticaal, 4 = 2×2, 5 = 2×2 plus gecentreerde derde rij, 6 = 2×3.
+- [x] A5-preview schaalt het volledige A4-ontwerp met `zoom:326/460`, zonder afzonderlijke herflow.
+- [x] Printpagina gebruikt `@page` met A4 (210×297 mm) of A5 (148×210 mm), nul marges en kleurbehoud.
+- [ ] **Nog controleren:** daadwerkelijke build en visuele HTML-print in Edge/Chrome voor 3, 4, 5 en 6 dranken op A4/A5; geen overlap, afsnijding of extra pagina's.
+- [ ] **Browserbeperking:** papierkeuze in printdialoog kan niet door de webapp gegarandeerd worden afgedwongen.
+- [ ] **Technische verbetering:** preview en print delen de HTML, maar de printmodule heeft nog eigen maat- en typografieregels; volledige pixelpariteit moet nog met browserregressietests worden bevestigd.
+
+### Documentatiebeleid
+De roadmap hieronder bevat ook historische uitgevoerde wijzigingen. Gebruik deze sectie als bron voor de huidige menukaartarchitectuur; verwijs voor actuele symbolen naar de bovenste sectie van het variabelenregister.
+
+
 ## Firebase-synchronisatie — update 10 november 2026
 
 ### Herstel tweede apparaat en dubbele inventaris-ID's (10 november 2026)

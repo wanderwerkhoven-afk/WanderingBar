@@ -305,3 +305,7 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 
 | `event.workshopInvoices?: WorkshopInvoice[]` | `src/types/event.ts`, `src/planning/workshopQuotes.ts` | `src/EventDetail.tsx` | Optionele persistente workshopfacturen op basis van offerte-snapshot; backward-compatible lokale eventdata |
 | `workshopQuoteId`, `activeWorkshopInvoice`, `workshopQuoteForInvoice` | `src/EventDetail.tsx` | Financiën en Overzicht | Geselecteerde workshopofferte voor facturatie en documentpreview; componentstate |
+
+| `customFinancialLines?: CustomFinancialLine[]` | `src/types/event.ts`, `src/planning/customDocuments.ts` | Financiën bij Anders/overige diensten | Per-evenement handmatige posten: `id`, `description`, `quantity`, `unitPrice` |
+| `customQuotes?: CustomQuote[]`, `customInvoices?: CustomInvoice[]` | `src/types/event.ts`, `src/planning/customDocuments.ts` | Financiën en Overzicht | Persistente document-snapshots met regels en totaal, factuur gekoppeld via `quoteId`; optioneel en backward compatible |
+| `activeCustomQuote`, `activeCustomInvoice`, `customQuoteId` | `src/EventDetail.tsx` | Financiële documentpreview | Tijdelijke UI-state voor gekozen document |

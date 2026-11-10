@@ -279,3 +279,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `.shell-event-detail`, `.event-detail-page` | `src/style.css` | EventDetail | Volledige mobiele/desktop pagina i.p.v. overlay; CSS-only |
 
 | `EventDetail.Tab = 'Offerte & factuur'` | `src/EventDetail.tsx` | Eventdetail tabnavigatie | Presentatie van bestaande cateringoffertes, cateringfacturen en workshopoffertes; geen nieuwe opslagvelden |
+
+| `EventDetail.Tab = 'Financiën'` | `src/EventDetail.tsx` | Tabnavigatie, cateringcalculator, workshopcalculator, offertes, facturen | Vervangt UI-tab `Offerte & factuur`; lokale componentstate, geen migratie van eventdata nodig |

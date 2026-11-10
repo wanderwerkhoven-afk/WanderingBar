@@ -281,3 +281,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `EventDetail.Tab = 'Offerte & factuur'` | `src/EventDetail.tsx` | Eventdetail tabnavigatie | Presentatie van bestaande cateringoffertes, cateringfacturen en workshopoffertes; geen nieuwe opslagvelden |
 
 | `EventDetail.Tab = 'Financiën'` | `src/EventDetail.tsx` | Tabnavigatie, cateringcalculator, workshopcalculator, offertes, facturen | Vervangt UI-tab `Offerte & factuur`; lokale componentstate, geen migratie van eventdata nodig |
+
+| `event.cateringQuotes?`, `event.workshopQuotes?`, `event.cateringInvoices?` | `src/types/event.ts` | `src/EventDetail.tsx` Overzicht-documentsectie | Bestaande opgeslagen snapshots bepalen conditionele zichtbaarheid en documentlijst; geen nieuwe opslagvelden |

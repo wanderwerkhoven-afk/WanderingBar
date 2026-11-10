@@ -27,38 +27,46 @@ export function downloadMenuPdf({eventTitle,heading,items,design,frame,size}:Men
   stroke(24*scale,24*scale,width-48*scale,height-48*scale,accent,.45*scale);
   for(const [x,y] of [[29*scale,29*scale],[width-29*scale,29*scale],[29*scale,height-29*scale],[width-29*scale,height-29*scale]])rect(x-2*scale,y-2*scale,4*scale,4*scale,accent);
  }
- text('THE WANDERING BAR',margin,height-78*scale,15*scale,true,fg);
- rule(height-93*scale);
- text(clean(heading).toUpperCase().slice(0,35),margin,height-130*scale,23*scale,true,fg);
- for(const [i,line] of wrap(eventTitle,48).slice(0,2).entries())text(line,margin,height-(155+i*15)*scale,10*scale,false,accent);
- const top=height-195*scale,bottom=75*scale;
+ const centerText=(s:string,center:number,y:number,fontSize:number,bold=false,color=fg)=>{
+  const estimatedWidth=clean(s).length*fontSize*(bold?0.48:0.51);
+  text(s,Math.max(34*scale,center-estimatedWidth/2),y,fontSize,bold,color);
+ };
+ const center=width/2;
+ if(frame==='ornate'){centerText('~',center,height-66*scale,21*scale,true,fg)}
+ centerText('T H E  W A N D E R I N G  B A R',center,height-91*scale,10.5*scale,true,fg);
+ const header=clean(heading).toUpperCase();
+ const titleLines=header==='THE DRINKS MENU'?['THE DRINKS','MENU']:wrap(header,17).slice(0,2);
+ const titleY=height-151*scale;
+ titleLines.forEach((line,i)=>centerText(line,center,titleY-i*35*scale,29*scale,true,fg));
+ const eventY=titleY-titleLines.length*35*scale-4*scale;
+ wrap(eventTitle.toUpperCase(),38).slice(0,2).forEach((line,i)=>centerText(line,center,eventY-i*14*scale,10.5*scale,false,fg));
+ const top=eventY-48*scale,bottom=83*scale;
  const available=top-bottom;
  const columns=items.length>3?2:1;
  const rows=columns===2?Math.ceil(items.length/2):items.length;
- const columnGap=26*scale;
- const columnWidth=columns===2?(usable-columnGap)/2:usable;
- const maxName=columns===2?27:50,maxDescription=columns===2?34:78;
+ const gap=18*scale;
+ const columnWidth=columns===2?(usable-gap)/2:usable;
+ const maxName=columns===2?22:42,maxDescription=columns===2?28:62;
  const formatted=items.map(item=>({name:wrap(item.name,maxName).slice(0,2),description:wrap(item.description,maxDescription).slice(0,3)}));
  const rowHeight=available/Math.max(1,rows);
- const baseName=columns===2?10.2:12.5,baseDescription=columns===2?7.3:8.5;
- const factor=Math.min(1,(rowHeight-10*scale)/(scale*(2*15+3*11+12)));
- if(factor<.55)throw new Error('Deze menukaart bevat te veel dranken voor één leesbare '+size+'-pagina. Kies minder dranken of gebruik A4.');
+ const baseName=columns===2?16:20,baseDescription=columns===2?9:11;
+ const factor=Math.min(1,(rowHeight-8*scale)/(scale*(2*19+3*12+4)));
+ if(factor<.55)throw new Error('Te veel dranken voor één leesbare '+size+'-menukaart. Kies minder dranken of A4.');
  for(let i=0;i<formatted.length;i++){
   const item=formatted[i],row=columns===2?Math.floor(i/2):i;
-  const isCenteredLast=columns===2&&items.length%2===1&&i===items.length-1;
+  const centeredLast=columns===2&&items.length%2===1&&i===items.length-1;
   const col=columns===2?i%2:0;
-  const x=isCenteredLast?margin+(usable-columnWidth)/2:margin+col*(columnWidth+columnGap);
-  const center=x+columnWidth/2;
-  const yTop=top-row*rowHeight-8*scale;
-  let y=yTop;
-  const centeredText=(s:string,fontSize:number,bold:boolean,color:string)=>{const estimatedWidth=clean(s).length*fontSize*(bold ? 0.54 : 0.48);text(s,Math.max(x,center-estimatedWidth/2),y,fontSize,bold,color)};
-  for(const line of item.name){centeredText(line,baseName*scale*factor,true,fg);y-=15*scale*factor}
-  for(const line of item.description){centeredText(line,baseDescription*scale*factor,false,accent);y-=11*scale*factor}
+  const x=centeredLast?margin+(usable-columnWidth)/2:margin+col*(columnWidth+gap);
+  const itemCenter=x+columnWidth/2;
+  const nameHeight=item.name.length*19*scale*factor;
+  const descHeight=item.description.length*12*scale*factor;
+  let y=top-row*rowHeight-(rowHeight-nameHeight-descHeight)/2;
+  for(const line of item.name){centerText(line,itemCenter,y,baseName*scale*factor,true,fg);y-=19*scale*factor}
+  y-=4*scale*factor;
+  for(const line of item.description){centerText(line,itemCenter,y,baseDescription*scale*factor,false,accent);y-=12*scale*factor}
  }
- rule(59*scale);
- text('CRAFTED FOR YOUR OCCASION',margin,44*scale,8*scale,false,accent);
  const stream=commands.join('\n')+'\n';
- const objects=['','<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Count 1 /Kids [6 0 R] >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>','<< /Length '+bytes(stream).length+' >>\nstream\n'+stream+'endstream','<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+width+' '+height+'] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 5 0 R >>'];
+ const objects=['','<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Count 1 /Kids [6 0 R] >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>','<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold /Encoding /WinAnsiEncoding >>','<< /Length '+bytes(stream).length+' >>\nstream\n'+stream+'endstream','<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+width+' '+height+'] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>'];
  let pdf='%PDF-1.4\n%\xE2\xE3\xCF\xD3\n';const offsets=[0];
  for(let i=1;i<objects.length;i++){offsets[i]=bytes(pdf).length;pdf+=i+' 0 obj\n'+objects[i]+'\nendobj\n'}
  const xref=bytes(pdf).length;pdf+='xref\n0 '+objects.length+'\n0000000000 65535 f \n';

@@ -15,11 +15,13 @@ export function printMenuHtml(preview:HTMLElement,size:MenuPrintSize):void{
  const pageWidth=size==='A5'?'148mm':'210mm';
  const pageHeight=size==='A5'?'210mm':'297mm';
  const scale=size==='A5'?559.3701/460:793.7008/460;
+ const paperLabel=size==='A5'?'A5 · 148 × 210 mm':'A4 · 210 × 297 mm';
  // All styles use the exact same 460px A4 canvas, then scale the entire canvas.
  const printCss=`
- @page{size:${size} portrait;margin:0}
+ @page{size:${pageWidth} ${pageHeight};margin:0}
+ @page :first{size:${pageWidth} ${pageHeight};margin:0}
  html,body{width:${pageWidth}!important;height:${pageHeight}!important;margin:0!important;padding:0!important;background:white!important;overflow:hidden!important}
- *{box-sizing:border-box}
+ *,*::before,*::after{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
  #print-root{width:${pageWidth};height:${pageHeight};position:relative;overflow:hidden}
  #print-root>.ed-menu-print{
    position:absolute!important;top:0!important;left:0!important;
@@ -44,7 +46,13 @@ export function printMenuHtml(preview:HTMLElement,size:MenuPrintSize):void{
    #print-toolbar{position:sticky;top:0;z-index:20;background:#fff;padding:12px;text-align:center;font:14px Arial,sans-serif}
    #print-toolbar button{border:0;border-radius:9px;padding:12px 22px;background:#4b2c1d;color:#fff;cursor:pointer}
  }
- @media print{#print-toolbar{display:none!important}#print-root{margin:0!important;box-shadow:none!important}}
+ @media print{
+  @page{size:${pageWidth} ${pageHeight};margin:0}
+  html,body{width:${pageWidth}!important;height:${pageHeight}!important;max-width:${pageWidth}!important;max-height:${pageHeight}!important;overflow:hidden!important;}
+  #print-toolbar{display:none!important}
+  #print-root{position:fixed!important;inset:0!important;width:${pageWidth}!important;height:${pageHeight}!important;margin:0!important;padding:0!important;box-shadow:none!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  #print-root>.ed-menu-print{page-break-before:avoid!important;page-break-after:avoid!important;break-before:avoid!important;break-after:avoid!important}
+ }
  `;
  const escapeTitle=(s:string)=>s.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]||ch));
  popup.document.open();

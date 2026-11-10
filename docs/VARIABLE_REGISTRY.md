@@ -334,3 +334,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `pageWidth`, `pageHeight`, `paperLabel` | `src/documents/menuHtmlPrint.ts` | Menukaart printvenster | Bepaalt vaste A4/A5-papierafmetingen, `@page`, marges 0 en zichtbare formaatindicatie; browser behoudt uiteindelijke printercontrole |
 
 | `sourceWidth`, `sourceHeight`, `sourceNodes`, `cloneNodes`, `scale` | `src/documents/menuHtmlPrint.ts` | HTML-menukaart print | Kopieert werkelijke previewafmetingen en computed styles; proportioneel schalen naar A4/A5 zonder tekstherflow |
+
+| Legacy `@media print` verwijderd | `src/EventDetail.css` | Menukaart afdrukken | Voorkomt conflict met `menuHtmlPrint.ts`: geen geforceerde A4 of 21pt cocktailkoppen meer |

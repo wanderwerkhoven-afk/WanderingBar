@@ -233,3 +233,11 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `EventActionTask`, `EventData.tasks` | `src/types/event.ts` | `EventDetail.tsx`, `eventTasks.ts`, `main.tsx` | Persistente eventactie met optionele ISO-deadline, status en id; geen nieuwe storage key |
 | `newTaskTitle`, `newTaskDeadline` | `src/EventDetail.tsx` | Acties & deadlines | Tijdelijke formulierstate voor nieuwe taak |
 | `EventTask.kind='action'`, `EventTask.deadline` | `src/planning/eventTasks.ts` | Dashboard en Voorbereiding | Afgeleide taak en individuele prioriteit op eigen deadline |
+
+## Cocktailworkshop prijzen — 10 november 2026
+| Symbool | Eigenaar | Consument | Betekenis |
+|---|---|---|---|
+| `WORKSHOP_PACKAGES`, `WorkshopPackageId` | `src/planning/workshopPricing.ts` | `EventDetail.tsx` | Twee standaardarrangementen met drie cocktailnamen en vaste standaardprijzen |
+| `WorkshopPricing`, `workshopPricing` | `src/planning/workshopPricing.ts` | `EventData.workshopPricing`, `EventDetail.tsx` | Per-event pakket en optionele aangepaste prijs; fallback op standaardprijs |
+| `MIN_WORKSHOP_GUESTS`, `isCocktailWorkshop`, `workshopStaffSuggestion` | `src/planning/workshopPricing.ts` | `EventDetail.tsx` | Minimum 10, detectie workshopdienst en personeelssuggestie |
+| `workshopTotal`, `setWorkshopPackage` | `src/EventDetail.tsx` | Overzicht prijskaart | Live omzet uit `event.guests` × prijs p.p.; pakketwissel reset prijs naar pakketstandaard |

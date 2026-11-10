@@ -375,3 +375,6 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Menukaart cocktailgroepen compacter (10 november 2026): de twee-koloms-grid gebruikt voortaan inhoudsafhankelijke rijhoogtes (`grid-auto-rows:auto`) en `align-content:center` met 28px tussen de rijen, in plaats van drie rijen die de hele beschikbare hoogte opvullen. Daardoor voelen 4–6 cocktails als één gecentreerde sectie. Dezelfde CSS wordt door de HTML-afdrukpagina geladen; A4/A5 behouden de bestaande schaal.
 
 - [x] Menukaart finetuning: cocktailgrid 16px omhoog verplaatst met `transform:translateY(-16px)`; de compacte `row-gap:28px`, centrering per kolom en footer blijven ongewijzigd. De HTML-print gebruikt dezelfde menukaart-CSS.
+
+- [x] Tijdelijke catalogusmigratie voor standaardcocktails en mocktails: in Instellingen → Catalogus staat nu een knop om alle ontbrekende `COCKTAIL_RECIPES` (13 recepten) expliciet op te slaan via `writeMenuCatalog`, zonder bestaande/gewijzigde recepten te overschrijven. De knop toont het aantal ontbrekende recepten en bevestigt lokale opslag.
+- [ ] **Wachten op gebruiker:** recepten op eigen apparaat opslaan en controleren dat Firestore-synchronisatie daadwerkelijk is voltooid, ook op een tweede apparaat. Pas daarna hardcoded `COCKTAIL_RECIPES`/catalogusfallback gecontroleerd verwijderen; niet eerder, om dataverlies te voorkomen.

@@ -327,3 +327,6 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `.ed-menu-print.ed-size-a5 > .ed-menu-paper` | `src/EventDetail.css` | Menukaart A5-preview | A4-canvas 460×650,57 px, `transform:scale(326/460)` met vaste oorsprong; geen reflow van drankblokken |
 
 | `.ed-menu-print.ed-size-a5` | `src/EventDetail.css` | A5-preview | Complete A4-canvas 460×650,57 met CSS `zoom:326/460`, in plaats van alleen child-transform; behoudt uitlijning van rand en inhoud |
+
+| `printMenuHtml(preview,size)` | `src/documents/menuHtmlPrint.ts` | Menukaart afdrukken | Kloont de actuele HTML-preview, neemt de stylesheets over en opent printvenster met A4/A5-pagina; geen aparte PDF-tekenengine |
+| `#print-root`, `#print-toolbar` | `src/documents/menuHtmlPrint.ts` | Printvenster | Vast 460px A4-canvas met schaal 793,7008/460 voor A4 en 559,3701/460 voor A5, browserprint/PDF |

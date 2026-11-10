@@ -138,7 +138,7 @@ export default function CloudGate({ children }: { children: ReactNode }) {
   return <>
     <div className="cloud-status-bar" role="status">
       <span><Cloud size={15}/> {syncStatus === 'synced' ? 'Gesynchroniseerd' : syncStatus === 'syncing' ? 'Synchroniseren…' : 'Synchronisatie controleren'} · {user?.displayName || user?.email}</span>
-      <button type="button" disabled={syncStatus === 'syncing' || remoteChange} onClick={() => window.dispatchEvent(new Event('barback-sync-request'))} aria-label="Nu synchroniseren" title="Nu synchroniseren"><RefreshCw size={16}/></button>
+      
       <button type="button" onClick={() => void signOut(auth)} aria-label="Uitloggen"><LogOut size={16}/></button>
     </div>
     {(error || remoteChange) && <div className="cloud-notice" role="alert">

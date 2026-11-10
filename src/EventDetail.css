@@ -323,3 +323,19 @@
 .ed-menu-print .ed-menu-drink h3{display:block;text-align:center}
 .ed-menu-print .ed-menu-drink .ed-beer-icon{display:inline-block;vertical-align:-.12em;margin-right:5px}
 .ed-menu-print .ed-beer-title-abv{display:inline;font-size:.72em;font-weight:400;white-space:nowrap;vertical-align:baseline;margin-left:5px;opacity:.8}
+
+/* Manual two-column beer order editor, matching printed row/column positions. */
+.ed-beer-order-tool{margin:18px 0;padding:15px;border:1px solid #e8d7c6;border-radius:14px;background:#fffaf3}
+.ed-beer-order-tool .ed-section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ed-beer-order-tool h3{margin:0;font-size:17px;color:#4b2c1d}
+.ed-beer-order-tool .ed-muted{margin:7px 0 12px}
+.ed-order-reset{border:1px solid #decab6;border-radius:999px;padding:7px 12px;background:#f8eee4;color:#674633;cursor:pointer}
+.ed-beer-order-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.ed-beer-order-item{display:flex;align-items:center;gap:8px;min-width:0;min-height:56px;padding:9px;border:1px solid #e4d2bf;border-radius:10px;background:#fff;cursor:grab;touch-action:none;user-select:none;transition:background .18s,border-color .18s,box-shadow .18s}
+.ed-beer-order-item.is-dragging{opacity:.6;cursor:grabbing;box-shadow:0 5px 16px #4b2c1d22}
+.ed-beer-order-item.is-target{border-color:#4b2c1d;background:#f1e1cf;box-shadow:0 0 0 2px #4b2c1d22}
+.ed-beer-order-position{display:grid;place-items:center;flex:none;width:23px;height:23px;border-radius:50%;background:#f4e7d9;color:#674633;font-size:11px;font-weight:700}
+.ed-beer-order-name{flex:1;min-width:0;font-size:12px;font-weight:650;line-height:1.35;color:#4b2c1d}
+.ed-beer-order-grip{font-size:21px;color:#a48972}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.25s}
+@media(prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation-duration:0s}}

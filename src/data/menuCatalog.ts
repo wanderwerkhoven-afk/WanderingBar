@@ -15,7 +15,7 @@ export const COCKTAIL_RECIPES:{name:string;type:'Cocktail'|'Mocktail';ingredient
 ];
 
 export type MenuKind='Cocktail'|'Mocktail'|'Wijn'|'Speciaalbier'|'G&T';
-export type MenuEntry={name:string;type:MenuKind;ingredients:[string,number,string][]};
+export type MenuEntry={name:string;type:MenuKind;ingredients:[string,number,string][];tasteProfile?:string};
 export const SERVICE_OPTIONS=['Cocktail workshop','Cocktail catering','Mobiele cocktailbar','Wijnbar','Speciaalbierbar','G&T bar'] as const;
 export function serviceMenuKinds(service?:string):MenuKind[]{const s=(service||'').toLocaleLowerCase('nl');if(s.includes('wijn'))return ['Wijn'];if(s.includes('speciaalbier')||s.includes('bierbar'))return ['Speciaalbier'];if(s.includes('g&t')||s.includes('gin & tonic'))return ['G&T'];if(s.includes('cocktail'))return ['Cocktail','Mocktail'];return ['Cocktail','Mocktail','Wijn','Speciaalbier','G&T']}
 export const MENU_CATALOG:MenuEntry[]=[
@@ -32,6 +32,44 @@ export const MENU_CATALOG:MenuEntry[]=[
 {name:'Cucumber Mint G&T',type:'G&T',ingredients:[["Hendrick's Gin",50,'ml'],['Indian tonic',150,'ml'],['Komkommer',0.125,'stuks'],['Verse munt',2,'blaadjes']]},
 {name:'Mediterranean Sunset G&T',type:'G&T',ingredients:[['Mediterranean Gin',50,'ml'],['Mediterranean tonic',150,'ml'],['Sinaasappel',0.125,'stuks'],['Tijm',1,'takjes']]}
 ];
+// Starter taste profiles are editable suggestions, not verified brewery tasting notes.
+export const BEER_TASTE_PROFILES:Record<string,string>={
+ 'Affligem Blond BLADE 8 L':'Blond · moutig · licht kruidig',
+ 'Lagunitas IPA BLADE 8 L':'IPA · citrus · hoppig · bitter',
+ 'Birra Moretti BLADE 8 L':'Lager · fris · zacht moutig',
+ 'Desperados Original':'Fris · licht zoet · citrus',
+ 'Corona Extra':'Licht · fris · mild',
+ 'Sol':'Licht · verfrissend · zacht',
+ 'Birra Moretti fles':'Lager · fris · moutig',
+ 'Liefmans Fruitesse':'Fruitig · zoetzuur · rood fruit',
+ 'Hoegaarden Wit':'Witbier · citrus · koriander',
+ 'Vedett Extra White':'Witbier · fris · citrus',
+ 'Oedipus Mannenliefde':'Saison · fruitig · kruidig',
+ 'Kasteel Rouge':'Kriek · zoet · donker fruit',
+ 'Texels Skuumkoppe':'Donker tarwebier · romig · moutig',
+ 'Affligem Blond fles':'Blond · zacht · kruidig',
+ 'La Chouffe':'Blond · kruidig · fruitig',
+ 'Tripel Karmeliet':'Tripel · vol · fruitig · kruidig',
+ 'Jopen Mooie Nel IPA':'IPA · citrus · tropisch · bitter',
+ 'BrewDog Punk IPA':'IPA · tropisch · hoppig · bitter',
+ 'vandeStreek Playground IPA 0.5':'Alcoholarm · IPA · citrus · hoppig',
+ 'Moersleutel Motor Oil':'Stout · koffie · chocolade · vol',
+ 'Moersleutel Crank the Juice':'IPA · sappig · tropisch',
+ 'Uiltje Bird of Prey':'IPA · citrus · tropisch · bitter',
+ 'Uiltje Wit':'Witbier · fris · fruitig',
+ "Brouwerij 't IJ IJwit":'Witbier · citrus · kruidig',
+ "Brouwerij 't IJ Zatte":'Tripel · fruitig · kruidig',
+ 'Jopen Adriaan Wit':'Witbier · fris · citrus',
+ 'Two Chefs Brewing Funky Falcon':'Pale ale · fruitig · hoppig',
+ 'Frontaal Juice Punch':'IPA · sappig · tropisch',
+ 'Brouwerij Kees Caramel Fudge Stout':'Stout · karamel · chocolade',
+ 'De Molen Hel & Verdoemenis':'Imperial stout · koffie · geroosterd',
+ 'Brouwerij Noordt Noordtsingle':'Blond · fris · moutig',
+ 'Speciaalbier blond':'Blond · zacht · moutig',
+ 'Speciaalbier IPA':'IPA · hoppig · bitter',
+ 'Speciaalbier tripel':'Tripel · vol · kruidig',
+ 'Speciaalbier alcoholvrij':'Alcoholvrij · fris · moutig'
+};
 export const CATALOG_STORAGE_KEY='wandering-barback-catalog-v1';
 export function readMenuCatalog():MenuEntry[]{try{const raw=localStorage.getItem(CATALOG_STORAGE_KEY);if(!raw)return MENU_CATALOG;const saved=JSON.parse(raw);return Array.isArray(saved)?saved:MENU_CATALOG}catch{return MENU_CATALOG}}
 export function writeMenuCatalog(entries:MenuEntry[]){localStorage.setItem(CATALOG_STORAGE_KEY,JSON.stringify(entries));window.dispatchEvent(new Event('wandering-catalog-updated'))}

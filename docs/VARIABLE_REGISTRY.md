@@ -375,3 +375,6 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `BEER_TASTE_PROFILES` | `src/data/menuCatalog.ts` | Bierimport | Voorlopige smaakprofielen per biernaam; alleen gebruikt voor ontbrekende profielen |
 | `missingBeers`, `importBeers()` | `src/Catalog.tsx` | Catalogus → Bieren | Niet-destructief opslaan van BLADE-/flesbieren en aanvullen van lege smaakprofielen |
 | `beerDescription(name)` | `src/EventDetail.tsx` | Speciaalbierbar-menukaart | Leest opgeslagen smaakprofiel voor bier uit catalogus en toont dit onder de titel |
+
+| `LEGACY_BEER_TASTE_PROFILES` | `src/data/menuCatalog.ts` | Biercatalogus migratie | Vorige korte standaardteksten voor veilige detectie en vervanging zonder overschrijven van eigen teksten |
+| `BEER_TASTE_PROFILES` | `src/data/menuCatalog.ts` | Biercatalogus | 35 nieuwe uitgebreide indicatieve smaakomschrijvingen, bewerkbaar en te synchroniseren |

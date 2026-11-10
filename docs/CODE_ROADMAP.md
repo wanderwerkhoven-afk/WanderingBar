@@ -288,3 +288,5 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [ ] Controleer op iPhone of de bronafbeelding zelf geen lichte/ingebakken hoeken heeft en valideer de daadwerkelijke GitHub Pages-deploy.
 
 - [x] Desktop responsive enhancement (>=900px): sidebar navigation, constrained content width, compact event hero, two-column dashboard, responsive event grid; mobile-first rules below 900px unchanged. Verify visually on real desktop after deployment.
+
+- [x] Eventdetail desktopworkspace (>=900px): dialoog tot 1220px breed, verticale sticky tabnavigatie, compacte eventheader en 2-koloms invoer- en overzichtsvelden. Offerte- en factuurpreviews blijven afdrukbaar; mobiele horizontale tabnavigatie ongewijzigd. Visuele desktop- en iPhone-regressietest na deployment nog uitvoeren.

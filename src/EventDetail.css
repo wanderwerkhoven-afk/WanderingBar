@@ -317,3 +317,9 @@
 
 /* ABV follows the heading when the guest chooses no tasting note. */
 .ed-menu-print .ed-beer-title-abv{font-family:inherit;font-size:.7em;font-weight:400;white-space:nowrap;flex:none;opacity:.8}
+
+/* Beer headings must be inline text, not flex items: words, tap icon and ABV
+   now wrap together, and measured heading height matches printed line count. */
+.ed-menu-print .ed-menu-drink h3{display:block;text-align:center}
+.ed-menu-print .ed-menu-drink .ed-beer-icon{display:inline-block;vertical-align:-.12em;margin-right:5px}
+.ed-menu-print .ed-beer-title-abv{display:inline;font-size:.72em;font-weight:400;white-space:nowrap;vertical-align:baseline;margin-left:5px;opacity:.8}

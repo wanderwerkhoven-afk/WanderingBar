@@ -252,3 +252,14 @@
  .shell>main:has(> .event)> .event,.shell>main:has(> .event)> .tasks,.shell>main:has(> .event)> .new-event{grid-column:1;grid-row:auto}
  .event-list{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* Event detail is a real page, not a dialog. Mobile-first full width. */
+.shell-event-detail{min-height:100dvh;background:#fffaf2;padding:0!important}
+.shell-event-detail>.event-detail-page{display:block!important;width:100%;max-width:1180px;margin:0 auto;padding:0!important;min-height:100dvh}
+.shell-event-detail .ed-page{min-height:100dvh;padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+@media(min-width:900px){
+ .shell-event-detail{padding:0!important;background:#f5eee6}
+ .shell-event-detail>.event-detail-page{max-width:1240px;padding:30px 34px 60px!important}
+ .shell-event-detail .ed-page{min-height:calc(100dvh - 90px);border:1px solid #e8dacd;border-radius:22px;box-shadow:0 16px 45px #5a382019;padding:30px clamp(30px,3.4vw,52px) 60px!important}
+ .shell-event-detail .ed-tabs{top:20px}
+}

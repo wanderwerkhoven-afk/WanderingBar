@@ -299,24 +299,21 @@
 .ed-menu-drink .ed-beer-icon{display:inline-block;flex:none;vertical-align:middle;stroke:currentColor}
 @media print{.ed-menu-drink .ed-beer-icon{width:17px;height:17px}}
 
-/* From eleven beers onward, keep a compact 16px row gap. */
-.ed-menu-drinks.ed-menu-drinks-grid.ed-beer-menu-six-rows{row-gap:16px}
 
-/* Seven or more beer rows (13+ items): hide only the printed taste profiles to preserve room for names and icons. */
-.ed-menu-drinks.ed-beer-menu-seven-plus-rows .ed-menu-drink p{display:none!important}
 
-/* Beer cards: reduce the empty space before the first beer from seven selections onward.
-   From eight beers, show only the beer names and tap/bottle icons. */
+
+
+/* Keep dense beer menus compact without hiding the selected subtitles. */
 .ed-menu-print .ed-menu-drinks.ed-beer-menu-dense{align-content:start;row-gap:16px;transform:none;padding-top:6px;box-sizing:border-box}
-.ed-menu-print .ed-menu-drinks.ed-beer-menu-names-only .ed-menu-drink p{display:none!important}
-.ed-menu-print .ed-menu-drinks.ed-beer-menu-names-only{row-gap:18px}
 .ed-menu-print:has(.ed-beer-menu-dense) .ed-menu-event{margin-bottom:6px!important}
 
 /* Keep paired beer titles aligned at the top of each grid row. */
 .ed-menu-print .ed-menu-drinks-grid .ed-menu-drink{align-self:start}
 
 /* Event-level beer tasting-note length: preserve font and layout, cap visible lines. */
-.ed-menu-print .ed-beer-subtitle-full .ed-menu-drink p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .ed-menu-print.ed-beer-subtitle-full .ed-menu-drink p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .ed-menu-print.ed-beer-subtitle-short .ed-menu-drink p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .ed-menu-print.ed-beer-subtitle-keywords .ed-menu-drink p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+
+/* ABV follows the heading when the guest chooses no tasting note. */
+.ed-menu-print .ed-beer-title-abv{font-family:inherit;font-size:.7em;font-weight:400;white-space:nowrap;flex:none;opacity:.8}

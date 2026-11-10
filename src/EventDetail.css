@@ -167,3 +167,20 @@
 .ed-action-task-add{display:grid;gap:10px;margin-top:15px}
 .ed-action-task-add button{border:0;background:#4b2c1d;color:white;border-radius:11px;padding:12px;font-weight:700}
 .ed-action-task-add button:disabled{opacity:.5}
+
+/* Cocktailworkshop quote tool: mobile-first and scoped to the event overview. */
+.ed-workshop-pricing{padding-bottom:18px}
+.ed-workshop-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ed-workshop-options button{display:flex;flex-direction:column;gap:7px;text-align:left;padding:13px;border:1px solid #d8d6cd;border-radius:13px;background:#fff;color:#28352d;font:inherit;cursor:pointer;min-width:0}
+.ed-workshop-options button.is-selected{border:2px solid #294634;background:#edf3ed;padding:12px}
+.ed-workshop-options strong{font-size:14px}
+.ed-workshop-options small{font-size:12px;line-height:1.5;color:#656c60}
+.ed-workshop-options span{font-size:12px;font-weight:700;color:#3c5945}
+.ed-workshop-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.ed-workshop-controls input[type=range]{accent-color:#294634;padding:0;width:100%}
+.ed-workshop-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
+.ed-workshop-summary>div{display:flex;flex-direction:column;gap:5px;padding:12px;background:#f4f0e9;border-radius:12px;min-width:0}
+.ed-workshop-summary small{color:#6d6c61;font-size:11px}
+.ed-workshop-summary strong{font-size:16px;overflow-wrap:anywhere}
+.ed-workshop-warning{color:#a24623;font-weight:700}
+@media(max-width:420px){.ed-workshop-controls{grid-template-columns:1fr}.ed-workshop-options button{padding:10px}.ed-workshop-options button.is-selected{padding:9px}}

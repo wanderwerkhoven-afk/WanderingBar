@@ -46,6 +46,8 @@ export function printMenuHtml(preview:HTMLElement,size:MenuPrintSize):void{
    #print-root>.ed-menu-print{box-shadow:none!important}
    #print-toolbar{position:sticky;top:0;z-index:20;background:#fff;padding:12px;text-align:center;font:14px Arial,sans-serif}
    #print-toolbar button{border:0;border-radius:9px;padding:12px 22px;background:#4b2c1d;color:#fff;cursor:pointer}
+   #print-toolbar{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+   #print-toolbar .back-to-menu{background:#f3e8dc;color:#4b2c1d;border:1px solid #d9c4b2}
  }
  @media print{
   html,body{width:${pageWidth}!important;height:${pageHeight}!important;max-width:${pageWidth}!important;max-height:${pageHeight}!important;overflow:hidden!important;}
@@ -56,7 +58,7 @@ export function printMenuHtml(preview:HTMLElement,size:MenuPrintSize):void{
  `;
  const escapeTitle=(s:string)=>s.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]||ch));
  popup.document.open();
- popup.document.write('<!doctype html><html lang="nl"><head><meta charset="utf-8"><title>'+escapeTitle(document.title)+' - Menukaart '+size+'</title><base href="'+document.baseURI+'">'+styleLinks+'<style>'+printCss+'</style></head><body><div id="print-toolbar"><button type="button" onclick="window.print()">Afdrukken / opslaan als PDF</button></div><div id="print-root">'+clone.outerHTML+'</div></body></html>');
+ popup.document.write('<!doctype html><html lang="nl"><head><meta charset="utf-8"><title>'+escapeTitle(document.title)+' - Menukaart '+size+'</title><base href="'+document.baseURI+'">'+styleLinks+'<style>'+printCss+'</style></head><body><div id="print-toolbar"><button type="button" class="back-to-menu" onclick="if(window.opener&&!window.opener.closed){window.opener.focus();window.close()}else{window.history.back()}">← Terug naar menu-instellingen</button><button type="button" onclick="window.print()">Afdrukken / opslaan als PDF</button></div><div id="print-root">'+clone.outerHTML+'</div></body></html>');
  popup.document.close();
  popup.focus();
 }

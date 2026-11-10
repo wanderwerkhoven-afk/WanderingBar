@@ -264,3 +264,12 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] A4-printstylesheet met offertegegevens, regels, totaal en waarschuwing voor ontbrekende btw-/bedrijfsgegevens.
 - [ ] Voor definitieve klantoffertes nog bedrijfsnaam-/adres-/KvK-/btw-gegevens, btw-tarief en algemene voorwaarden bevestigen; offerte is nu expliciet een concept.
 - [ ] Browserprint en productiebuild nog niet geverifieerd; geen directe PDF-library/export of e-mailverzending.
+
+## Cocktail Catering calculator — 10 november 2026
+- [x] `src/planning/cateringPricing.ts` is canonieke bron voor staffel: 25–49 €6,50/€7,50; 50–99 €6/€7; 100–149 €5,50/€6,50; 150–199 €5/€6; 200+ €4,50/€5,50 (Classic/Signature).
+- [x] Mobiele bar met 1 bartender: minimaal 3 uur €175, daarna €45/uur; optionele tweede bartender €45/uur met apart urenveld; reiskosten buiten calculatie.
+- [x] `EventData.cateringPlan?` voor optionele persistente eventconfiguratie en backwards compatibility.
+- [x] Event → Overzicht → Cocktail Catering: aantallen, signature-aandeel, duur, tweede bartender, staffeloverzicht en live totaal; enkel zichtbaar voor dienst 'Cocktail catering'.
+- [ ] Cocktails per recept/menukaart en automatische inkoop zijn nog niet verbonden aan de prijsverdeling; percentage is voorlopig een begrotingsinstrument.
+- [ ] Btw, reiskosten, offerte-export en productiebuild/mobiele regressietests nog te valideren.
+- [ ] Volumestaffel past één tarief op alle cocktails toe; omzet kan dalen op staffelgrenzen. Later zakelijke keuze voor progressieve staffel of minimumbedrag.

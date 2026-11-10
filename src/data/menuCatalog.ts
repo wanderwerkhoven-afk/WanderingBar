@@ -15,7 +15,7 @@ export const COCKTAIL_RECIPES:{name:string;type:'Cocktail'|'Mocktail';ingredient
 ];
 
 export type MenuKind='Cocktail'|'Mocktail'|'Wijn'|'Speciaalbier'|'G&T';
-export type MenuEntry={name:string;type:MenuKind;ingredients:[string,number,string][];tasteProfile?:string};
+export type MenuEntry={name:string;type:MenuKind;ingredients:[string,number,string][];tasteProfile?:string;alcoholPercentage?:number};
 export const SERVICE_OPTIONS=['Cocktail workshop','Cocktail catering','Mobiele cocktailbar','Wijnbar','Speciaalbierbar','G&T bar'] as const;
 export function serviceMenuKinds(service?:string):MenuKind[]{const s=(service||'').toLocaleLowerCase('nl');if(s.includes('wijn'))return ['Wijn'];if(s.includes('speciaalbier')||s.includes('bierbar'))return ['Speciaalbier'];if(s.includes('g&t')||s.includes('gin & tonic'))return ['G&T'];if(s.includes('cocktail'))return ['Cocktail','Mocktail'];return ['Cocktail','Mocktail','Wijn','Speciaalbier','G&T']}
 export const MENU_CATALOG:MenuEntry[]=[
@@ -108,6 +108,15 @@ export const LEGACY_BEER_TASTE_PROFILES:Record<string,string>={
  "Speciaalbier IPA":"IPA · hoppig · bitter",
  "Speciaalbier tripel":"Tripel · vol · kruidig",
  "Speciaalbier alcoholvrij":"Alcoholvrij · fris · moutig"
+};
+// Verified default ABV values. Unknown or edition-dependent beers are intentionally omitted.
+export const DEFAULT_BEER_ABV:Record<string,number>={
+ 'Affligem Blond BLADE 8 L':6.8,'Affligem Blond fles':6.8,
+ 'Lagunitas IPA BLADE 8 L':6.2,'Birra Moretti BLADE 8 L':4.6,'Birra Moretti fles':4.6,
+ 'Moersleutel Crank the Juice':5.5,'Two Chefs Brewing Funky Falcon':5.2,
+ 'BrewDog Punk IPA':5.4,'Uiltje Bird of Prey':5.8,'Jopen Mooie Nel IPA':6.5,
+ 'Texels Skuumkoppe':6,'Liefmans Fruitesse':3.8,'Desperados Original':6,
+ 'Corona Extra':4.6,'Speciaalbier alcoholvrij':0
 };
 export const CATALOG_STORAGE_KEY='wandering-barback-catalog-v1';
 export function readMenuCatalog():MenuEntry[]{try{const raw=localStorage.getItem(CATALOG_STORAGE_KEY);if(!raw)return MENU_CATALOG;const saved=JSON.parse(raw);return Array.isArray(saved)?saved:MENU_CATALOG}catch{return MENU_CATALOG}}

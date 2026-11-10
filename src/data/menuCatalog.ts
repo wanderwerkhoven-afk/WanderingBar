@@ -147,7 +147,7 @@ export const DEFAULT_BEER_ABV:Record<string,number>={
  "Speciaalbier alcoholvrij": 0,
 };
 export const CATALOG_STORAGE_KEY='wandering-barback-catalog-v1';
-export function readMenuCatalog():MenuEntry[]{try{const raw=localStorage.getItem(CATALOG_STORAGE_KEY);if(!raw)return MENU_CATALOG;const saved=JSON.parse(raw);return Array.isArray(saved)?saved:MENU_CATALOG}catch{return MENU_CATALOG}}
+export function readMenuCatalog():MenuEntry[]{try{const raw=localStorage.getItem(CATALOG_STORAGE_KEY);if(!raw)return MENU_CATALOG;const saved=JSON.parse(raw);return Array.isArray(saved)?[...saved,...MENU_CATALOG.filter(item=>item.type==='Wijn'&&item.sourceUrl&&!saved.some((existing:MenuEntry)=>existing.name.trim().toLocaleLowerCase('nl')===item.name.trim().toLocaleLowerCase('nl')))]:MENU_CATALOG}catch{return MENU_CATALOG}}
 export function writeMenuCatalog(entries:MenuEntry[]){localStorage.setItem(CATALOG_STORAGE_KEY,JSON.stringify(entries));window.dispatchEvent(new Event('wandering-catalog-updated'))}
 export function getMenuEntry(name:string):MenuEntry|undefined{return readMenuCatalog().find(entry=>entry.name===name)}
 

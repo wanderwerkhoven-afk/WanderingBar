@@ -277,3 +277,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 
 | `selected`, `openEvent`, `closeEvent`, URL-hash `#/evenement/:id` | `src/main.tsx` | evenementkaarten, dashboard, taken, EventDetail | Geselecteerd evenement als paginanavigatie; URL-hash maakt terugnavigatie en directe links mogelijk, opslag van evenementdata ongewijzigd |
 | `.shell-event-detail`, `.event-detail-page` | `src/style.css` | EventDetail | Volledige mobiele/desktop pagina i.p.v. overlay; CSS-only |
+
+| `EventDetail.Tab = 'Offerte & factuur'` | `src/EventDetail.tsx` | Eventdetail tabnavigatie | Presentatie van bestaande cateringoffertes, cateringfacturen en workshopoffertes; geen nieuwe opslagvelden |

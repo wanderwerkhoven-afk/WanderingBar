@@ -336,3 +336,7 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `sourceWidth`, `sourceHeight`, `sourceNodes`, `cloneNodes`, `scale` | `src/documents/menuHtmlPrint.ts` | HTML-menukaart print | Kopieert werkelijke previewafmetingen en computed styles; proportioneel schalen naar A4/A5 zonder tekstherflow |
 
 | Legacy `@media print` verwijderd | `src/EventDetail.css` | Menukaart afdrukken | Voorkomt conflict met `menuHtmlPrint.ts`: geen geforceerde A4 of 21pt cocktailkoppen meer |
+
+| `src/documents/menuPdf.ts` | Verwijderd | Menukaart | Ongebruikte legacy PDF-renderer; geen actieve import meer in EventDetail |
+| `.ed-menu-print`, `.ed-menu-print.ed-size-a5`, `.ed-menu-drinks-grid` | `src/EventDetail.css` | Menukaart preview | Geconsolideerde layoutregels; geen dubbele A5 transform/zoom-blokken of legacy named print pages |
+| `printMenuHtml` | `src/documents/menuHtmlPrint.ts` | Menukaart print | Enige actieve menukaart-afdrukroute, gebruikt HTML-clone en één `@page`-regel |

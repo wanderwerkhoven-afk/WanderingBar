@@ -33,18 +33,27 @@ export function downloadMenuPdf({eventTitle,heading,items,design,frame,size}:Men
  for(const [i,line] of wrap(eventTitle,48).slice(0,2).entries())text(line,margin,height-(155+i*15)*scale,10*scale,false,accent);
  const top=height-195*scale,bottom=75*scale;
  const available=top-bottom;
- const formatted=items.map(item=>({name:wrap(item.name,50).slice(0,2),description:wrap(item.description,78).slice(0,2)}));
- const weights=formatted.map(item=>24+item.name.length*14+item.description.length*11);
- const totalWeight=weights.reduce((a,b)=>a+b,0);
- const factor=Math.min(1,available/(totalWeight*scale));
- if(factor<.58)throw new Error('Deze menukaart bevat te veel dranken voor één leesbare '+size+'-pagina. Kies minder dranken of gebruik A4.');
- let y=top;
+ const columns=items.length>3?2:1;
+ const rows=columns===2?Math.ceil(items.length/2):items.length;
+ const columnGap=26*scale;
+ const columnWidth=columns===2?(usable-columnGap)/2:usable;
+ const maxName=columns===2?27:50,maxDescription=columns===2?34:78;
+ const formatted=items.map(item=>({name:wrap(item.name,maxName).slice(0,2),description:wrap(item.description,maxDescription).slice(0,3)}));
+ const rowHeight=available/Math.max(1,rows);
+ const baseName=columns===2?10.2:12.5,baseDescription=columns===2?7.3:8.5;
+ const factor=Math.min(1,(rowHeight-10*scale)/(scale*(2*15+3*11+12)));
+ if(factor<.55)throw new Error('Deze menukaart bevat te veel dranken voor één leesbare '+size+'-pagina. Kies minder dranken of gebruik A4.');
  for(let i=0;i<formatted.length;i++){
-  const item=formatted[i];
-  const step=(n:number)=>n*scale*factor;
-  for(const line of item.name){text(line,margin,y,12.5*scale*factor,true);y-=step(15)}
-  for(const line of item.description){text(line,margin,y,8.5*scale*factor,false,accent);y-=step(11)}
-  y-=step(24);
+  const item=formatted[i],row=columns===2?Math.floor(i/2):i;
+  const isCenteredLast=columns===2&&items.length%2===1&&i===items.length-1;
+  const col=columns===2?i%2:0;
+  const x=isCenteredLast?margin+(usable-columnWidth)/2:margin+col*(columnWidth+columnGap);
+  const center=x+columnWidth/2;
+  const yTop=top-row*rowHeight-8*scale;
+  let y=yTop;
+  const centeredText=(s:string,fontSize:number,bold:boolean,color:string)=>{const estimatedWidth=clean(s).length*fontSize*(bold?.54:.48);text(s,Math.max(x,center-estimatedWidth/2),y,fontSize,bold,color)};
+  for(const line of item.name){centeredText(line,baseName*scale*factor,true,fg);y-=15*scale*factor}
+  for(const line of item.description){centeredText(line,baseDescription*scale*factor,false,accent);y-=11*scale*factor}
  }
  rule(59*scale);
  text('CRAFTED FOR YOUR OCCASION',margin,44*scale,8*scale,false,accent);

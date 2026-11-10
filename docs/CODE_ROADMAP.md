@@ -283,3 +283,6 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Factuur vanuit opgeslagen offerte met alleen posten en totalen, inclusief eventueel extra cocktails; opslag per evenement in `cateringInvoices`.
 - [ ] Documenten zijn concepten: KvK-, btw-, adres- en betaalgegevens, btw-berekening, nummerreeks en juridische factuurcontrole moeten nog worden ingericht. Geen verzendintegratie.
 - [ ] Productiebuild en PDF-printcontrole nog niet uitgevoerd.
+
+- [x] iPhone-appicoon: geüploade bronafbeelding `F84641DF-7011-4AD4-8662-96A0AABA3DAC.png` wordt via Vite build als `apple-touch-icon.png` en `app-icon.png` uitgegeven. iOS bepaalt de afgeronde hoeken; HTML verwijst naar Apple touch icon en favicon. Manifest in `public/manifest.webmanifest`.
+- [ ] Controleer op iPhone of de bronafbeelding zelf geen lichte/ingebakken hoeken heeft en valideer de daadwerkelijke GitHub Pages-deploy.

@@ -1,9 +1,10 @@
 import type {WorkshopQuote} from '../planning/workshopQuotes';
 import type {CateringQuote} from '../planning/cateringDocuments';
+import type {CustomQuote} from '../planning/customDocuments';
 
 /** Dependency-free A4 PDF export for immutable quotation snapshots. Amounts are
  * copied from the stored quote; no VAT rate or business details are invented. */
-type Quote = WorkshopQuote | CateringQuote;
+type Quote = WorkshopQuote | CateringQuote | CustomQuote;
 const money=(n:number)=>new Intl.NumberFormat('nl-NL',{style:'currency',currency:'EUR'}).format(n);
 const date=(s:string)=>/^\d{4}-\d{2}-\d{2}$/.test(s)?s.slice(8,10)+'-'+s.slice(5,7)+'-'+s.slice(0,4):s;
 const clean=(s:unknown)=>String(s??'').replace(/[\r\n\t]+/g,' ').replace(/\s+/g,' ').trim();
@@ -14,8 +15,10 @@ const wrap=(text:string,max:number)=>{const words=clean(text).split(' '),lines:s
 
 export function downloadQuotePdf(quote:Quote):void {
  const workshop='packageName' in quote;
- const q=workshop?null:quote as CateringQuote;
+ const custom='lines' in quote;
+ const q=!workshop&&!custom?quote as CateringQuote:null;
  const w=workshop?quote as WorkshopQuote:null;
+ const customQuote=custom?quote as CustomQuote:null;
  const rows:{label:string;qty:string;rate:string;sum:string}[]=[];
  if(w)rows.push({label:w.packageName,qty:String(w.guests),rate:money(w.pricePerPerson),sum:money(w.workshopTotal)});
  if(q){
@@ -24,7 +27,8 @@ export function downloadQuotePdf(quote:Quote):void {
   if(q.signatureCount)rows.push({label:'Signature cocktails',qty:String(q.signatureCount),rate:money(q.signatureRate),sum:money(q.signatureTotal)});
   if(q.plan.secondBartender)rows.push({label:'Tweede bartender ('+q.plan.secondBartenderHours+' uur)',qty:String(q.plan.secondBartenderHours),rate:money(45),sum:money(q.secondBartenderTotal)});
  }
- if(quote.travelCost)rows.push({label:'Reiskosten',qty:'1',rate:money(quote.travelCost),sum:money(quote.travelCost)});
+ if(customQuote)for(const item of customQuote.lines)rows.push({label:item.description,qty:String(item.quantity),rate:money(item.rate),sum:money(item.amount)});
+ if(!customQuote&&quote.travelCost)rows.push({label:'Reiskosten',qty:'1',rate:money(quote.travelCost),sum:money(quote.travelCost)});
  const pages:string[][]=[[]];
  const cmd=(s:string)=>pages[0].push(s);
  const rect=(x:number,y:number,width:number,height:number,r:number,g:number,b:number)=>cmd(r+' '+g+' '+b+' rg '+x+' '+y+' '+width+' '+height+' re f');
@@ -38,7 +42,7 @@ export function downloadQuotePdf(quote:Quote):void {
  text('WANDERING BAR',43,803,21,true,'0.98 0.94 0.87');
  text('COCKTAIL EXPERIENCE ON LOCATION',44,785,8,false,'0.87 0.71 0.48');
  text('OFFERTE',43,725,36,true,'1 1 1');
- text(w?'COCKTAILWORKSHOP':'COCKTAILBAR CATERING',44,704,11,true,'0.89 0.74 0.53');
+ text(w?'COCKTAILWORKSHOP':custom?'DIENSTVERLENING OP MAAT':'COCKTAILBAR CATERING',44,704,11,true,'0.89 0.74 0.53');
  section('Jullie evenement',640);
  text(clean(quote.eventTitle).slice(0,45),43,616,20,true);
  const intro='Bedankt voor jullie aanvraag! Met plezier verzorgen wij een sfeervolle en smaakvolle cocktailervaring op locatie.';
@@ -46,12 +50,14 @@ export function downloadQuotePdf(quote:Quote):void {
  text('Opdrachtgever',341,630,9,true);text(clean(quote.client).slice(0,35),427,630,9);
  text('Datum',341,611,9,true);text(date(quote.eventDate),427,611,9);
  text('Locatie',341,592,9,true);text(clean([quote.eventAddress,quote.eventCity].filter(Boolean).join(', ')||'Nog te bevestigen').slice(0,28),427,592,8);
- text(w?'Deelnemers':'Cocktails',341,573,9,true);text(String(w?.guests??q?.plan.cocktails),427,573,9);
+ text(w?'Deelnemers':custom?'Offerte':'Cocktails',341,573,9,true);text(custom?'Op maat':String(w?.guests??q?.plan.cocktails),427,573,9);
  line(550);
  section('Wat wij verzorgen',530);
- const inclusions=w?['Professionele cocktailworkshop','Begeleiding bij het bereiden','Drie cocktails per deelnemer','Benodigde ingredienten en materialen']:['Mobiele cocktailbar op locatie','Professionele bartender'+(q?.plan.secondBartender?'s':''),'Classic en Signature cocktails','Ingredienten, ijs en garnering','Barbenodigdheden en glaswerk','Op- en afbouw'];
+ const inclusions=custom?['Dienstverlening volgens afspraak','Gespecificeerde werkzaamheden','Transparante prijsopbouw','Uitvoering op locatie']:w?['Professionele cocktailworkshop','Begeleiding bij het bereiden','Drie cocktails per deelnemer','Benodigde ingredienten en materialen']:['Mobiele cocktailbar op locatie','Professionele bartender'+(q?.plan.secondBartender?'s':''),'Classic en Signature cocktails','Ingredienten, ijs en garnering','Barbenodigdheden en glaswerk','Op- en afbouw'];
  inclusions.forEach((item,i)=>{const col=i%2,row=Math.floor(i/2);text('+',43+col*259,509-row*18,12,true,'0.69 0.45 0.19');text(item,59+col*259,510-row*18,9)});
  const priceTop=451;
+ // Keep the whole custom quotation on one A4; never print an empty extra sheet.
+ if(customQuote&&rows.length>12)throw new Error('Deze offerte bevat meer dan 12 posten. Verdeel de werkzaamheden over minder regels voor een leesbare A4-offerte.');
  line(priceTop+8);section('Investering',priceTop-9);
  text('Omschrijving',43,priceTop-30,8,true);text('Aantal',347,priceTop-30,8,true);text('Tarief',412,priceTop-30,8,true);text('Bedrag',491,priceTop-30,8,true);
  line(priceTop-38);
@@ -77,12 +83,13 @@ export function downloadQuotePdf(quote:Quote):void {
   yy-=5;
   for(const [i,l] of wrap('Extra cocktails: '+money(q.extraCocktailRate)+' per stuk volgens de geboekte staffel. Extra afname wijzigt de afgesproken staffel niet.',100).slice(0,2).entries())text(l,44,yy-i*12,8);
   yy-=25;
- }else{
+ }else if(w){
   section('Cocktailselectie',yy);
   yy-=17;
   for(const l of wrap((w?.cocktails||[]).join('  /  '),94).slice(0,2)){text(l,44,yy,8);yy-=12}
   yy-=10;
  }
+ if(customQuote){yy-=5;section('Afspraken',yy);yy-=16;text('De genoemde werkzaamheden en tarieven zijn opgenomen in deze offerte.',44,yy,8);yy-=20}
  if(quote.notes){section('Aanvullende afspraken',yy);yy-=15;for(const l of wrap(quote.notes,108).slice(0,3)){text(l,44,yy,8);yy-=11}}
  // Never silently clip the tier table or notes. Warn rather than issuing a misleading document.
  if(yy<70)throw new Error('De offerte bevat te veel informatie voor een leesbare A4. Verkort de opmerkingen of controleer de staffel.');

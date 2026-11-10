@@ -356,3 +356,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `printMenuHtml` | `src/documents/menuHtmlPrint.ts` | Menukaart print | Enige actieve menukaart-afdrukroute, gebruikt HTML-clone en één `@page`-regel |
 
 | `.ed-menu-drinks.ed-menu-drinks-grid` | `src/EventDetail.css` | Menukaart preview + HTML-afdruk | `grid-auto-rows:auto`, `align-content:center`, `row-gap:28px`: compacte, verticaal gecentreerde cocktailgroep in plaats van over volledige hoogte uitgerekte rijen |
+
+| `.ed-menu-drinks.ed-menu-drinks-grid` `transform:translateY(-16px)` | `src/EventDetail.css` | Menukaart preview en HTML-print | Verplaatst de volledige cocktailsectie 16px omhoog zonder de afstand tussen cocktailrijen te veranderen |

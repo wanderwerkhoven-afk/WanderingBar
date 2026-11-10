@@ -1,0 +1,24 @@
+{
+  "name": "Wandering BarBack",
+  "short_name": "BarBack",
+  "description": "Evenementen en cateringbeheer voor The Wandering Bar",
+  "start_url": "/WanderingBar/",
+  "scope": "/WanderingBar/",
+  "display": "standalone",
+  "background_color": "#271408",
+  "theme_color": "#271408",
+  "icons": [
+    {
+      "src": "/WanderingBar/app-icon.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/WanderingBar/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -121,7 +121,8 @@ const formatBeerSubtitle=(name:string,description:string)=>{
  return [abv,...keywords].filter(Boolean).join(' · ');
 };
 const printMenuItems=isBeerBar?[...beerPlan.taps.filter(t=>t.glasses>0).map(t=>({name:t.beer.replace(/ BLADE 8 L$/,''),description:formatBeerSubtitle(t.beer,beerDescription(t.beer)),abv:beerAlcoholLabel(t.beer),beerType:'tap' as const})),...Object.entries(beerPlan.bottles).filter(([,n])=>n>0).map(([name])=>({name,description:formatBeerSubtitle(name,beerDescription(name)),abv:beerAlcoholLabel(name),beerType:'bottle' as const}))]:activeMenu.map(name=>({name,description:catalogEntries.find(item=>item.name===name)?.ingredients.map(([ingredient])=>ingredient).slice(0,4).join(' · ')||'',abv:'',beerType:null}));
-// Group beers by their measured title line count so neighboring columns look balanced.
+// Measure the actual heading height after layout. Inline title content wraps naturally,
+// including the tap icon and ABV, so all beers use the same line-count metric.
 const menuGridRef=useRef<HTMLDivElement|null>(null);
 const [beerTitleLines,setBeerTitleLines]=useState<Record<string,number>>({});
 useEffect(()=>{
@@ -129,41 +130,25 @@ useEffect(()=>{
  const grid=menuGridRef.current;
  if(!grid)return;
  const measure=()=>{
-  const firstCard=grid.querySelector<HTMLElement>('.ed-menu-drink');
-  if(!firstCard)return;
-  const columnWidth=firstCard.getBoundingClientRect().width;
-  if(columnWidth<=0)return;
-  // Render every heading in an isolated, identical-width measuring card.
-  // Measuring visible cards after sorting can create feedback loops and mismatched rows.
-  const probe=document.createElement('div');
-  probe.className='ed-menu-drink';
-  probe.style.cssText='position:absolute;visibility:hidden;pointer-events:none;left:0;top:0;max-height:none;overflow:visible;';
-  probe.style.width=columnWidth+'px';
   const next:Record<string,number>={};
-  for(const item of printMenuItems){
-   const visible=[...grid.querySelectorAll<HTMLElement>('.ed-menu-drink')].find(el=>el.dataset.beerName===item.name);
-   const original=visible?.querySelector('h3');
-   if(!original)continue;
-   const title=original.cloneNode(true) as HTMLElement;
-   probe.replaceChildren(title);
-   grid.appendChild(probe);
-   const textNode=[...title.childNodes].find(node=>node.nodeType===Node.TEXT_NODE&&node.textContent?.trim());
-   if(textNode){
-    const range=document.createRange();
-    range.selectNodeContents(textNode);
-    const rects=[...range.getClientRects()].filter(rect=>rect.width>0&&rect.height>0);
-    next[item.name]=Math.max(1,new Set(rects.map(rect=>Math.round(rect.top))).size);
-   }
-   probe.remove();
+  for(const card of grid.querySelectorAll<HTMLElement>('.ed-menu-drink')){
+   const heading=card.querySelector<HTMLElement>('h3');
+   const name=card.dataset.beerName;
+   if(!heading||!name)continue;
+   const lineHeight=parseFloat(getComputedStyle(heading).lineHeight);
+   if(!Number.isFinite(lineHeight)||lineHeight<=0)continue;
+   next[name]=Math.max(1,Math.round(heading.getBoundingClientRect().height/lineHeight));
   }
   if(Object.keys(next).length!==printMenuItems.length)return;
-  setBeerTitleLines(prev=>Object.keys(next).length===Object.keys(prev).length&&Object.keys(next).every(name=>next[name]===prev[name])?prev:next);
+  setBeerTitleLines(previous=>Object.keys(next).length===Object.keys(previous).length&&Object.keys(next).every(name=>next[name]===previous[name])?previous:next);
  };
  measure();
  const observer=new ResizeObserver(measure);
  observer.observe(grid);
+ for(const card of grid.querySelectorAll<HTMLElement>('.ed-menu-drink'))observer.observe(card);
+ document.fonts?.ready.then(measure).catch(()=>{});
  return()=>observer.disconnect();
-},[isBeerBar,printMenuItems.map(item=>item.name+'|'+item.beerType).join('|')]);
+},[isBeerBar,beerSubtitleStyle,printMenuItems.map(item=>item.name+'|'+item.beerType+'|'+item.abv).join('|')]);
 const arrangedMenuItems=isBeerBar&&printMenuItems.length>3?[...printMenuItems].sort((a,b)=>(beerTitleLines[a.name]??1)-(beerTitleLines[b.name]??1)):printMenuItems;
 const quantities=event.quantities||{};
 const schedule=event.schedule||[];

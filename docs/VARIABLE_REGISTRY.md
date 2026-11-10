@@ -363,3 +363,6 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `COCKTAIL_RECIPES` | `src/data/menuCatalog.ts` | Tijdelijke migratiebron | 13 vaste cocktail/mocktailrecepten; pas verwijderen na bevestigde Firestore-sync en verificatie op tweede apparaat |
 
 | `missingRecipes` / `importRecipes` (bron `MENU_CATALOG`) | `src/Catalog.tsx` | Catalogusimport | Niet-destructieve import van alle ontbrekende standaarddranken, waaronder drie G&T-recepten; vervangt eerdere beperkte `COCKTAIL_RECIPES`-import |
+
+| `editing`, `closeEditor`, `original` | `src/Catalog.tsx` | Catalogus | Regelen full-page recepteditor en terugkeer naar catalogus zonder modal |
+| `.catalog-editor-page`, `.catalog-editor-heading`, `.catalog-back`, `.catalog-editor` | `src/Catalog.css` | Catalogus | Responsieve editor als pagina-inhoud in plaats van fixed overlay |

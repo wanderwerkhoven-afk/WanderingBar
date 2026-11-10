@@ -28,7 +28,7 @@ export function downloadQuotePdf(quote:Quote):void {
   if(q.plan.secondBartender)rows.push({label:'Tweede bartender ('+q.plan.secondBartenderHours+' uur)',qty:String(q.plan.secondBartenderHours),rate:money(45),sum:money(q.secondBartenderTotal)});
  }
  if(customQuote)for(const item of customQuote.lines)rows.push({label:item.description,qty:String(item.quantity),rate:money(item.rate),sum:money(item.amount)});
- if(!customQuote&&quote.travelCost)rows.push({label:'Reiskosten',qty:'1',rate:money(quote.travelCost),sum:money(quote.travelCost)});
+ if('travelCost' in quote&&quote.travelCost)rows.push({label:'Reiskosten',qty:'1',rate:money(quote.travelCost),sum:money(quote.travelCost)});
  const pages:string[][]=[[]];
  const cmd=(s:string)=>pages[0].push(s);
  const rect=(x:number,y:number,width:number,height:number,r:number,g:number,b:number)=>cmd(r+' '+g+' '+b+' rg '+x+' '+y+' '+width+' '+height+' re f');

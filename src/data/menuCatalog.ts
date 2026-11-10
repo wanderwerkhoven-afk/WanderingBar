@@ -1,3 +1,4 @@
+import {GALL_WINE_CATALOG} from './wineCatalog';
 export const COCKTAIL_RECIPES:{name:string;type:'Cocktail'|'Mocktail';ingredients:[string,number,string][]}[]=[
 {name:'Last Sip',type:'Cocktail',ingredients:[['Vodka',40,'ml'],['Lycheelikeur',20,'ml'],['Yuzusap',15,'ml'],['Vanillesiroop',15,'ml'],['Lycheesap',20,'ml'],['Passievruchtschuim',20,'ml']]},
 {name:'Spicy Guava Margarita',type:'Cocktail',ingredients:[['Tequila blanco',45,'ml'],['Guavepuree',25,'ml'],['Ananassap',20,'ml'],['Limoensap',20,'ml'],['Agavesiroop',10,'ml'],['Jalapeñosiroop',5,'ml']]},
@@ -15,11 +16,12 @@ export const COCKTAIL_RECIPES:{name:string;type:'Cocktail'|'Mocktail';ingredient
 ];
 
 export type MenuKind='Cocktail'|'Mocktail'|'Wijn'|'Speciaalbier'|'G&T';
-export type MenuEntry={name:string;type:MenuKind;ingredients:[string,number,string][];tasteProfile?:string;alcoholPercentage?:number};
+export type MenuEntry={name:string;type:MenuKind;ingredients:[string,number,string][];tasteProfile?:string;alcoholPercentage?:number;wineCategory?:string;grapes?:string;country?:string;region?:string;sourceUrl?:string};
 export const SERVICE_OPTIONS=['Cocktail workshop','Cocktail catering','Mobiele cocktailbar','Wijnbar','Speciaalbierbar','G&T bar'] as const;
 export function serviceMenuKinds(service?:string):MenuKind[]{const s=(service||'').toLocaleLowerCase('nl');if(s.includes('wijn'))return ['Wijn'];if(s.includes('speciaalbier')||s.includes('bierbar'))return ['Speciaalbier'];if(s.includes('g&t')||s.includes('gin & tonic'))return ['G&T'];if(s.includes('cocktail'))return ['Cocktail','Mocktail'];return ['Cocktail','Mocktail','Wijn','Speciaalbier','G&T']}
 export const MENU_CATALOG:MenuEntry[]=[
 ...COCKTAIL_RECIPES,
+...GALL_WINE_CATALOG.map(wine=>({name:wine.name,type:'Wijn' as const,ingredients:[[wine.name,150,'ml'] as [string,number,string]],tasteProfile:wine.tasteProfile,alcoholPercentage:wine.alcoholPercentage,wineCategory:wine.category,grapes:wine.grapes,country:wine.country,region:wine.region,sourceUrl:wine.sourceUrl})),
 {name:'Huiswijn wit',type:'Wijn',ingredients:[['Huiswijn wit',150,'ml']]},
 {name:'Huiswijn rood',type:'Wijn',ingredients:[['Huiswijn rood',150,'ml']]},
 {name:'Huiswijn rosé',type:'Wijn',ingredients:[['Huiswijn rosé',150,'ml']]},

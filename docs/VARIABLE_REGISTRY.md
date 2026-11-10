@@ -274,3 +274,6 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | Desktop responsive breakpoints (900px, 1100px, 1250px) | `src/style.css` | Dashboard, Events, navigation | CSS-only layout changes; no persisted variables or changes to mobile behavior |
 
 | Eventdetail desktop breakpoint 900px (compact 900–1100px) | `src/EventDetail.css` | `.ed-modal`, `.ed-page`, `.ed-tabs`, `.ed-panel` | Presentatielaag voor desktop, geen wijzigingen in eventdata of mobiele tabnavigatie |
+
+| `selected`, `openEvent`, `closeEvent`, URL-hash `#/evenement/:id` | `src/main.tsx` | evenementkaarten, dashboard, taken, EventDetail | Geselecteerd evenement als paginanavigatie; URL-hash maakt terugnavigatie en directe links mogelijk, opslag van evenementdata ongewijzigd |
+| `.shell-event-detail`, `.event-detail-page` | `src/style.css` | EventDetail | Volledige mobiele/desktop pagina i.p.v. overlay; CSS-only |

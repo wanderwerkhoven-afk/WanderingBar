@@ -332,3 +332,5 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `#print-root`, `#print-toolbar` | `src/documents/menuHtmlPrint.ts` | Printvenster | Vast 460px A4-canvas met schaal 793,7008/460 voor A4 en 559,3701/460 voor A5, browserprint/PDF |
 
 | `pageWidth`, `pageHeight`, `paperLabel` | `src/documents/menuHtmlPrint.ts` | Menukaart printvenster | Bepaalt vaste A4/A5-papierafmetingen, `@page`, marges 0 en zichtbare formaatindicatie; browser behoudt uiteindelijke printercontrole |
+
+| `sourceWidth`, `sourceHeight`, `sourceNodes`, `cloneNodes`, `scale` | `src/documents/menuHtmlPrint.ts` | HTML-menukaart print | Kopieert werkelijke previewafmetingen en computed styles; proportioneel schalen naar A4/A5 zonder tekstherflow |

@@ -378,3 +378,5 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 
 - [x] Tijdelijke catalogusmigratie voor standaardcocktails en mocktails: in Instellingen → Catalogus staat nu een knop om alle ontbrekende `COCKTAIL_RECIPES` (13 recepten) expliciet op te slaan via `writeMenuCatalog`, zonder bestaande/gewijzigde recepten te overschrijven. De knop toont het aantal ontbrekende recepten en bevestigt lokale opslag.
 - [ ] **Wachten op gebruiker:** recepten op eigen apparaat opslaan en controleren dat Firestore-synchronisatie daadwerkelijk is voltooid, ook op een tweede apparaat. Pas daarna hardcoded `COCKTAIL_RECIPES`/catalogusfallback gecontroleerd verwijderen; niet eerder, om dataverlies te voorkomen.
+
+- [x] Catalogus-import uitgebreid: importeert nu alle ontbrekende `MENU_CATALOG`-items, inclusief de drie G&T-recepten (`Pink Pepper & Grapefruit G&T`, `Cucumber Mint G&T`, `Mediterranean Sunset G&T`), plus cocktails/mocktails/wijnen/bieren. Bestaande records worden op naam case-insensitive behouden en niet overschreven. Nog steeds expliciet lokaal opslaan en daarna Firestore-sync controleren voordat hardcoded recepten worden verwijderd.

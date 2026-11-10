@@ -339,3 +339,10 @@
 .ed-beer-order-grip{font-size:21px;color:#a48972}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.25s}
 @media(prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation-duration:0s}}
+
+/* Floating pointer-following card while dragging a beer. */
+.ed-beer-drag-ghost{position:fixed;z-index:9999;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 13px;box-sizing:border-box;border:1px solid #a77d57;border-radius:11px;background:#fff9ef;color:#4b2c1d;box-shadow:0 15px 35px rgba(75,44,29,.26);transform:scale(1.07);transform-origin:center;pointer-events:none;will-change:left,top;animation:ed-beer-lift .16s ease-out both}
+.ed-beer-drag-ghost .ed-beer-order-name{font-size:12px;font-weight:700}
+.ed-beer-order-item.is-dragging{opacity:.28}
+@keyframes ed-beer-lift{from{transform:scale(1);box-shadow:0 2px 8px rgba(75,44,29,.12)}to{transform:scale(1.07);box-shadow:0 15px 35px rgba(75,44,29,.26)}}
+@media(prefers-reduced-motion:reduce){.ed-beer-drag-ghost{animation:none;transform:none}}

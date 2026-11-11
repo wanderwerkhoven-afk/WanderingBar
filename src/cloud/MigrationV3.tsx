@@ -84,10 +84,34 @@ export default function MigrationV3({ uid }: { uid: string }) {
       if (JSON.stringify(current) !== JSON.stringify(snapshot) || JSON.stringify(readLocal()) !== JSON.stringify(local)) {
         throw new Error('Gegevens zijn gewijzigd sinds de back-up. Start de controle opnieuw.');
       }
+      // The v3 create rule requires this legacy marker. It may not exist for
+      // older accounts; create it only after verifying that legacy records
+      // are readable, and never overwrite an existing marker.
+      const marker = doc(db, 'users', uid, 'meta', 'workspace');
+      const existingMarker = await getDocFromServer(marker);
+      if (!existingMarker.exists()) {
+        await setDoc(marker, { version: 1, initializedAt: new Date().toISOString() });
+      }
       const root = doc(db, v3Paths.workspace().join('/'));
-      const existing = await getDocFromServer(root);
-      if (existing.exists() && existing.data().ownerUid !== uid) throw new Error('De nieuwe workspace is van een ander account.');
-      if (!existing.exists()) await setDoc(root, { ownerUid: uid, schemaVersion: 3, migrationStatus: 'copying', createdAt: new Date().toISOString() });
+      // The owner-only read rule intentionally denies GET before the root
+      // exists. Attempt create in that case; Firestore rejects it if another
+      // owner already claimed the workspace.
+      let existing;
+      try {
+        existing = await getDocFromServer(root);
+      } catch (error) {
+        if (!error || typeof error !== 'object' || !('code' in error) ||
+            error.code !== 'permission-denied') throw error;
+      }
+      if (existing?.exists() && existing.data().ownerUid !== uid) {
+        throw new Error('De nieuwe workspace is van een ander account.');
+      }
+      if (!existing?.exists()) {
+        await setDoc(root, {
+          ownerUid: uid, schemaVersion: 3, migrationStatus: 'copying',
+          createdAt: new Date().toISOString(),
+        });
+      }
       const items = DATASETS.flatMap(dataset => snapshot[dataset].map(row => ({ dataset, row, path: target(dataset, row) })));
       const unique = new Set(items.map(item => item.path.join('/')));
       if (unique.size !== items.length) throw new Error('Dubbele doel-ID ontdekt; kopiëren gestopt.');
@@ -109,7 +133,7 @@ export default function MigrationV3({ uid }: { uid: string }) {
         if (!check.exists() || check.data().legacyValue !== item.row.value) throw new Error('Controle mislukt bij ' + item.path.join('/'));
       }
       await setDoc(root, { ownerUid: uid, schemaVersion: 3, migrationStatus: 'copied-not-active', verifiedRecords: items.length, verifiedAt: new Date().toISOString() }, { merge: true });
-      setMessage('Kopie gecontroleerd (' + items.length + ' records). Oude Firestore en actieve synchronisatie blijven ongewijzigd. Omschakeling volgt apart.');
+      setMessage('Kopie gecontroleerd (' + items.length + ' records). Vernieuw de app om v3 te activeren. Oude Firestore blijft bewaard.');
     } catch (e) { setMessage('Migratie niet afgerond: ' + (e instanceof Error ? e.message : 'onbekende fout') + '. Oude data blijft behouden.'); }
     finally { setBusy(false); }
   }
@@ -124,7 +148,7 @@ export default function MigrationV3({ uid }: { uid: string }) {
       <button disabled={busy || !backedUp} onClick={() => void copy()}>3. Kopiëren en verifiëren</button>
       {snapshot && <p>{DATASETS.map(d => d + ': ' + snapshot[d].length).join(' · ')}</p>}
       <p role="status">{message}</p>
-      <small>Let op: v3 Security Rules moeten vooraf in Firebase gepubliceerd zijn. Deze stap zet de app nog niet over naar v3.</small>
+      <small>De eerder gepubliceerde v3 Security Rules zijn vereist. Na een geslaagde kopie wordt v3 bij het opnieuw openen gecontroleerd en geactiveerd.</small>
     </div>}
   </div>;
 }

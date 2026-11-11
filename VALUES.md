@@ -39,3 +39,11 @@ De definitieve catalogussleutel wordt in `src/data/menuCatalog.ts` beheerd; wijz
 - Conflictscenario en back-up export testen met twee verschillende versies.
 
 **Let op:** de aanwezigheid van de synchronisatiecode bewijst nog niet dat het Firebase-project in de Console de juiste Auth-provider, database en Security Rules heeft. De eerste echte upload vindt plaats wanneer de eigenaar op het apparaat met lokale gegevens inlogt.
+
+## Firestore v2 — gestructureerde records (11 november 2026)
+- **Catalogus:** `users/{uid}/catalog/{stableRecordId}`; **inventaris:** `users/{uid}/inventory/{stableRecordId}`. Document-ID's blijven tijdens de overgang onveranderd om duplicaten, verbroken verwijzingen en gegevensverlies te voorkomen.
+- Nieuwe of gewijzigde records krijgen naast het bestaande compatibiliteitsveld `value` en `position` ook `schemaVersion: 2`, `recordId`, `slug`, `name` en expliciete productvelden. Zo worden productnaam, categorie, voorraad, ingrediënten en bronlinks zichtbaar in de Firebase Console.
+- **Cataloguslinks:** `sourceUrl` = productpagina, `imageUrl` = rechtstreekse afbeeldings-URL, `image` = handmatig geüploade afbeelding. **Inventaris:** `webLink` = productpagina, `imageUrl` = afbeeldings-URL, `image` = upload. Deze velden zijn onafhankelijk.
+- Een slug is een leesbaar zoekveld, **niet** de document-ID; een productnaam kan wijzigen zonder dat een document zijn identiteit verliest.
+- Bestaande v1-records blijven leesbaar en worden **niet automatisch verwijderd, hernoemd of overschreven**. De v2-velden worden momenteel toegevoegd wanneer een record opnieuw wordt opgeslagen. Dit is een compatibele tussenfase, **geen voltooide databasebrede migratie**.
+- Een definitieve omschakeling naar Firestore-only en het vervangen van de v1 JSON-envelope vereisen een gecontroleerde back-up, volledige inventarisatie, migratie met idempotente controles, verificatie op aantallen en referenties, en pas daarna een afzonderlijke verwijderfase.

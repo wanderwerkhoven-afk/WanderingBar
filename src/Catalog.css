@@ -32,3 +32,5 @@
 .catalog-image-preview img{width:124px;height:124px;object-fit:contain;border-radius:12px;background:#f0e4d6}
 .catalog-image-preview button{border:1px solid #cbb9a6;border-radius:10px;padding:10px;background:#fff7eb;color:#4a3325}
 @media(max-width:520px){.catalog-product-media{height:92px}.catalog-product-placeholder{font-size:34px}}
+
+.catalog-photo-hint{font-size:12px;color:#786c60;line-height:1.5;margin:0}

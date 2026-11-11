@@ -1,5 +1,13 @@
 # Wandering BarBack — Code Roadmap
 
+## Statusoverzicht — 11 november 2026 (leidend)
+
+- **Gereed in code:** catalogus zonder hardcoded producten, bierselectie bij evenementen uit catalogus, losse afbeeldings- en productlinks, productcards met hover- en fullscreenpreview, automatische Firestore-synchronisatie via lokale opslag.
+- **Niet gereed:** volledige Firestore-only architectuur, v1→v2-backfill van bestaande cloudrecords, verificatie van alle cloudproducten en afbeeldingslinks.
+- **Kwaliteitscontrole:** laatste build/deployment en gedrag op echte apparaten afzonderlijk controleren. Codecommit is geen bewijs van succesvolle cloudsync.
+- **Documentatie:** actuele product- en cloudvariabelen staan bovenaan `docs/VARIABLE_REGISTRY.md`; oude regels hieronder zijn historisch en mogen niet als actieve productarchitectuur worden geïnterpreteerd.
+
+
 ## Actuele technische status — 10 november 2026
 
 Deze sectie beschrijft de **huidige implementatie**; oudere afgeronde regels verderop zijn een historisch wijzigingslog en beschrijven soms inmiddels vervangen technieken.

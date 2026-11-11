@@ -46,6 +46,27 @@ function snapshotRows(snapshot: QuerySnapshot<DocumentData>): Row[] {
   }).sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
 }
 
+/** Queryable Firestore fields alongside the legacy value envelope (v1-compatible). */
+function structuredRecord(dataset: Dataset, row: Row): Record<string, unknown> {
+  const value: unknown = JSON.parse(row.value);
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Ongeldig cloudrecord.');
+  const record = value as Record<string, unknown>;
+  const name = typeof record.name === 'string' ? record.name : '';
+  const slug = name.normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '').toLocaleLowerCase('nl')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80);
+  const fields: Record<string, unknown> = { schemaVersion: 2, recordId: row.id, slug, name };
+  const keys = dataset === 'catalog'
+    ? ['type','ingredients','tasteProfile','alcoholPercentage','wineCategory','grapes','country','region','sourceUrl','image','imageUrl']
+    : dataset === 'inventory'
+      ? ['id','category','subcategory','quantity','unit','location','notes','brand','price','supplier','priceCheckedAt','webLink','image','imageUrl','recipe']
+      : ['id','title','name','date','status'];
+  for (const key of keys) {
+    const field = record[key];
+    if (field !== undefined && field !== null && typeof field !== 'function') fields[key] = field;
+  }
+  return fields;
+}
+
 function toRaw(rows: Row[]): string { return JSON.stringify(rows.map(row => JSON.parse(row.value))); }
 function remoteRaws(remote: RemoteData): RawLocal {
   return Object.fromEntries(DATASETS.map(k => [k, toRaw(remote[k])])) as RawLocal;
@@ -101,6 +122,7 @@ async function writeDataset(uid: string, dataset: Dataset, desired: Row[], previ
       if (change.type === 'set') {
         batch.set(doc(collectionRef(uid, dataset), change.row.id), {
           value: change.row.value, position: change.row.position,
+          ...structuredRecord(dataset, change.row),
         });
       } else {
         batch.delete(doc(collectionRef(uid, dataset), change.id));

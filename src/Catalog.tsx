@@ -2,7 +2,6 @@ import {useEffect,useState} from 'react';
 import {createPortal} from 'react-dom';
 import {imageToBase64} from './eventImage';
 import {readMenuCatalog,writeMenuCatalog,type MenuEntry,type MenuKind} from './data/menuCatalog';
-import {BLADE_BEERS,BOTTLED_BEER_CATALOG} from './planning/beerBar';
 import './Catalog.css';
 function CatalogProductImage({entry}:{entry:MenuEntry}){
  const [gallImage,setGallImage]=useState('');

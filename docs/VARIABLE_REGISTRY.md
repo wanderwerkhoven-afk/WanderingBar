@@ -1,400 +1,95 @@
-# Wandering BarBack — Variable Registry
+# Wandering BarBack — Variable Registry / technische koppelingen
+**Gecontroleerd tegen broncode op main: 11 november 2026.** Dit is het leidende **waar-wijzigen-wat-raakt-wat** register. Alleen daadwerkelijk aangetroffen symbolen worden als bestaand beschreven. Zie [CODE_ROADMAP.md](CODE_ROADMAP.md) voor werkstatus en [../VALUES.md](../VALUES.md) voor opslagafspraken.
 
-## Actuele product- en cloudvariabelen — 11 november 2026
-
-Deze sectie is leidend voor catalogus, inventaris, bierbar en Firestore. Historische tabellen verderop kunnen oude migratiefasen beschrijven; verwijderde symbolen zijn uit de tabellen geschrapt.
-
-| Symbool / veld | Bestand | Actuele betekenis |
+## 1. Snelle wijzigingswijzer
+| Ik wil wijzigen… | Begin hier | Controleer ook / afhankelijkheid |
 |---|---|---|
-| `MenuEntry`, `MenuKind` | `src/data/menuCatalog.ts` | Productmodel en drankcategorieën; geen vaste productrecords |
-| `sourceUrl`, `imageUrl`, `image` | `src/data/menuCatalog.ts` | Productpagina, externe productfoto en geüploade afbeelding, afzonderlijk opgeslagen |
-| `CATALOG_STORAGE_KEY` | `src/data/menuCatalog.ts` | Legacy lokale cataloguscache; wordt nog gesynchroniseerd |
-| `readMenuCatalog()`, `writeMenuCatalog()` | `src/data/menuCatalog.ts` | Lezen en schrijven via huidige lokale opslaglaag |
-| `CatalogProductImage`, `hoverRect`, `previewOpen` | `src/Catalog.tsx` | Foto, hoverpreview en fullscreenweergave |
-| `.catalog-hover-preview`, `.catalog-image-lightbox` | `src/Catalog.css` | Hoverlaag en fullscreen-overlay |
-| `readStoredInventory()`, `writeStoredInventory()` | `src/repositories/inventoryRepository.ts` | Huidige lokale inventarisopslag |
-| `webLink`, `imageUrl`, `image` | `src/types/inventory.ts` | Productpagina, afbeelding-URL en upload in inventaris |
-| `BeerBarPlan`, `defaultBeerBarPlan()`, `normalizeBeerBarPlan()` | `src/planning/beerBar.ts` | Biertap-/flesplanning zonder hardcoded biermerken |
-| `bottledBeerOptions`, `catalogEntries` | `src/EventDetail.tsx` | Bier- en overige productkeuzes uit opgeslagen catalogus; bestaande evenementselecties blijven behouden |
-| `beerDescription()`, `beerAlcoholLabel()` | `src/EventDetail.tsx` | Smaakprofiel en alcoholpercentage uit catalogusrecord |
-| `DATASETS`, `prepareSync()`, `startLiveSync()` | `src/cloud/storageSync.ts` | Firestore-synchronisatie van vier datasets via lokale cache |
-| `structuredRecord()`, `schemaVersion`, `slug`, `recordId` | `src/cloud/storageSync.ts` | Leesbare v2-velden naast legacy JSON-envelope |
-| `syncStatus` | `src/cloud/CloudGate.tsx` | Status gesynchroniseerd / synchroniseren / fout |
+| Catalogusproduct, wijn, bier, cocktail of G&T | `src/Catalog.tsx` | `src/data/menuCatalog.ts` (model, opslag), `src/EventDetail.tsx` (evenementkeuze), `src/cloud/storageSync.ts` (Firestore-velden) |
+| Productfoto / hover / fullscreen | `src/Catalog.tsx`, `src/Catalog.css` | `MenuEntry.image`, `imageUrl`, `sourceUrl`; `src/eventImage.ts` (uploadconversie) |
+| Inventarisartikel / foto / voorraad | `src/Inventory.tsx`, `src/inventory.css` | `src/types/inventory.ts`, `src/repositories/inventoryRepository.ts`, `src/inventoryPlanning.ts`, `src/cloud/storageSync.ts` |
+| Voorraad koppelen aan recept of inkoop | `src/inventoryPlanning.ts` | `src/EventDetail.tsx`, `src/data/menuCatalog.ts`, `src/Inventory.tsx` |
+| Bierkeuze voor evenement / tap / fles | `src/EventDetail.tsx` | `src/planning/beerBar.ts`, `src/data/menuCatalog.ts`, `src/types/event.ts` |
+| Wijnkaart, cocktailkaart of menukaartselectie | `src/EventDetail.tsx` | `src/data/menuCatalog.ts`, `src/data/menuTemplates.ts`, `src/EventDetail.css`, `src/documents/menuHtmlPrint.ts` |
+| Menukaart afdrukken A4/A5 | `src/documents/menuHtmlPrint.ts` | `src/EventDetail.tsx`, `src/EventDetail.css`, `src/data/menuTemplates.ts` |
+| Evenement aanmaken/bewerken/verwijderen | `src/main.tsx` | `src/types/event.ts`, `src/repositories/eventRepository.ts`, `src/EventDetail.tsx`, `src/cloud/storageSync.ts` |
+| Evenementplanning, paklijst, taken | `src/EventDetail.tsx` | `src/planning/eventTasks.ts`, `src/planning/beerBar.ts`, `src/inventoryPlanning.ts`, `src/types/event.ts` |
+| Workshopprijs / offerte / factuur | `src/planning/workshopPricing.ts` | `src/planning/workshopQuotes.ts`, `src/EventDetail.tsx`, `src/documents/quotePdf.ts`, `src/planning/vat.ts` |
+| Cateringprijs / offerte / factuur | `src/planning/cateringPricing.ts` | `src/planning/cateringDocuments.ts`, `src/EventDetail.tsx`, `src/documents/quotePdf.ts`, `src/planning/vat.ts` |
+| Overige financiële regels/documenten | `src/planning/customDocuments.ts` | `src/EventDetail.tsx`, `src/documents/quotePdf.ts`, `src/planning/vat.ts` |
+| Login / conflicten / synchronisatie | `src/cloud/CloudGate.tsx` | `src/cloud/storageSync.ts`, `src/cloud/localRows.ts`, `src/firebase.ts`, `firestore.rules` |
+| Navigatie / dashboard / routes | `src/main.tsx`, `src/style.css` | `src/SwipeEventCard.tsx`, `src/eventDates.ts`, `src/planning/eventTasks.ts` |
+| Deploy / build | `package.json`, `vite.config.ts` | `.github/workflows/deploy.yml`, `.github/workflows/event-detail-build.yml` |
 
-**Verwijderd uit actieve productcode:** `MENU_CATALOG`, `COCKTAIL_RECIPES`, `BEER_TASTE_PROFILES`, `LEGACY_BEER_TASTE_PROFILES`, `DEFAULT_BEER_ABV`, `BLADE_BEERS`, `BOTTLED_BEER_CATALOG`, `BOTTLED_BEERS`, en de handmatige import-/synchronisatieknoppen voor standaardproducten.
-
-**Nog niet afgerond:** rechtstreeks Firestore-only lezen/schrijven, gecontroleerde v1→v2-backfill en verificatie van alle cloudrecords.
-
-
-## Actuele menukaart-architectuur — 10 november 2026
-
-**Deze tabel is leidend.** Oudere verwijzingen naar `menuPdf.ts`, `downloadMenuPdf`, `sourceNodes` en `cloneNodes` zijn vervallen en zijn uit het historische register verwijderd.
-
-| Variabele / symbool | Bestand | Actuele functie |
-|---|---|---|
-| `menuDesign`, `menuFrame`, `menuSize` | `src/EventDetail.tsx` | Geselecteerde menukaartstijl, sierlijst en A4/A5-formaat |
-| `printMenuItems` | `src/EventDetail.tsx` | Te tonen dranknamen en omschrijvingen; bepaalt kolom-/rij-indeling |
-| `printMenuHtml(preview,size)` | `src/documents/menuHtmlPrint.ts` | Enige actieve menukaart-afdrukroute; kloont HTML-preview naar apart printvenster |
-| `pageWidth`, `pageHeight`, `scale` | `src/documents/menuHtmlPrint.ts` | A4/A5-printschaal en fysieke pagina-afmetingen |
-| `#print-root`, `#print-toolbar` | `src/documents/menuHtmlPrint.ts` | Printcanvas en knop voor browserafdruk |
-| `.ed-menu-print`, `.ed-menu-paper` | `src/EventDetail.css` | Basisontwerp van de menukaart |
-| `.ed-menu-drinks-grid`, `.ed-menu-drinks-five` | `src/EventDetail.css` | Twee kolommen vanaf vier dranken; vijfde drank gecentreerd |
-| `.ed-menu-print.ed-size-a5` | `src/EventDetail.css` | Proportionele schaal van volledige A4-preview met `zoom:326/460` |
-| `catalogEntries` | `src/EventDetail.tsx` | Kopie van de opgeslagen catalogus voor evenementselectie; geen ingebouwde producten |
-| `maxMenuItems` | `src/EventDetail.tsx` | Selectielimiet van zes bij cocktail/mocktail-diensten |
-
-**Verwijderd:** `src/documents/menuPdf.ts` en de oude globale A4/A5-printregels uit `EventDetail.css`. De offerte- en factuur-PDF-generatoren zijn aparte functionaliteiten en vallen buiten deze menukaartopschoning.
-
-
-## Firebase en synchronisatie — 10 november 2026
-
-**Dubbele-ID-herstel:** `src/cloud/localRows.ts` bezit `Dataset`, `Row`, `parsed()` en `rowsFromLocal()`. Bij hergebruik van een `inventory.id` genereert `rowsFromLocal` een unieke `-local-N`-suffix in de cloudrepresentatie; de overige datasets blokkeren onveilige duplicaten. `PreparedSync.canMerge` en `PreparedSync.localProblem` sturen de beschikbare keuzes op het inlogscherm. `PreparedSync.activate('cloud')` vervangt uitsluitend de vier gegevenssets van de browser; geen algemene cacheclear. Regressietests: `tests/localRows.test.mjs`, uitgevoerd met `npm test`.
-
-| Symbool / opslag | Eigenaar | Betekenis |
-|---|---|---|
-| `firebaseConfig`, `auth`, `db` | `src/firebase.ts` | Firebase webconfiguratie, Google Authentication en Firestore-instantie (`barback-20df5`) |
-| `DATASETS`, `Dataset` | `src/cloud/storageSync.ts` | `events`, `deletedEvents`, `inventory`, `catalog`; overeenkomstige lokale keys en Firestore-subcollecties |
-| `RawLocal`, `readLocal()` | `src/cloud/storageSync.ts` | Momentopname van de vier ongewijzigde legacy-localStorage JSON-waarden |
-| `users/{uid}/{dataset}/{recordId}` | Firestore / `storageSync.ts` | Accountgebonden records met `value` (JSON-string) en `position` (lijstvolgorde) |
-| `users/{uid}/meta/workspace` | Firestore / `storageSync.ts` | Initialisatiemarker: onderscheid tussen nieuw account en bewust lege datasets |
-| `barback-firebase-local-owner-v1` | `storageSync.ts` | UID-eigenaar van de browserkopie; voorkomt accountvermenging |
-| `barback-firebase-synced-v1-{uid}` | `storageSync.ts` | Fingerprint van laatst gesynchroniseerde lokale dataset; voorkomt onbedoelde conflictkeuzes |
-| `prepareSync()`, `PreparedSync.activate()` | `storageSync.ts` | Servergegevens ophalen, conflict detecteren, lokale upload / back-up / merge / cloudkeuze |
-| `startLiveSync()` | `storageSync.ts` | Firestore listeners, periodieke lokale upload, voortgang en conflictstop |
-| `barback-sync-request` | `CloudGate.tsx` → `storageSync.ts` | Browser-event: controleer lokale gegevens direct op nog niet geüploade wijzigingen |
-| `syncStatus` | `CloudGate.tsx` | React-state `synced`, `syncing` of `error`; getoond in de verbindingsbalk |
-| `remoteChange` | `CloudGate.tsx` | React-state: externe wijziging ontvangen; gebruiker moet verversen |
-
-**Belangrijk:** browserdata kunnen pas naar Firestore worden geüpload nadat de betreffende gebruiker met Google is aangemeld. De code kan geen lokaal opgeslagen gegevens uit de browser van de eigenaar op afstand uitlezen. De daadwerkelijke upload vereist daarom een eerste ingelogde sessie op dat apparaat.
-
-Status: 2026-11-08. Bron: code op `main`. Dit is een register van **gedeelde, persistente en domeinbepalende** variabelen, niet van iedere tijdelijke callback- of loopvariabele. Bestandsnamen en symbolen zijn hoofdlettergevoelig.
-
-| Symbool / veld | Gedefinieerd in | Gebruikt door | Betekenis / opslag |
-|---|---|---|---|
-| `Tab`, `tabs` | `src/main.tsx` | `App` | Navigatie: Home, Evenementen, Inventaris, Voorbereiding, Meer |
-| `tab`, `setTab` | `App` in `src/main.tsx` | App-header, content, bottom-nav | Actief tabblad; React-state, niet persistent |
-| `EventItem` | `src/main.tsx` | `App`, `readEvents`, `saveEvent` | Alias van `EventData` |
-| `EventData` | `src/EventDetail.tsx` | `main.tsx`, `EventDetail` | Evenementmodel: id, title, date, city, guests, progress, status, photo en optionele velden |
-| `sampleEvents` | `src/main.tsx` | `readEvents` | Voorbeeld-/fallback-events, waaronder ODW |
-| `STORAGE_KEY` | `src/main.tsx` | `readEvents`, event-`useEffect` | `wandering-barback-events-v1` |
-| `events`, `setEvents` | `App` in `src/main.tsx` | eventlijst, `saveEvent`, `createEvent` | Eventcollectie in React-state; opgeslagen als JSON |
-| `selected`, `setSelected` | `App` | EventDetail openen/sluiten | Geselecteerd event |
-| `form`, `setForm` | `App` | Eventaanmaakformulier | title, date, city, guests, service, photo |
-| `filter`, `search`, `visibleEvents` | `App` | Eventoverzicht | Eventfilter, zoektekst en gefilterde resultaten |
-| `imageToBase64` | `src/eventImage.ts` | `main.tsx`, `EventDetail.tsx`, `Inventory.tsx` | File → JPEG data-URL; gebruikt voor event- en productfoto |
-| `Category`, `Item` | `src/Inventory.tsx` | Inventaris-UI, `inventoryPlanning.ts` | Inventariscategorie en artikeltype; `Item` is geëxporteerd |
-| `Item.id`, `Item.name` | `Item` | inventaris en matching | Technische ID versus zichtbare naam; matching is nu vooral naamgebaseerd |
-| `Item.quantity`, `Item.unit` | `Item` | `Inventory`, `available`, `saveBatch` | Voorraadhoeveelheid en eenheid; null betekent onbekend |
-| `Item.price`, `Item.supplier`, `Item.brand` | `Item` | inventaris, `purchaseLines` | Referentieprijs, leverancier, merk; `brand` wordt soms gebruikt om flesinhoud te herkennen |
-| `Item.recipe`, `Item.image` | `Item` | inventaris-UI | Vrije recepttekst en optionele Base64-data-URL |
-| `categories` | `src/Inventory.tsx` | categorieën en formulier | Categorieën, subcategorieën en iconen |
-| `seed`, `beverageCatalog`, `extraCatalog`, `homemadeStarter` | `src/Inventory.tsx` | seed-opbouw en `load` | Startcatalogus en zelfgemaakte artikelen |
-| `verifiedPrices`, `gallPrices`, `gallBatch2…13` | `src/Inventory.tsx` | `applyVerifiedPrices` | Prijsbronnen voor (vooral) Gall & Gall; verificatiestatus per bron controleren |
-| `ahFruitMixerBatch`, `newAhPrices`, `ahBatchTen/Twenty/Thirty/Forty` | `src/Inventory.tsx` | `applyVerifiedPrices` | AH-prijsreferenties |
-| `syrupBatchTen`, `syrupBatchTwenty`, `preferredSyrupPrices` | `src/Inventory.tsx` | `applyVerifiedPrices` | Siroopprijzen en voorkeursalternatieven |
-| `INVENTORY_STORAGE_KEY`, `key` | `src/Inventory.tsx` | `load`, inventaris-`useEffect`, `inventoryPlanning.ts` | `wandering-barback-inventory-v1` |
-| `applyVerifiedPrices` | `src/Inventory.tsx` | `load` | Voegt standaardprijzen toe aan items; let op bescherming handmatige wijzigingen |
-| `attachHomemadeRecipes` | `src/Inventory.tsx` | `load` | Koppelt startrecepten aan bestaande artikelen |
-| `load`, `items`, `setItems` | `src/Inventory.tsx` | Inventariscomponent | Laadt, beheert en bewaart voorraad in localStorage |
-| `draft`, `setDraft` | `Inventory` | Productmodal | Tijdelijke bewerkversie van inventarisartikel |
-| `RECIPES` | `src/EventDetail.tsx` | Menukaart, `ingredients` | Cocktailcatalogus met ingrediënten en hoeveelheden per drankje |
-| `menu`, `quantities` | `EventDetail` | Menukaart en `ingredients` | Geselecteerde cocktails en aantallen per cocktail |
-| `ingredients` | `EventDetail` | Inkoopberekening | Geaggregeerde receptbehoeften vóór marge |
-| `margin` / `purchaseMargin` | `EventDetail` / `EventData` | `purchaseLines` | Extra inkooppercentage per evenement |
-| `lines` | `EventDetail` | Inkoop-tab | Resultaten van `purchaseLines` |
-| `stockItems`, `setStockItems` | `EventDetail` | `purchaseLines`, `saveBatch` | Momentopname van lokale inventaris |
-| `inventoryItems` | `src/inventoryPlanning.ts` | `EventDetail` | Leest voorraad uit localStorage |
-| `aliases`, `matchItem` | `src/inventoryPlanning.ts` | `purchaseLines`, `saveBatch` | Naam-aliassen en productmatching |
-| `Need`, `PurchaseLine` | `src/inventoryPlanning.ts` | `purchaseLines`, event-Inkoop | Gevraagde hoeveelheid en berekende voorraad/tekort/leverancier |
-| `available`, `purchaseLines` | `src/inventoryPlanning.ts` | Event-Inkoop | Eenheidsconversie en voorraadvergelijking |
-| `BatchRecipe`, `batchRecipes` | `src/inventoryPlanning.ts` | Event-Inkoop | Zelfmaakrecepten, doelvolume, grondstoffen en instructies |
-| `batchName`, `batchAmount`, `batchMessage` | `EventDetail` | Batchformulier | Geselecteerd recept, geplande productie en feedback |
-| `saveBatch` | `src/inventoryPlanning.ts` | `EventDetail` | Boekt grondstoffen af en output bij in localStorage |
-| `schedule`, `packing`, `staff` | `EventDetail` (uit `event`) | Overzicht, Paklijst, Planning | Evenementdraaiboek, materialen en medewerkers |
-| `DEFAULT_PACK`, `DEFAULT_SCHEDULE` | `src/EventDetail.tsx` | `EventDetail` init-effect | Standaard paklijst en draaiboek |
-
-## Dataflow
-
-```mermaid
-flowchart TD
-  A["main.tsx · App events"] --> B["EventDetail.tsx · menu & event"]
-  C["Inventory.tsx · items"] --> D["localStorage · inventory-v1"]
-  A --> E["localStorage · events-v1"]
-  B --> F["inventoryPlanning.ts · purchaseLines"]
-  D --> F
-  B --> G["inventoryPlanning.ts · saveBatch"]
-  G --> D
-  H["eventImage.ts · imageToBase64"] --> A
-  H --> B
-  H --> C
+## 2. Werkelijke gegevensstroom
+```text
+Google login → CloudGate → prepareSync → conflictkeuze/initialisatie → App
+Catalogus UI → writeMenuCatalog → localStorage catalog → storageSync poll (1200 ms) → Firestore users/{uid}/catalog/{recordId}
+Inventaris UI → localStorage inventory → storageSync poll → Firestore users/{uid}/inventory/{recordId}
+Evenement UI → eventRepository → localStorage events/deletedEvents → storageSync poll → Firestore
+Firestore onSnapshot → externe wijziging gesignaleerd → melding/verversen; GEEN directe live binding per formulier
+EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklijst / documentmodules
 ```
+**Belangrijk:** Firestore is momenteel niet de directe primaire leesbron voor de React-schermen. De app gebruikt lokale JSON met synchronisatie. Geen bewijs vanuit GitHub dat alle records in de echte cloud staan.
 
-## Belangrijke opslagvelden
-- Event: `id` (number), `title`, `date` (momenteel displaytekst), `city`, `guests`, `progress`, `status`, `photo`, `menu`, `quantities`, `schedule`, `packing`, `staff`, `purchaseMargin`.
-- Inventaris: `id`, `name`, `category`, `subcategory`, `quantity`, `unit`, `location`, `notes`, `brand`, `price`, `supplier`, `priceCheckedAt`, `webLink`, `recipe`, `image`.
-- `photo` en `image` zijn data-URL's of (voor bestaande voorbeeld-events) gewone URL's. Niet aannemen dat alle waarden Base64 zijn.
-- `quantity: null` betekent **niet geteld**, niet nul. `quantity: 0` betekent nul voorraad.
-- `price` is momenteel niet consequent gekoppeld aan een expliciete verpakkingsmaat; kostenramingen zijn daarom beperkt betrouwbaar.
+## 3. Canonieke modellen en sleutels
+| Symbool / veld | Definitie | Gebruikt door / gevolg |
+|---|---|---|
+| `MenuKind`, `MenuEntry` | `src/data/menuCatalog.ts` | Catalog, EventDetail, storageSync; types: Cocktail, Mocktail, Wijn, Speciaalbier, G&T |
+| `MenuEntry.name` | `src/data/menuCatalog.ts` | Huidige catalogus-Firestore-document-ID via `encodeURIComponent(name)`; hernoemen kan dus documentidentiteit veranderen |
+| `MenuEntry.ingredients` | `src/data/menuCatalog.ts` | Recepten, menukaart, berekening benodigdheden |
+| `tasteProfile`, `alcoholPercentage`, `wineCategory`, `grapes`, `country`, `region` | `src/data/menuCatalog.ts` | Productweergave, filters, wijn-/bierkaart |
+| `sourceUrl`, `imageUrl`, `image` | `src/data/menuCatalog.ts` | Productpagina, directe afbeeldingslink, geüploade base64-foto; upload heeft voorrang |
+| `SERVICE_OPTIONS`, `serviceMenuKinds()` | `src/data/menuCatalog.ts` | Diensten en toegestane cataloguscategorieën |
+| `Item`, `Category` | `src/types/inventory.ts` | Inventaris; `quantity:null` betekent niet geteld, niet nul |
+| `Item.webLink`, `imageUrl`, `image` | `src/types/inventory.ts` | Inventarisproductpagina en productfoto's |
+| `EventData`, `DeletedEvent`, `PackingItem`, `ScheduleItem`, `EventActionTask` | `src/types/event.ts` | Evenementdetail, planning, documenten en opslag |
+| `BeerBarPlan` | `src/planning/beerBar.ts` | `taps: {beer,glasses}[]`, `bottles: Record<string,number>`, `bottlesPerTub`, `iceKgPerTub` |
+| `EVENT_STORAGE_KEY` | `src/repositories/storageKeys.ts` | `wandering-barback-events-v1` |
+| `DELETED_EVENTS_STORAGE_KEY` | `src/repositories/storageKeys.ts` | `wandering-barback-deleted-events-v1` |
+| `INVENTORY_STORAGE_KEY` | `src/repositories/storageKeys.ts` | `wandering-barback-inventory-v1` |
+| `CATALOG_STORAGE_KEY` | `src/data/menuCatalog.ts` | `wandering-barback-catalog-v1` |
 
-## Register onderhouden
-Bij elke PR/commit met een nieuwe gedeelde variabele of opslagveld:
-1. Noteer eigenaarbestand, type, betekenis, consument(en) en opslaglocatie.
-2. Leg naamwijzigingen en migratie vast; vermijd duplicatie.
-3. Markeer berekende waarden als derived, React-state als transient en opgeslagen velden als persisted.
-4. Voeg bij opslagwijzigingen een migratie-/compatibiliteitstest toe.
-5. Houd de diagram en roadmap synchroon.
+## 4. Schermen en concrete symbolen
+| Symbool | Bestand | Wat wordt geraakt |
+|---|---|---|
+| `paths`, `getRoute()`, `go()`, `App` | `src/main.tsx` | Hashroutes: dashboard, evenementen, inventaris, voorbereiding, meer, catalogus, verwijderde evenementen, evenementdetail |
+| `sampleEvents`, `readEvents()` | `src/main.tsx` | **Nog aanwezige hardcoded demo-evenementen** als lokale sleutel ontbreekt; geen catalogusproducten |
+| `Catalog`, `persist()`, `save()`, `remove()` | `src/Catalog.tsx` | Product-CRUD naar lokale catalogus; update-event `wandering-catalog-updated` |
+| `CatalogProductImage`, `gallImage`, `hoverRect`, `previewOpen` | `src/Catalog.tsx` | Afbeelding, Gall & Gall-metadatafallback, hover en fullscreen |
+| `.catalog-hover-preview img` | `src/Catalog.css` | Hoverfles: `translateY(-20px) scale(.97)` (stand 11-11-2026) |
+| `Inventory`, `load()`, `starter`, `seed`, `beverageStarter`, `extraStarter`, `homemadeStarter` | `src/Inventory.tsx` | **Nog hardcoded inventarisstartdata**, uitbreidingen en recepten; niet gelijk aan catalogusproducten |
+| `verifiedPrices`, `applyVerifiedPrices()`, `addBeerBarOptions()` | `src/Inventory.tsx` | In code aanwezige prijs-/bier-inventarisdefaults en migratiegedrag; wijziging kan bestaande lokale inventaris beïnvloeden |
+| `readStoredInventory()`, `writeStoredInventory()` | `src/repositories/inventoryRepository.ts` | Inventarisopslaghulpen; `Inventory.tsx` gebruikt ook eigen `load()` en lokale writes |
+| `inventoryItems()`, `matchItem()`, `purchaseLines()`, `batchRecipes()`, `saveBatch()` | `src/inventoryPlanning.ts` | Voorraad, naamkoppeling, inkoop, batchverbruik |
+| `EventDetail`, `catalogEntries`, `availableMenu`, `activeMenu` | `src/EventDetail.tsx` | Productselectie op evenement vanuit opgeslagen catalogus |
+| `bottledBeerOptions`, `beerDescription()`, `beerAlcoholLabel()` | `src/EventDetail.tsx` | Bierkeuzes uit catalogus + reeds geselecteerde flessen; omschrijving/ABV uit catalogus |
+| `DEFAULT_PACK`, `DEFAULT_SCHEDULE` | `src/EventDetail.tsx` | **Hardcoded startpaklijst en startdraaiboek**; niet productcatalogus |
+| `defaultBeerBarPlan()`, `normalizeBeerBarPlan()`, `beerBarRequirements()`, `beerBarPacking()` | `src/planning/beerBar.ts` | Geen vaste biermerken als tapdefaults; vaste BLADE-materiaalnaam en paklijstbenodigdheden bestaan nog |
+| `MENU_TEMPLATES`, `MENU_PRINT_SIZES` | `src/data/menuTemplates.ts` | Vaste **ontwerppresets**, geen producten |
+| `printMenuHtml()` | `src/documents/menuHtmlPrint.ts` | HTML-menukaartprint A4/A5 |
+| `downloadQuotePdf()` | `src/documents/quotePdf.ts` | PDF-output voor offertes/documenten |
+| `getEventTasks()` | `src/planning/eventTasks.ts` | Dashboard en voorbereiding |
+| `parseEventDate()`, `formatEventDate()`, `nextUpcomingEvent()` | `src/eventDates.ts` | Datumweergave en eerstvolgende evenement |
 
-## Centrale modellen en opslag — update 8 november 2026
-| Symbool | Eigenaar | Consumenten | Opslag / status |
-|---|---|---|---|
-| `EventData`, `EventStatus`, `ScheduleItem`, `PackingItem`, `StaffMember`, `DeletedEvent` | `src/types/event.ts` | `main.tsx`, `EventDetail.tsx`, `eventRepository.ts` | Type-only; shape van bestaande eventrecords ongewijzigd |
-| `Item`, `Category` | `src/types/inventory.ts` | `Inventory.tsx`, `inventoryPlanning.ts`, `inventoryRepository.ts` | Type-only; shape van bestaande inventarisrecords ongewijzigd |
-| `EVENT_STORAGE_KEY` | `src/repositories/storageKeys.ts` | `eventRepository.ts` | `wandering-barback-events-v1` |
-| `DELETED_EVENTS_STORAGE_KEY` | `src/repositories/storageKeys.ts` | `eventRepository.ts` | `wandering-barback-deleted-events-v1` |
-| `INVENTORY_STORAGE_KEY` | `src/repositories/storageKeys.ts` | `Inventory.tsx`, `inventoryPlanning.ts`, `inventoryRepository.ts` | `wandering-barback-inventory-v1` |
-| `readStoredEvents`, `writeStoredEvents` | `src/repositories/eventRepository.ts` | `main.tsx` | Actieve evenementen in bestaande localStorage key |
-| `readStoredDeletedEvents`, `writeStoredDeletedEvents` | `src/repositories/eventRepository.ts` | `main.tsx` | Herstelarchief in bestaande localStorage key |
-| `readStoredInventory`, `writeStoredInventory` | `src/repositories/inventoryRepository.ts` | Toekomstige inventarisrefactor | Voorbereid, nog niet verbonden met inventaris-UI |
+## 5. Firebase: exacte verantwoordelijkheden
+| Symbool | Bestand | Gedrag |
+|---|---|---|
+| `auth`, `db` | `src/firebase.ts` | Firebase-project `barback-20df5`; Google Auth en Firestore |
+| `CloudGate`, `phase`, `syncStatus` | `src/cloud/CloudGate.tsx` | Login, conflictkeuze, status, foutmelding en toegang tot App |
+| `DATASETS`, `KEYS` | `src/cloud/storageSync.ts` | Vier collecties: events, deletedEvents, inventory, catalog |
+| `prepareSync()`, `PreparedSync.activate()` | `src/cloud/storageSync.ts` | Download cloud, vergelijk lokale data, back-up, cloud/merge keuze |
+| `startLiveSync()`, `writeDataset()` | `src/cloud/storageSync.ts` | `onSnapshot`-detectie, 1200ms lokale poll, Firestore batch writes |
+| `structuredRecord()` | `src/cloud/storageSync.ts` | v2-zoekvelden naast `value` JSON en `position`; niet alle bestaande documenten zijn gebackfilld |
+| `rowsFromLocal()`, `recordId()` | `src/cloud/localRows.ts` | Dataset-ID's: catalogus op naam, events op id, deletedEvents op event.id, inventory op id; inventarisduplicaten krijgen lokale suffix |
+| `OWNER_KEY`, `SYNC_PREFIX`, `INVENTORY_MIGRATION_KEY` | `src/cloud/storageSync.ts` | Browseraccount, fingerprint, migratiemarkering |
+| `firestore.rules` | repositoryroot | Beveiligingsregels; publicatie in echte Firebase Console afzonderlijk verifiëren |
 
-**Compatibiliteit:** oude exports `EventDetail.EventData`, `Inventory.Item` en `Inventory.INVENTORY_STORAGE_KEY` blijven bestaan als re-exports. Geen schemawijziging of automatische migratie. 
+## 6. Impactcontrole bij wijzigingen
+1. Wijzig het **model** in `src/data/menuCatalog.ts`, `src/types/inventory.ts` of `src/types/event.ts` wanneer velden veranderen.
+2. Wijzig de **editor/kaart** in `Catalog.tsx`, `Inventory.tsx` of `EventDetail.tsx`.
+3. Controleer **afnemers**: `EventDetail.tsx`, `inventoryPlanning.ts`, bierbar-/documentmodules en `main.tsx`.
+4. Controleer **opslag en synchronisatie**: lokale sleutel, `localRows.ts` ID-regels, `storageSync.ts` v2-velden en conflictscenario.
+5. Controleer **bestaande gegevens** op tweede apparaat, oudere evenementen, verwijderde items en inventarisduplicaten.
+6. Draai `npm test` en `npm run build`; controleer GitHub Actions én de live app. Werk daarna dit register, roadmap en VALUES bij.
 
-## Dienstspecifieke menukaart — 8 november 2026
-| Symbool | Eigenaar | Gebruikt in | Betekenis |
-|---|---|---|---|
-| `MenuKind`, `MenuEntry` | `src/data/menuCatalog.ts` | `EventDetail.tsx` | Type van drankcategorie en recept/serveerhoeveelheden |
-| `serviceMenuKinds` | `src/data/menuCatalog.ts` | `EventDetail.tsx` | Toegestane drankcategorieën per dienst |
-| `getMenuEntry` | `src/data/menuCatalog.ts` | `EventDetail.tsx` | Naamgebaseerde receptlookup voor inkoop |
-| `allowedKinds`, `availableMenu`, `visibleMenu` | `EventDetail` | Menukaart-UI | Afgeleide filterwaarden; niet opgeslagen |
-| `maxMenuItems`, `menuTitle` | `EventDetail` | Menukaart-UI | Dienstspecifieke limiet en koptekst; niet opgeslagen |
-
-Bestaande persistente velden `event.service`, `event.menu` en `event.quantities` blijven ongewijzigd. Nieuwe dranken zijn voorlopig startvoorbeelden en geen geverifieerde voorraadproducten.
-
-## Speciaalbierbar-catalogus — 8 november 2026
-| Symbool | Eigenaar | Gebruik | Opslag |
-|---|---|---|---|
-| `beerBarStarter` | `src/Inventory.tsx` | 3 BLADE-fusten, tapinstallatie, ijsbak en 3 flesbieropties | Nieuwe records krijgen `quantity:null`; bestaande records worden behouden |
-| `addBeerBarOptions` | `src/Inventory.tsx` | Aanvullen ontbrekende catalogusopties na legacy-inventarisload | Bestaande `wandering-barback-inventory-v1` key, zonder schemawijziging |
-
-## Bierbarplanning — 8 november 2026
-| Symbool | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `BeerBarPlan` | `src/planning/beerBar.ts` | `EventData.beerBarPlan`, `EventDetail` | Optionele configuratie voor 3 taps, flesbier en ijsbakken |
-| `defaultBeerBarPlan`, `normalizeBeerBarPlan` | `src/planning/beerBar.ts` | `EventDetail` | Niet-destructieve standaardconfiguratie voor oudere events |
-| `beerBarRequirements`, `beerBarPacking` | `src/planning/beerBar.ts` | `EventDetail` | Berekening van fusten, flesjes, ijsbakken, ijs en paklijst |
-| `beerIngredients` | `EventDetail` | `purchaseLines` | Inkoopbehoefte voor bierbar uit optioneel eventplan |
-
-## Flesbiercatalogus (8 november 2026)
-| Symbool | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `bottledBeerCatalog` | `src/Inventory.tsx` | `addBeerBarOptions` | 28 merkgebonden flesbieropties met onbekende voorraad, zonder vaste prijzen of flesformaten |
-
-| `bottledBeerOptions` | `EventDetail` | Flesbiersectie bij Speciaalbierbar | Unieke combinatie van catalogus, aanwezige inventarisopties en opgeslagen eventselecties |
-
-## Dienstspecifieke menu-filtering (9 november 2026)
-| Symbool | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `availableMenu`, `activeMenu` | `EventDetail` | Menukaart, hoeveelheden en inkoop | Alleen menu-items passend bij gekozen dienst; bierbar gebruikt aparte bierplanning |
-| `SERVICE_OPTIONS` | `src/data/menuCatalog.ts` | Eventdetail dienstselector | Gedefinieerde diensten en hun menukeuzes |
-
-## Centrale catalogus (9 november 2026)
-| Symbool | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `CATALOG_STORAGE_KEY` | `src/data/menuCatalog.ts` | `readMenuCatalog`, `writeMenuCatalog` | `wandering-barback-catalog-v1` voor recepten en menu-items |
-| `readMenuCatalog` | `src/data/menuCatalog.ts` | `Catalog`, `EventDetail`, `getMenuEntry` | Opgeslagen catalogus, of startcatalogus als geen opslag bestaat |
-| `writeMenuCatalog` | `src/data/menuCatalog.ts` | `Catalog` | Slaat catalogus op en verstuurt `wandering-catalog-updated` |
-
-## Audit en correcties — 9 november 2026
-Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, **niet elke lokale variabele**. Eerdere historische tabellen blijven leesbaar, maar onderstaande actuele definities gaan voor bij tegenstrijdigheid.
-
-| Actueel symbool / veld | Eigenaar | Gebruikt door | Type / opslag |
-|---|---|---|---|
-| `Tab`, `tabs`, `tab`, `setTab` | `src/main.tsx` | `App` | UI-navigatie via React-state; geen URL-router |
-| `settingsPage`, `setSettingsPage` | `src/main.tsx` | Meer → Instellingen/Catalogus/Verwijderde evenementen | React-state `main \| catalog \| deleted` |
-| `Catalog` | `src/Catalog.tsx` | `src/main.tsx` | Beheerscherm voor drankcatalogus |
-| `kind`, `entries`, `editing`, `original`, `error` | `Catalog` | Catalogusfilter en editor | Tijdelijke React-state; `entries` afkomstig uit localStorage |
-| `CATALOG_STORAGE_KEY` | `src/data/menuCatalog.ts` | `readMenuCatalog`, `writeMenuCatalog` | Persistent `wandering-barback-catalog-v1`; nog niet centraal in `storageKeys.ts` |
-| `readMenuCatalog`, `writeMenuCatalog`, `getMenuEntry` | `src/data/menuCatalog.ts` | `Catalog`, `EventDetail` | Lezen, opslaan en lookup van recepten |
-| `catalog`, `setCatalog` | `EventDetail` | `availableMenu`, menukaart | React-state, herladen bij storage/catalogus-event |
-| `allowedKinds`, `availableMenu`, `activeMenu`, `visibleMenu` | `EventDetail` | Dienstspecifieke menukaart en inkoop | Afgeleide, niet-persistente filters |
-| `BeerBarPlan`, `EventData.beerBarPlan` | `src/planning/beerBar.ts`, `src/types/event.ts` | `EventDetail` | Optioneel persistent eventveld |
-| `bottledBeerCatalog`, `beerBarStarter`, `addBeerBarOptions` | `src/Inventory.tsx` | Inventarisload | Nieuwe bierproducten, `quantity:null` tot geteld |
-| `bottledBeerOptions`, `beerPlan`, `beerNeeds`, `beerPacking` | `EventDetail` | Speciaalbierbar, inkoop, paklijst | Afgeleid van catalogus/inventaris en eventplan |
-| `EVENT_STORAGE_KEY`, `DELETED_EVENTS_STORAGE_KEY`, `INVENTORY_STORAGE_KEY` | `src/repositories/storageKeys.ts` | Repositories, inventarisplanning | Bestaande persistente keys; ongewijzigd |
-
-**Verouderde vermeldingen in de oorspronkelijke tabel:** `STORAGE_KEY` als eigenaar in `main.tsx` en `RECIPES` in `EventDetail.tsx` zijn niet meer actueel. Gebruik respectievelijk `EVENT_STORAGE_KEY` en `readMenuCatalog`/`getMenuEntry`.
-
-**Belangrijk:** geen volledige statische symbolenindex of compile-/routetest uitgevoerd. Bij nieuwe modules en wijzigingen moet dit register verder worden bijgewerkt.
-
-## Verplicht registerprotocol — vanaf 9 november 2026
-- Voor nieuwe gedeelde symbolen: eerst zoeken naar een bestaande definitie en importeren/hergebruiken in plaats van dupliceren.
-- Eén canonieke eigenaar per type, functie, configuratie, opslagkey of domeinberekening; noteer naam, type, bestand, consumenten, persistentie en migratie-effect.
-- Bij hernoemen of verwijderen: alle consumenten en dit register gelijktijdig aanpassen; verouderde vermeldingen corrigeren of expliciet als historisch markeren.
-- Geen registratie van iedere tijdelijke loopvariabele: alleen gedeelde, persistente en architectuurbepalende symbolen, om het register onderhoudbaar te houden.
-- Controleer bij iedere wijziging ook `docs/CODE_ROADMAP.md` en eventuele wijzigingen in navigatie en gegevensstromen.
-- Typecheck, build en regressietests uitvoeren waar beschikbaar; ontbrekende verificatie zichtbaar vastleggen.
-
-## Meer-detailnavigatie (9 november 2026)
-| Symbool / klasse | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `settingsPage`, `setSettingsPage` | `src/main.tsx` | Meer en fullscreen detailoverlay | React-state: `main \| catalog \| deleted`; niet persistent |
-| `more-fullscreen`, `more-fullscreen-inner`, `more-fullscreen-header`, `more-fullscreen-content` | `src/style.css` | Meer-detailpagina's | Schermvullende presentatie, veilige scrollcontainer en header; geen afzonderlijke URL-route |
-
-## Automatische menukaartontwerpen (9 november 2026)
-| Symbool | Eigenaar | Gebruikt door | Status |
-|---|---|---|---|
-| `menuDesign`, `setMenuDesign` | `src/EventDetail.tsx` | Menukaartontwerper | React-state `signature \| minimal \| elegant`, niet persistent |
-| `printMenuItems` | `src/EventDetail.tsx` | Live preview en print | Afgeleid van `activeMenu` en `catalog` of `beerPlan`; geen duplicaat van receptdata |
-| `ed-menu-print`, `ed-design-*`, `ed-menu-paper` | `src/EventDetail.css` | Menukaartontwerper | A4-print- en previewstyling |
-
-## Herbruikbare menukaarttemplates (9 november 2026)
-| Symbool | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `MENU_TEMPLATES`, `MenuTemplateId`, `MenuFrameStyle` | `src/data/menuTemplates.ts` | `EventDetail.tsx` | Canonieke kleurpaletten en types voor lijstafwerking |
-| `menuFrame`, `setMenuFrame` | `src/EventDetail.tsx` | Live menukaart | Tijdelijke UI-keuze: `plain \| ornate`; nog niet per evenement opgeslagen |
-| `ed-frame-ornate` | `src/EventDetail.css` | Preview en print | Ingezette dubbele sierlijn en ornamenten, met printmarge |
-
-## Printformaat menukaart (9 november 2026)
-| Symbool | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `MENU_PRINT_SIZES`, `MenuPrintSize` | `src/data/menuTemplates.ts` | `EventDetail.tsx` | Canonieke A4/A5 afmetingen in mm |
-| `menuSize`, `setMenuSize` | `src/EventDetail.tsx` | Menukaartontwerper | Tijdelijke keuze A4/A5, niet persistent |
-| `ed-size-a4`, `ed-size-a5` | `src/EventDetail.css` | Print en preview | Afdrukformaat, tekst- en ornamentmarges |
-
-## Dashboard-afgeleide gegevens (9 november 2026)
-| Symbool | Eigenaar | Gebruikt door | Betekenis |
-|---|---|---|---|
-| `eventDate` | `src/main.tsx` | `nextEvent` | Parseert ISO en bestaande Nederlandse weergavedatums; ontbrekend jaartal wordt als eerstvolgende kalenderdatum geïnterpreteerd |
-| `nextEvent` | `src/main.tsx` | Dashboard | Selecteert het eerstvolgende actieve evenement op datum; geen aparte opslag |
-| `dashboardEvent` | `src/main.tsx` | Dashboardkaart en taken | Afgeleid van `events`-state |
-| `openTasks`, `toggleDashboardTask` | `src/main.tsx` | Dashboardtaken | Afgeleid van event-`schedule` en `packing`; schrijft wijzigingen terug naar `events` |
-
-## Canonieke evenementdatums (9 november 2026)
-| Symbool | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `parseEventDate`, `formatEventDate`, `nextUpcomingEvent` | `src/eventDates.ts` | `main.tsx`, `EventDetail.tsx`, `SwipeEventCard.tsx` | ISO-validatie, Nederlandse datumweergave en selectie op datum; vervangt lokale `eventDate`/`nextEvent` |
-| `EventData.date` | `src/types/event.ts` | Eventopslag en alle eventweergaven | String: nieuwe records `YYYY-MM-DD`; oude vrije tekst blijft bestaan tot gebruiker expliciet corrigeert |
-
-## Cross-event taken en dienstconcepten — 9 november 2026
-| Symbool | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `getEventTasks`, `EventTask` | `src/planning/eventTasks.ts` | `src/main.tsx` dashboard en Voorbereiding | Niet-persistente afgeleide taken uit `EventData`; prioriteit, event-id, item-id, actie |
-| `getServiceConcept`, `ServiceConcept` | `src/planning/serviceConcepts.ts` | `eventTasks.ts` | Service-eisen afgeleid van `SERVICE_OPTIONS` en `serviceMenuKinds`; geen eigen catalogus |
-| `allTasks`, `openTasks`, `taskRows`, `toggleDashboardTask` | `src/main.tsx` | Dashboard en Voorbereiding | Afgeleide UI, top 5 vs alle taken, writes alleen op bestaande eventvelden |
-
-## Deadlineprioriteit (9 november 2026)
-| Symbool | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `TaskUrgency`, `EventTask.urgency`, `EventTask.daysUntil` | `src/planning/eventTasks.ts` | `src/main.tsx` | Dynamische urgentie op basis van resterende kalenderdagen; niet persistent |
-| `dateRank`, `base` | `src/planning/eventTasks.ts` | `getEventTasks` | Deadlineklasse en dagen domineren prioriteitsgetal; taaksoort is secundair |
-| `task-urgency-*` | `src/style.css` | Dashboard en Voorbereiding | Visuele labels voor Kritiek/Zeer hoog/Hoog/Gemiddeld/Laag/Datum ontbreekt |
-
-## Individuele eventtaken en deadlines (9 november 2026)
-| Symbool | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `EventActionTask`, `EventData.tasks` | `src/types/event.ts` | `EventDetail.tsx`, `eventTasks.ts`, `main.tsx` | Persistente eventactie met optionele ISO-deadline, status en id; geen nieuwe storage key |
-| `newTaskTitle`, `newTaskDeadline` | `src/EventDetail.tsx` | Acties & deadlines | Tijdelijke formulierstate voor nieuwe taak |
-| `EventTask.kind='action'`, `EventTask.deadline` | `src/planning/eventTasks.ts` | Dashboard en Voorbereiding | Afgeleide taak en individuele prioriteit op eigen deadline |
-
-## Cocktailworkshop prijzen — 10 november 2026
-| Symbool | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `WORKSHOP_PACKAGES`, `WorkshopPackageId` | `src/planning/workshopPricing.ts` | `EventDetail.tsx` | Twee standaardarrangementen met drie cocktailnamen en vaste standaardprijzen |
-| `WorkshopPricing`, `workshopPricing` | `src/planning/workshopPricing.ts` | `EventData.workshopPricing`, `EventDetail.tsx` | Per-event pakket en optionele aangepaste prijs; fallback op standaardprijs |
-| `MIN_WORKSHOP_GUESTS`, `isCocktailWorkshop`, `workshopStaffSuggestion` | `src/planning/workshopPricing.ts` | `EventDetail.tsx` | Minimum 10, detectie workshopdienst en personeelssuggestie |
-| `workshopTotal`, `setWorkshopPackage` | `src/EventDetail.tsx` | Overzicht prijskaart | Live omzet uit `event.guests` × prijs p.p.; pakketwissel reset prijs naar pakketstandaard |
-
-## Offertes — 10 november 2026
-| Symbool | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `WorkshopQuote`, `QuoteSettings`, `createWorkshopQuote`, `quoteDefaultValidity` | `src/planning/workshopQuotes.ts` | `EventDetail.tsx` | Offerte-snapshot met berekende bedragen en 14 dagen standaardgeldigheid |
-| `EventData.workshopQuotes` | `src/types/event.ts` | Eventopslag, offertegeschiedenis | Optionele persistente offertehistorie, zonder extra opslagkey |
-| `quoteClient`, `quoteTravel`, `quoteNotes`, `quoteValidUntil`, `activeQuote` | `src/EventDetail.tsx` | Offerteformulier en printvoorbeeld | Tijdelijke invoer en geselecteerde snapshot voor browser-print/PDF |
-
-## Cocktail Catering calculator — 10 november 2026
-| Symbool / veld | Eigenaar | Consument | Betekenis |
-|---|---|---|---|
-| `CATERING_TIERS` | `src/planning/cateringPricing.ts` | `calculateCatering`, `EventDetail` | Staffels Classic/Signature bij totale afname |
-| `CATERING_MIN_HOURS`, `CATERING_BASE_PRICE`, `CATERING_EXTRA_HOURLY_RATE`, `CATERING_SECOND_BARTENDER_HOURLY_RATE`, `CATERING_MIN_COCKTAILS` | `src/planning/cateringPricing.ts` | calculator en UI | 3 uur, €175, €45, €45, 25 cocktails |
-| `CateringPlan`, `DEFAULT_CATERING_PLAN`, `normalizeCateringPlan`, `calculateCatering` | `src/planning/cateringPricing.ts` | `EventData.cateringPlan`, `EventDetail` | Persistente invoer en afgeleide live bedragen |
-| `EventData.cateringPlan?` | `src/types/event.ts` | eventrepository | Optionele cateringinstellingen per evenement; bestaande records compatibel |
-
-| `CateringPlan.extraCocktails`, `extraCocktailRate`, `extraCocktailsTotal` | `src/planning/cateringPricing.ts` | `EventDetail.tsx` | Extra geserveerde cocktails, Classic-prijs op basis van oorspronkelijk geboekte aantallen, afzonderlijke nacalculatie; optioneel veld compatibel met bestaande records |
-
-## Dynamische cateringprijzen en documenten
-| Symbool / veld | Gedefinieerd in | Gebruikt door | Betekenis / opslag |
-|---|---|---|---|
-| `CATERING_TIER_RANGES` | `src/planning/cateringPricing.ts` | `cateringTiers` | Vaste aantalsgrenzen van de vijf niveaus |
-| `CateringPriceEndpoints`, `DEFAULT_CATERING_PRICES` | `src/planning/cateringPricing.ts` | `CateringPlan.prices` | Classic start/eind €6,50/€4,50, Signature start/eind €7,50/€5,50 |
-| `cateringTiers`, `calculateCatering` | `src/planning/cateringPricing.ts` | `EventDetail`, documentgenerator | Interpolatie en berekening; geboekte staffel bepaalt Classic-meerwerktarief |
-| `CateringPlan.extraCocktailRateOverride?` | `src/planning/cateringPricing.ts` | `EventDetail`, `createCateringQuote` | Afwijkend meerwerktarief, anders Classic-staffeltarief |
-| `CateringQuote`, `createCateringQuote` | `src/planning/cateringDocuments.ts` | `EventData.cateringQuotes?` | Vaste offerte-snapshot inclusief prijzen, staffels en klantafspraken |
-| `CateringInvoice`, `createCateringInvoice` | `src/planning/cateringDocuments.ts` | `EventData.cateringInvoices?` | Factuurmomentopname met uitsluitend financiële regels |
-
-| `uploadedIcon`, `apple-touch-icon.png`, `app-icon.png` | `vite.config.ts` | `index.html`, `manifest.webmanifest` | Geüploade root-PNG wordt als webappiconen gepubliceerd bij build; iOS rondt het beginschermicoon zelf af |
-
-| Desktop responsive breakpoints (900px, 1100px, 1250px) | `src/style.css` | Dashboard, Events, navigation | CSS-only layout changes; no persisted variables or changes to mobile behavior |
-
-| Eventdetail desktop breakpoint 900px (compact 900–1100px) | `src/EventDetail.css` | `.ed-modal`, `.ed-page`, `.ed-tabs`, `.ed-panel` | Presentatielaag voor desktop, geen wijzigingen in eventdata of mobiele tabnavigatie |
-
-| `selected`, `openEvent`, `closeEvent`, URL-hash `#/evenement/:id` | `src/main.tsx` | evenementkaarten, dashboard, taken, EventDetail | Geselecteerd evenement als paginanavigatie; URL-hash maakt terugnavigatie en directe links mogelijk, opslag van evenementdata ongewijzigd |
-| `.shell-event-detail`, `.event-detail-page` | `src/style.css` | EventDetail | Volledige mobiele/desktop pagina i.p.v. overlay; CSS-only |
-
-| `EventDetail.Tab = 'Offerte & factuur'` | `src/EventDetail.tsx` | Eventdetail tabnavigatie | Presentatie van bestaande cateringoffertes, cateringfacturen en workshopoffertes; geen nieuwe opslagvelden |
-
-| `EventDetail.Tab = 'Financiën'` | `src/EventDetail.tsx` | Tabnavigatie, cateringcalculator, workshopcalculator, offertes, facturen | Vervangt UI-tab `Offerte & factuur`; lokale componentstate, geen migratie van eventdata nodig |
-
-| `event.cateringQuotes?`, `event.workshopQuotes?`, `event.cateringInvoices?` | `src/types/event.ts` | `src/EventDetail.tsx` Overzicht-documentsectie | Bestaande opgeslagen snapshots bepalen conditionele zichtbaarheid en documentlijst; geen nieuwe opslagvelden |
-
-| `event.workshopInvoices?: WorkshopInvoice[]` | `src/types/event.ts`, `src/planning/workshopQuotes.ts` | `src/EventDetail.tsx` | Optionele persistente workshopfacturen op basis van offerte-snapshot; backward-compatible lokale eventdata |
-| `workshopQuoteId`, `activeWorkshopInvoice`, `workshopQuoteForInvoice` | `src/EventDetail.tsx` | Financiën en Overzicht | Geselecteerde workshopofferte voor facturatie en documentpreview; componentstate |
-
-| `customFinancialLines?: CustomFinancialLine[]` | `src/types/event.ts`, `src/planning/customDocuments.ts` | Financiën bij Anders/overige diensten | Per-evenement handmatige posten: `id`, `description`, `quantity`, `unitPrice` |
-| `customQuotes?: CustomQuote[]`, `customInvoices?: CustomInvoice[]` | `src/types/event.ts`, `src/planning/customDocuments.ts` | Financiën en Overzicht | Persistente document-snapshots met regels en totaal, factuur gekoppeld via `quoteId`; optioneel en backward compatible |
-| `activeCustomQuote`, `activeCustomInvoice`, `customQuoteId` | `src/EventDetail.tsx` | Financiële documentpreview | Tijdelijke UI-state voor gekozen document |
-
-| `downloadQuotePdf(CustomQuote)` | `src/documents/quotePdf.ts`, `src/EventDetail.tsx` | Offerte PDF bij dienst Anders | Hergebruikt vaste éénpagina-A4 PDF-opmaak van catering, toont `lines` en `total`, geen browserprint |
-
-
-
-| `maxMenuItems` | `src/EventDetail.tsx` | Cocktail- en mocktailselectie | Maximaal 6 items bij uitsluitend Cocktail/Mocktail, passend bij PDF-layout |
-
-| `.ed-menu-print .ed-menu-drinks-grid` | `src/EventDetail.css` | Menukaart-preview | Drie begrensde rijen en compacte typografie om zes dranken binnen de sierlijst te houden |
-
-
-| `.ed-menu-print.ed-size-a5` | `src/EventDetail.css` | A5-preview | Complete A4-canvas 460×650,57 met CSS `zoom:326/460`, in plaats van alleen child-transform; behoudt uitlijning van rand en inhoud |
-
-| `printMenuHtml(preview,size)` | `src/documents/menuHtmlPrint.ts` | Menukaart afdrukken | Kloont de actuele HTML-preview, neemt de stylesheets over en opent printvenster met A4/A5-pagina; geen aparte PDF-tekenengine |
-| `#print-root`, `#print-toolbar` | `src/documents/menuHtmlPrint.ts` | Printvenster | Vast 460px A4-canvas met schaal 793,7008/460 voor A4 en 559,3701/460 voor A5, browserprint/PDF |
-
-| `pageWidth`, `pageHeight`, `paperLabel` | `src/documents/menuHtmlPrint.ts` | Menukaart printvenster | Bepaalt vaste A4/A5-papierafmetingen, `@page`, marges 0 en zichtbare formaatindicatie; browser behoudt uiteindelijke printercontrole |
-
-
-| Legacy `@media print` verwijderd | `src/EventDetail.css` | Menukaart afdrukken | Voorkomt conflict met `menuHtmlPrint.ts`: geen geforceerde A4 of 21pt cocktailkoppen meer |
-
-| `.ed-menu-print`, `.ed-menu-print.ed-size-a5`, `.ed-menu-drinks-grid` | `src/EventDetail.css` | Menukaart preview | Geconsolideerde layoutregels; geen dubbele A5 transform/zoom-blokken of legacy named print pages |
-| `printMenuHtml` | `src/documents/menuHtmlPrint.ts` | Menukaart print | Enige actieve menukaart-afdrukroute, gebruikt HTML-clone en één `@page`-regel |
-
-| `.ed-menu-drinks.ed-menu-drinks-grid` | `src/EventDetail.css` | Menukaart preview + HTML-afdruk | `grid-auto-rows:auto`, `align-content:center`, `row-gap:28px`: compacte, verticaal gecentreerde cocktailgroep in plaats van over volledige hoogte uitgerekte rijen |
-
-| `.ed-menu-drinks.ed-menu-drinks-grid` `transform:translateY(-16px)` | `src/EventDetail.css` | Menukaart preview en HTML-print | Verplaatst de volledige cocktailsectie 16px omhoog zonder de afstand tussen cocktailrijen te veranderen |
-
-
-
-| `editing`, `closeEditor`, `original` | `src/Catalog.tsx` | Catalogus | Regelen full-page recepteditor en terugkeer naar catalogus zonder modal |
-| `.catalog-editor-page`, `.catalog-editor-heading`, `.catalog-back`, `.catalog-editor` | `src/Catalog.css` | Catalogus | Responsieve editor als pagina-inhoud in plaats van fixed overlay |
-
-| `paths`, `getRoute()`, `go(path)` | `src/main.tsx` | Appnavigatie | Centrale hashroute-tabel en browsergeschiedenis voor GitHub Pages |
-| `tab`, `settingsPage`, `selected` | `src/main.tsx` | Appnavigatie | Afgeleid van hashroute bij eerste render en bij popstate/hashchange |
-| `.more-route-page`, `.more-route-content` | `src/style.css` | Catalogus en verwijderde evenementen | Normale paginalayout in plaats van overlay |
-
-| `MenuEntry.tasteProfile?` | `src/data/menuCatalog.ts` | Biercatalogus / menukaart | Optionele bewerkbare smaakomschrijving, compatibel met bestaande records |
-| `beerDescription(name)` | `src/EventDetail.tsx` | Speciaalbierbar-menukaart | Leest opgeslagen smaakprofiel voor bier uit catalogus en toont dit onder de titel |
-
-
-| `printMenuItems[].beerType` | `src/EventDetail.tsx` | Speciaalbierbar-menukaart | `tap`, `bottle` of `null` bepaalt pictogram naast de naam in preview/print |
-| `beerPlan.taps[].glasses`, `beerPlan.bottles[name]` | `src/EventDetail.tsx` | Bierselectie | Aantal > 0 betekent aangevinkt voor menukaart; bestaande inkoopberekeningen behouden |
-| `.ed-beer-icon` | `src/EventDetail.css` | Menukaart | Bier-/flespictogram in kopregel met behoud van smaakprofiel |
-
-| `ed-beer-menu-six-rows` | `src/EventDetail.tsx`, `src/EventDetail.css` | Speciaalbier-menukaart | Voor 11–12 geselecteerde bieren: `row-gap:16px` in plaats van standaard 28px |
-
-| `ed-beer-menu-seven-plus-rows` | `src/EventDetail.tsx`, `src/EventDetail.css` | Speciaalbier-menukaart | Vanaf 13 bieren (7+ rijen) worden smaakprofielregels alleen in de menukaart verborgen; 16px row-gap blijft via `ed-beer-menu-six-rows` |
+**Geen automatische Firestore-only migratie en geen gegarandeerde referentiële integriteit:** evenementmenu's bewaren productnamen, niet stabiele product-ID's. Hernoemen/verwijderen van catalogusproducten kan daardoor bestaande menuverwijzingen raken.

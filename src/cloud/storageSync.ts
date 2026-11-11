@@ -1,5 +1,5 @@
 import {
-  collection, doc, getDocFromServer, getDocsFromServer, onSnapshot, setDoc, writeBatch,
+  collection, doc, getDocFromServer, getDocsFromServer, onSnapshot, writeBatch,
   type DocumentData, type QuerySnapshot, type Unsubscribe,
 } from 'firebase/firestore';
 import { db } from '../firebase';

@@ -3,6 +3,36 @@ import {createPortal} from 'react-dom';
 import {imageToBase64} from './eventImage';
 import {readMenuCatalog,writeMenuCatalog,type MenuEntry,type MenuKind} from './data/menuCatalog';
 import './Catalog.css';
+
+// Country flags are derived from the wine's existing country field, not stored separately.
+const wineCountryFlags:Record<string,string>={
+ 'nederland':'🇳🇱','netherlands':'🇳🇱','frankrijk':'🇫🇷','france':'🇫🇷',
+ 'italië':'🇮🇹','italie':'🇮🇹','italy':'🇮🇹','spanje':'🇪🇸','spain':'🇪🇸',
+ 'duitsland':'🇩🇪','germany':'🇩🇪','oostenrijk':'🇦🇹','austria':'🇦🇹',
+ 'portugal':'🇵🇹','belgië':'🇧🇪','belgie':'🇧🇪','belgium':'🇧🇪',
+ 'griekenland':'🇬🇷','greece':'🇬🇷','hongarije':'🇭🇺','hungary':'🇭🇺',
+ 'roemenië':'🇷🇴','roemenie':'🇷🇴','romania':'🇷🇴','kroatië':'🇭🇷','kroatie':'🇭🇷','croatia':'🇭🇷',
+ 'slovenië':'🇸🇮','slovenie':'🇸🇮','slovenia':'🇸🇮','zwitserland':'🇨🇭','switzerland':'🇨🇭',
+ 'verenigd koninkrijk':'🇬🇧','engeland':'🇬🇧','united kingdom':'🇬🇧','england':'🇬🇧',
+ 'verenigde staten':'🇺🇸','amerika':'🇺🇸','usa':'🇺🇸','united states':'🇺🇸',
+ 'argentinie':'🇦🇷','argentinië':'🇦🇷','argentina':'🇦🇷','chili':'🇨🇱','chile':'🇨🇱',
+ 'zuid-afrika':'🇿🇦','zuid afrika':'🇿🇦','south africa':'🇿🇦',
+ 'australië':'🇦🇺','australie':'🇦🇺','australia':'🇦🇺',
+ 'nieuw-zeeland':'🇳🇿','nieuw zeeland':'🇳🇿','new zealand':'🇳🇿',
+ 'canada':'🇨🇦','brazilië':'🇧🇷','brazil':'🇧🇷','brazilie':'🇧🇷',
+ 'uruguay':'🇺🇾','georgië':'🇬🇪','georgie':'🇬🇪','georgia':'🇬🇪',
+ 'libanon':'🇱🇧','lebanon':'🇱🇧','israël':'🇮🇱','israel':'🇮🇱',
+ 'turkije':'🇹🇷','turkey':'🇹🇷','türkiye':'🇹🇷','bulgarije':'🇧🇬','bulgaria':'🇧🇬',
+ 'tsjechië':'🇨🇿','tsjechie':'🇨🇿','czech republic':'🇨🇿',
+ 'moldavië':'🇲🇩','moldavie':'🇲🇩','moldova':'🇲🇩',
+ 'china':'🇨🇳','japan':'🇯🇵','india':'🇮🇳'
+};
+function WineCountryFlag({country}:{country?:string}){
+ const label=country?.trim();
+ if(!label)return null;
+ const flag=wineCountryFlags[label.toLocaleLowerCase('nl')];
+ return flag?<span className="catalog-wine-country-flag" title={label} aria-label={'Herkomst: '+label} role="img">{flag}</span>:null;
+}
 function CatalogProductImage({entry}:{entry:MenuEntry}){
  const [gallImage,setGallImage]=useState('');
  const [failed,setFailed]=useState(false);
@@ -26,7 +56,7 @@ function CatalogProductImage({entry}:{entry:MenuEntry}){
  },[entry.type,entry.image,entry.imageUrl,entry.sourceUrl]);
  const src=entry.image||entry.imageUrl||gallImage;
  useEffect(()=>{if(!hoverRect)return;const dismiss=()=>setHoverRect(null);window.addEventListener('scroll',dismiss,true);window.addEventListener('resize',dismiss);return()=>{window.removeEventListener('scroll',dismiss,true);window.removeEventListener('resize',dismiss)}},[hoverRect]);
- return <><div className="catalog-product-media">{src&&!failed?<button type="button" className="catalog-product-image-button" onMouseEnter={event=>{if(!window.matchMedia("(hover: hover) and (pointer: fine)").matches)return;const card=event.currentTarget.closest(".catalog-product-card");if(!card)return;const r=card.getBoundingClientRect();setHoverRect({top:r.top,left:r.left,width:r.width,height:r.height})}} onMouseLeave={()=>setHoverRect(null)} onClick={()=>{setHoverRect(null);setPreviewOpen(true)}} aria-label={'Bekijk productfoto van '+entry.name+' op volledig scherm'} title="Foto vergroten"><img src={src} alt={entry.name} loading="lazy" onError={()=>setFailed(true)}/><span className="catalog-product-zoom-hint">Vergroten</span></button>:<span className="catalog-product-placeholder" aria-hidden="true">{entry.type==='Wijn'?'W':entry.type==='Speciaalbier'?'B':entry.type==='G&T'?'G':'C'}</span>}</div>{hoverRect&&!previewOpen&&src&&!failed&&createPortal(<div className="catalog-hover-preview" aria-hidden="true" style={{top:Math.max(8,hoverRect.top),left:hoverRect.left,width:hoverRect.width,height:Math.min(hoverRect.height,window.innerHeight-16)}}><img src={src} alt=""/><span className="catalog-hover-preview-close">×</span></div>,document.body)}{previewOpen&&src&&!failed&&createPortal(<div className="catalog-image-lightbox" role="dialog" aria-modal="true" aria-label={'Productfoto van '+entry.name} onClick={()=>setPreviewOpen(false)}><div className="catalog-image-lightbox-inner" onClick={event=>event.stopPropagation()}><button type="button" className="catalog-image-lightbox-close" onClick={()=>setPreviewOpen(false)} aria-label="Sluit foto">×</button><img src={src} alt={entry.name}/><p>{entry.name}</p></div></div>,document.body)}</>;
+ return <><div className="catalog-product-media">{entry.type==='Wijn'&&<WineCountryFlag country={entry.country}/>}{src&&!failed?<button type="button" className="catalog-product-image-button" onMouseEnter={event=>{if(!window.matchMedia("(hover: hover) and (pointer: fine)").matches)return;const card=event.currentTarget.closest(".catalog-product-card");if(!card)return;const r=card.getBoundingClientRect();setHoverRect({top:r.top,left:r.left,width:r.width,height:r.height})}} onMouseLeave={()=>setHoverRect(null)} onClick={()=>{setHoverRect(null);setPreviewOpen(true)}} aria-label={'Bekijk productfoto van '+entry.name+' op volledig scherm'} title="Foto vergroten"><img src={src} alt={entry.name} loading="lazy" onError={()=>setFailed(true)}/><span className="catalog-product-zoom-hint">Vergroten</span></button>:<span className="catalog-product-placeholder" aria-hidden="true">{entry.type==='Wijn'?'W':entry.type==='Speciaalbier'?'B':entry.type==='G&T'?'G':'C'}</span>}</div>{hoverRect&&!previewOpen&&src&&!failed&&createPortal(<div className="catalog-hover-preview" aria-hidden="true" style={{top:Math.max(8,hoverRect.top),left:hoverRect.left,width:hoverRect.width,height:Math.min(hoverRect.height,window.innerHeight-16)}}><img src={src} alt=""/><span className="catalog-hover-preview-close">×</span></div>,document.body)}{previewOpen&&src&&!failed&&createPortal(<div className="catalog-image-lightbox" role="dialog" aria-modal="true" aria-label={'Productfoto van '+entry.name} onClick={()=>setPreviewOpen(false)}><div className="catalog-image-lightbox-inner" onClick={event=>event.stopPropagation()}><button type="button" className="catalog-image-lightbox-close" onClick={()=>setPreviewOpen(false)} aria-label="Sluit foto">×</button><img src={src} alt={entry.name}/><p>{entry.name}</p></div></div>,document.body)}</>;
 }
 const kinds:MenuKind[]=['Cocktail','Mocktail','Wijn','Speciaalbier','G&T'];
 export default function Catalog(){

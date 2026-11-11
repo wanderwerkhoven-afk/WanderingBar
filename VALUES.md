@@ -106,3 +106,7 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - Oude Firestore-documenten zijn **niet verwijderd** en blijven een herstelkopie; de code kan ze niet meer lezen. Rules moeten nog in Firebase Console worden gepubliceerd en live tests moeten worden uitgevoerd.
 
 - TypeScript cleanup v3-only: ongebruikte `setDoc`-import uit storageSync verwijderd.
+
+## Wijncatalogus — vlag herkomstland (2026-11-11)
+- `Catalog.tsx`: `WineCountryFlag` leest bestaande `MenuEntry.country` en toont op wijnfoto's een ronde vlag rechtsboven. Ondersteunt gangbare Nederlandse/Engelse landnamen; ontbrekend of onbekend land toont geen vlag.
+- `Catalog.css`: `catalog-wine-country-flag` overlay (40px desktop / 34px mobiel) met lichte rand en schaduw. Geen wijzigingen aan catalogusdata, Firestore of afbeeldingslinks.

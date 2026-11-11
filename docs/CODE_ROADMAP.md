@@ -64,3 +64,14 @@
 - [x] `AGENTS.md` bevat het repositorybrede protocol: bij elke codewijziging alle drie de documenten actualiseren.
 - [x] `.github/workflows/documentation-contract.yml` controleert bij push en pull request of code-/configuratiewijzigingen samen met updates aan `VARIABLE_REGISTRY.md`, `CODE_ROADMAP.md` en `VALUES.md` worden aangeleverd.
 - [ ] Controleren dat de nieuwe workflow daadwerkelijk slaagt op GitHub Actions; inhoudelijke correctheid blijft een handmatige code-audit.
+
+## Firestore v3 — implementatiestatus
+- [x] V3-doelstructuur en veilige migratiegates gedocumenteerd in `docs/FIRESTORE_V3_MIGRATION.md`.
+- [x] Paden en nieuwe naam-onafhankelijke ID-helper vastgelegd in `src/cloud/firestoreV3.ts` (nog niet aangesloten).
+- [ ] Werkelijke Firestore-data, eigenaar-UID, duplicaten, categorieën en cloudback-up controleren.
+- [ ] Eigenaar-beperkte v3 Security Rules voorbereiden, publiceren en testen; legacy-toegang behouden.
+- [ ] Niet-destructieve kopie uitvoeren, manifest/ID-mapping en aantallen verifiëren.
+- [ ] Alle catalogus-/evenementreferenties en opslagrepositories naar vaste ID's migreren.
+- [ ] Sync op twee apparaten, event-hernoemen, verwijderde evenementen, conflict en rollback testen.
+- [ ] Pas daarna v3 activeren; legacy-data voorlopig behouden.
+**Live-status:** de applicatie gebruikt nog `users/{uid}`; er zijn geen Firestore-documenten verplaatst.

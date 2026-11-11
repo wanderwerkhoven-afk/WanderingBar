@@ -1,58 +1,55 @@
-# Wandering BarBack — Values & Data
+# Wandering BarBack — Values, opslag en data-contracten
+**Gecontroleerd tegen broncode main op 11 november 2026.** Leidende wijzigingskaart: [docs/VARIABLE_REGISTRY.md](docs/VARIABLE_REGISTRY.md). Actuele taken: [docs/CODE_ROADMAP.md](docs/CODE_ROADMAP.md).
 
-Dit document beschrijft de vaste waarden, opslagafspraken en principes voor de Firebase-integratie. De volledige technische symbolenlijst staat in [`docs/VARIABLE_REGISTRY.md`](docs/VARIABLE_REGISTRY.md); de uitvoering en resterende tests in [`docs/CODE_ROADMAP.md`](docs/CODE_ROADMAP.md).
+## Ononderhandelbare principes
+1. **Geen stilzwijgend gegevensverlies.** Nooit bestaande lokale of Firestore-records verwijderen op basis van aannames over migratie of synchronisatie.
+2. **Eén Google-account per lokale workspace.** Cloudgegevens staan onder `users/{uid}`; accountwisseling en conflicten worden in de cloudgate behandeld.
+3. **GitHub Pages blijft hosting.** Firebase levert authenticatie en database, niet de sitehosting.
+4. **Geen schijnzekerheid.** Een codecommit, een 'Gesynchroniseerd'-label of een geslaagde build bewijst niet op zichzelf dat alle cloudrecords juist zijn.
+5. **Datamodel en afnemers samen onderhouden.** Nieuwe velden, hernoemen of verwijderen: altijd editor, evenementselecties, inkoop, documenten, opslag en synchronisatie nalopen.
+6. **Documentatie is een kaart van de code.** Variabelenregister en roadmap in dezelfde wijziging bijwerken; verouderde claims corrigeren, niet blijven herhalen.
 
-## Kernwaarden
+## Huidige opslagarchitectuur (NIET Firestore-only)
+| Dataset | Browser-key | Firestore-collectie | Broncode |
+|---|---|---|---|
+| Evenementen | `wandering-barback-events-v1` | `users/{uid}/events/{recordId}` | `src/repositories/eventRepository.ts`, `src/main.tsx` |
+| Verwijderde evenementen | `wandering-barback-deleted-events-v1` | `users/{uid}/deletedEvents/{recordId}` | `src/repositories/eventRepository.ts`, `src/main.tsx` |
+| Inventaris | `wandering-barback-inventory-v1` | `users/{uid}/inventory/{recordId}` | `src/Inventory.tsx`, `src/repositories/inventoryRepository.ts` |
+| Catalogus | `wandering-barback-catalog-v1` | `users/{uid}/catalog/{recordId}` | `src/data/menuCatalog.ts`, `src/Catalog.tsx` |
 
-1. **Geen gegevensverlies:** bestaande browsergegevens worden nooit stilzwijgend gewist; bij conflicten is eerst een export van lokale én cloudgegevens nodig.
-2. **Eén persoonlijke workspace:** alle Firestore-documenten vallen onder de UID van de Google-gebruiker. Firestore Security Rules blokkeren toegang tot de gegevens van andere UID's.
-3. **App werkt via GitHub Pages:** Firebase levert authenticatie en Firestore, geen vervangende hosting.
-4. **Zichtbare synchronisatie:** gebruikers zien of de lokale wijzigingen zijn gesynchroniseerd, nog worden geüpload of een fout hebben veroorzaakt.
-5. **Compatibel blijven:** bestaande localStorage-sleutels en gegevensvormen blijven in gebruik tot een expliciet geteste migratie.
+`src/cloud/storageSync.ts` synchroniseert de vier lokale datasets met Firestore via een poll van 1200 ms en detecteert externe wijzigingen via `onSnapshot`. De UI leest op dit moment in hoofdzaak uit lokale opslag. Het schema bewaart `value` (JSON-string) en `position`; nieuwe/gewijzigde records krijgen daarnaast `schemaVersion:2`, `recordId`, `slug`, `name` en datasetspecifieke velden. **Bestaande records zijn niet aantoonbaar allemaal gemigreerd.**
 
-## Gegevenssets
+## Identiteit en relaties — belangrijk bij wijzigingen
+- **Catalogus**: Firestore-ID = `encodeURIComponent(MenuEntry.name)`. Productnaam is dus op dit moment een technische sleutel; `slug` is alleen een leesbaar veld. **Niet claimen dat catalogus-ID's al stabiel zijn bij hernoemen.**
+- **Inventaris**: Firestore-ID = geëncodeerde `Item.id`; dubbele lokale inventaris-ID's kunnen bij conversie een `-local-N` suffix krijgen.
+- **Evenementen**: Firestore-ID = geëncodeerde `EventData.id`; verwijderde evenementen gebruiken `DeletedEvent.event.id`.
+- **Evenementmenu's**: `EventData.menu` bewaart productnamen; `quantities` is een map op productnaam. Bierplanning bewaart eveneens namen in `taps[].beer` en `bottles`. Producthernoemen of -verwijderen kan verwijzingen breken; eerst impactanalyse en migratie.
+- **Productfoto's**: `sourceUrl` (catalogus-productpagina), `imageUrl` (rechtstreekse afbeelding), `image` (upload/base64); inventaris heeft `webLink` in plaats van `sourceUrl`. De catalogus probeert bij een Gall & Gall-link zonder eigen afbeelding een externe metadatafallback; die fallback wordt niet automatisch in `imageUrl` opgeslagen.
 
-| Dataset | Browseropslag | Firestore-pad |
-|---|---|---|
-| Evenementen | `wandering-barback-events-v1` | `users/{uid}/events/{recordId}` |
-| Verwijderde evenementen | `wandering-barback-deleted-events-v1` | `users/{uid}/deletedEvents/{recordId}` |
-| Inventaris | `wandering-barback-inventory-v1` | `users/{uid}/inventory/{recordId}` |
-| Cocktail- en drankcatalogus | `wandering-barback-catalog-v1` | `users/{uid}/catalog/{recordId}` |
+## Conflict- en herstelgedrag
+- `prepareSync()` leest lokale en cloudrecords en controleert initialisatie via `users/{uid}/meta/workspace`.
+- Bij verschil kan de gebruiker na back-up kiezen voor **cloudversie** of **samenvoegen**, voor zover de lokale records geldig zijn en van dezelfde eigenaar komen.
+- Samenvoegen gebeurt op record-ID, niet op semantisch identieke productinhoud; dit is **geen gegarandeerde deduplicatie**.
+- De synchronisatie gebruikt `barback-firebase-local-owner-v1` voor lokale eigenaar en `barback-firebase-synced-v1-{uid}` als fingerprint.
+- Externe wijzigingen leiden tot een verversmelding; niet alle geopende formulieren worden live op afstand aangepast.
+- Bij schrijffouten moeten lokale gegevens behouden blijven en moet een fout zichtbaar zijn.
+- Bij grotere records is er een beschermende limiet in `src/cloud/localRows.ts` (900.000 bytes per record); base64-foto's verdienen extra aandacht.
 
-De definitieve catalogussleutel wordt in `src/data/menuCatalog.ts` beheerd; wijzigingen daarin vereisen een migratie. Ieder cloudrecord bewaart de JSON-inhoud (`value`) en sorteervolgorde (`position`). Een meta-document registreert dat de workspace ooit is geïnitialiseerd, ook als alle records later worden verwijderd.
+## Welke hardcoded gegevens zijn er echt nog?
+**Geen vaste drankproductlijst in de catalogusmodule** (`src/data/menuCatalog.ts`, `src/Catalog.tsx`). De evenementbierkaart leest de opgeslagen catalogus. **Wel nog aanwezig**:
+- `src/Inventory.tsx`: inventarisstartproducten, bierinventarisopties, prijsdefaults en huisgemaakte recepten/migratieaanvullingen.
+- `src/main.tsx`: demo-evenementen bij ontbrekende events-sleutel.
+- `src/EventDetail.tsx`: startpaklijst en startdraaiboek.
+- `src/planning/beerBar.ts`: materiaalnamen en aantallen voor BLADE-paklijst; geen vaste biermerken als tapdefaults.
+- `src/planning/workshopPricing.ts`, `src/planning/cateringPricing.ts`: vaste standaardtarieven/pakketten.
+- `src/data/menuTemplates.ts`: vaste visuele menukaartpresets (geen producten).
 
-## Synchronisatieregels
+Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: eerst echte cloudrecords, afhankelijkheden en herstelpad controleren. De openstaande opschoning staat in de roadmap.
 
-**Tweede apparaat met bestaande lokale cache:** na een downloadbare back-up mag de gebruiker kiezen tussen de vier lokale BarBack-datasets vervangen door de Firebase-versie of beide versies samenvoegen. Dit raakt de Firebase-gegevens op andere apparaten niet. Legacy-inventarisregels met dezelfde ID worden bij samenvoegen afzonderlijk behouden met unieke ID's. Bij onleesbare lokale records is alleen de cloudoptie beschikbaar. Er worden geen algemene browsergegevens gewist.
+## Verificatie vóór 'klaar'
+- Controleer echte Firestore-documenten en aantallen, niet alleen de broncode.
+- Test login, tweede apparaat, conflict/merge, productwijzigingen, bestaande evenementen en inventaris.
+- Draai `npm test` en `npm run build`, controleer CI/deploy en bekijk de live UI.
+- Update bij elke codewijziging de exacte koppelingen in `docs/VARIABLE_REGISTRY.md` en de status in `docs/CODE_ROADMAP.md`.
 
-- Eerste aanmelding met een lege Firestore-workspace: aanwezige browsergegevens uploaden.
-- Een bestaande cloudversie met andere lokale gegevens: back-up downloaden en daarna expliciet samenvoegen of cloudversie kiezen.
-- Na aanmelden: lokale wijzigingen worden ongeveer elke 1,2 seconde gecontroleerd en naar Firestore geschreven; de status is zichtbaar in de cloudstatusbalk. Er is geen handmatige synchronisatieknop meer.
-- Externe wijzigingen: verversmelding tonen, zodat open formulieren niet ongemerkt oude waarden terugschrijven.
-- Bij verbindingsfouten: lokale gegevens laten staan, fout tonen en later opnieuw synchroniseren.
-
-## Validatie die nog door de eigenaar moet gebeuren
-
-- Google-login op GitHub Pages, en `users/{uid}` in Firebase Console controleren.
-- Een evenement toevoegen en wijzigen; controleren of dit na herladen en op een tweede apparaat zichtbaar is.
-- Een inventarisartikel en catalogusitem wijzigen; dezelfde controle uitvoeren.
-- Conflictscenario en back-up export testen met twee verschillende versies.
-
-**Let op:** de aanwezigheid van de synchronisatiecode bewijst nog niet dat het Firebase-project in de Console de juiste Auth-provider, database en Security Rules heeft. De eerste echte upload vindt plaats wanneer de eigenaar op het apparaat met lokale gegevens inlogt.
-
-## Firestore v2 — gestructureerde records (11 november 2026)
-- **Catalogus:** `users/{uid}/catalog/{stableRecordId}`; **inventaris:** `users/{uid}/inventory/{stableRecordId}`. Document-ID's blijven tijdens de overgang onveranderd om duplicaten, verbroken verwijzingen en gegevensverlies te voorkomen.
-- Nieuwe of gewijzigde records krijgen naast het bestaande compatibiliteitsveld `value` en `position` ook `schemaVersion: 2`, `recordId`, `slug`, `name` en expliciete productvelden. Zo worden productnaam, categorie, voorraad, ingrediënten en bronlinks zichtbaar in de Firebase Console.
-- **Cataloguslinks:** `sourceUrl` = productpagina, `imageUrl` = rechtstreekse afbeeldings-URL, `image` = handmatig geüploade afbeelding. **Inventaris:** `webLink` = productpagina, `imageUrl` = afbeeldings-URL, `image` = upload. Deze velden zijn onafhankelijk.
-- Een slug is een leesbaar zoekveld, **niet** de document-ID; een productnaam kan wijzigen zonder dat een document zijn identiteit verliest.
-- Bestaande v1-records blijven leesbaar en worden **niet automatisch verwijderd, hernoemd of overschreven**. De v2-velden worden momenteel toegevoegd wanneer een record opnieuw wordt opgeslagen. Dit is een compatibele tussenfase, **geen voltooide databasebrede migratie**.
-- Een definitieve omschakeling naar Firestore-only en het vervangen van de v1 JSON-envelope vereisen een gecontroleerde back-up, volledige inventarisatie, migratie met idempotente controles, verificatie op aantallen en referenties, en pas daarna een afzonderlijke verwijderfase.
-
-
-## Producten en UI — actuele afspraken (11 november 2026)
-- De catalogus bevat **geen hardcoded standaardproducten**; producten worden door de gebruiker beheerd en via de huidige synchronisatielaag gedeeld met Firestore.
-- Bierselecties in evenementen worden uit opgeslagen catalogusrecords opgebouwd; oude evenementselecties blijven zichtbaar. De bierplanning start zonder vaste tapmerken.
-- Smaakprofielen en alcoholpercentages worden uit catalogusrecords gelezen, niet uit vaste tabellen in de broncode.
-- Catalogus- en inventarisproducten bewaren de productlink en afbeeldingslink in afzonderlijke velden; een geüploade foto blijft een aparte bron.
-- Catalogusfoto's tonen een begrensde afbeelding, een hoverpreview en een fullscreenviewer bij klik.
-- De **lokale cache is nog de primaire applicatiebron**; Firestore-only en volledige v2-migratie zijn openstaande werkzaamheden. De daadwerkelijke inhoud van Firestore is niet vanuit de GitHub-repository te verifiëren.
+**Status:** documentatie gebaseerd op gecontroleerde GitHub-code; daadwerkelijke cloudinhoud en browsergedrag moeten afzonderlijk worden geverifieerd.

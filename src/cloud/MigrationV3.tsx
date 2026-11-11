@@ -59,8 +59,9 @@ export default function MigrationV3({ uid }: { uid: string }) {
   const [backedUp, setBackedUp] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  const [progress, setProgress] = useState<{ done: number; total: number; phase: string } | null>(null);
   async function inspect() {
-    setBusy(true); setMessage('Cloudgegevens uitlezen…'); setBackedUp(false);
+    setBusy(true); setMessage('Cloudgegevens uitlezen…'); setBackedUp(false); setProgress(null);
     try {
       const cloud = await readCloud(uid);
       const browser = readLocal();
@@ -78,7 +79,7 @@ export default function MigrationV3({ uid }: { uid: string }) {
   }
   async function copy() {
     if (!snapshot || !local || !backedUp) return;
-    setBusy(true);
+    setBusy(true); setProgress({ done: 0, total: 1, phase: 'Controleren of de back-up nog actueel is' });
     try {
       const current = await readCloud(uid);
       if (JSON.stringify(current) !== JSON.stringify(snapshot) || JSON.stringify(readLocal()) !== JSON.stringify(local)) {
@@ -113,6 +114,7 @@ export default function MigrationV3({ uid }: { uid: string }) {
         });
       }
       const items = DATASETS.flatMap(dataset => snapshot[dataset].map(row => ({ dataset, row, path: target(dataset, row) })));
+      setProgress({ done: 0, total: items.length, phase: 'Gegevens kopiëren' });
       const unique = new Set(items.map(item => item.path.join('/')));
       if (unique.size !== items.length) throw new Error('Dubbele doel-ID ontdekt; kopiëren gestopt.');
       for (let start = 0; start < items.length; start += 150) {
@@ -126,15 +128,21 @@ export default function MigrationV3({ uid }: { uid: string }) {
           });
         }
         await batch.commit();
-        setMessage('Kopiëren: ' + Math.min(start + 150, items.length) + '/' + items.length);
+        const copied = Math.min(start + 150, items.length);
+        setProgress({ done: copied, total: items.length, phase: 'Gegevens kopiëren' });
+        setMessage('Kopiëren: ' + copied + '/' + items.length);
       }
-      for (const item of items) {
+      setProgress({ done: 0, total: items.length, phase: 'Gekopieerde documenten verifiëren' });
+      for (let index = 0; index < items.length; index++) {
+        const item = items[index];
         const check = await getDocFromServer(doc(db, item.path.join('/')));
         if (!check.exists() || check.data().legacyValue !== item.row.value) throw new Error('Controle mislukt bij ' + item.path.join('/'));
+        setProgress({ done: index + 1, total: items.length, phase: 'Gekopieerde documenten verifiëren' });
       }
       await setDoc(root, { ownerUid: uid, schemaVersion: 3, migrationStatus: 'copied-not-active', verifiedRecords: items.length, verifiedAt: new Date().toISOString() }, { merge: true });
+      setProgress({ done: items.length, total: items.length, phase: 'Migratie voltooid' });
       setMessage('Kopie gecontroleerd (' + items.length + ' records). Vernieuw de app om v3 te activeren. Oude Firestore blijft bewaard.');
-    } catch (e) { setMessage('Migratie niet afgerond: ' + (e instanceof Error ? e.message : 'onbekende fout') + '. Oude data blijft behouden.'); }
+    } catch (e) { setProgress(current => current ? { ...current, phase: 'Migratie onderbroken' } : null); setMessage('Migratie niet afgerond: ' + (e instanceof Error ? e.message : 'onbekende fout') + '. Oude data blijft behouden.'); }
     finally { setBusy(false); }
   }
   return <div style={{padding:'8px 16px',background:'#f5eee6',color:'#42252c'}}>
@@ -147,6 +155,16 @@ export default function MigrationV3({ uid }: { uid: string }) {
       <button disabled={busy || !snapshot || !local} onClick={() => {download({format:'WanderingBar-v3-backup',uid,exportedAt:new Date().toISOString(),cloud:snapshot,local});setBackedUp(true);}}>2. Back-up downloaden</button>{' '}
       <button disabled={busy || !backedUp} onClick={() => void copy()}>3. Kopiëren en verifiëren</button>
       {snapshot && <p>{DATASETS.map(d => d + ': ' + snapshot[d].length).join(' · ')}</p>}
+      {progress && <div style={{marginTop:16,marginBottom:12}} aria-live="polite">
+        <div style={{display:'flex',justifyContent:'space-between',gap:12,marginBottom:6}}>
+          <strong>{progress.phase}</strong>
+          <span>{progress.total > 0 ? Math.round(progress.done / progress.total * 100) : 0}%</span>
+        </div>
+        <div role="progressbar" aria-label={progress.phase} aria-valuemin={0} aria-valuemax={progress.total} aria-valuenow={progress.done} style={{height:12,background:'#e7d9cd',borderRadius:99,overflow:'hidden'}}>
+          <div style={{width: (progress.total > 0 ? progress.done / progress.total * 100 : 0) + '%',height:'100%',background:'#a57450',transition:'width 180ms ease'}} />
+        </div>
+        <small>{progress.done} van {progress.total} documenten</small>
+      </div>}
       <p role="status">{message}</p>
       <small>De eerder gepubliceerde v3 Security Rules zijn vereist. Na een geslaagde kopie wordt v3 bij het opnieuw openen gecontroleerd en geactiveerd.</small>
     </div>}

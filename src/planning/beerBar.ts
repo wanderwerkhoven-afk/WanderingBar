@@ -1,12 +1,9 @@
 import type {PackingItem} from '../types/event';
-export const BLADE_BEERS=['Affligem Blond BLADE 8 L','Lagunitas IPA BLADE 8 L','Birra Moretti BLADE 8 L'] as const;
-export const BOTTLED_BEER_CATALOG=["Desperados Original","Corona Extra","Sol","Birra Moretti fles","Liefmans Fruitesse","Hoegaarden Wit","Vedett Extra White","Oedipus Mannenliefde","Kasteel Rouge","Texels Skuumkoppe","Affligem Blond fles","La Chouffe","Tripel Karmeliet","Jopen Mooie Nel IPA","BrewDog Punk IPA","vandeStreek Playground IPA 0.5","Moersleutel Motor Oil","Moersleutel Crank the Juice","Uiltje Bird of Prey","Uiltje Wit","Brouwerij 't IJ IJwit","Brouwerij 't IJ Zatte","Jopen Adriaan Wit","Two Chefs Brewing Funky Falcon","Frontaal Juice Punch","Brouwerij Kees Caramel Fudge Stout","De Molen Hel & Verdoemenis","Brouwerij Noordt Noordtsingle"] as const;
-export const BOTTLED_BEERS=['Speciaalbier blond flesjes','Speciaalbier IPA flesjes','Speciaalbier tripel flesjes'] as const;
 export type BeerBarPlan={taps:{beer:string;glasses:number}[];bottles:Record<string,number>;bottlesPerTub:number;iceKgPerTub:number};
-export const defaultBeerBarPlan=():BeerBarPlan=>({taps:BLADE_BEERS.map(beer=>({beer,glasses:0})),bottles:{},bottlesPerTub:24,iceKgPerTub:8});
+export const defaultBeerBarPlan=():BeerBarPlan=>({taps:[],bottles:{},bottlesPerTub:24,iceKgPerTub:8});
 export function normalizeBeerBarPlan(input?:Partial<BeerBarPlan>):BeerBarPlan{
  const defaults=defaultBeerBarPlan();
- return {taps:Array.from({length:3},(_,i)=>({beer:input?.taps?.[i]?.beer||defaults.taps[i].beer,glasses:Math.max(0,Math.floor(Number(input?.taps?.[i]?.glasses)||0))})),bottles:input?.bottles&&typeof input.bottles==='object'?input.bottles:{},bottlesPerTub:Math.max(1,Math.floor(Number(input?.bottlesPerTub)||24)),iceKgPerTub:Math.max(0,Number(input?.iceKgPerTub??8))};
+ return {taps:(input?.taps||defaults.taps).filter(t=>Boolean(t?.beer)).slice(0,3).map(t=>({beer:t.beer,glasses:Math.max(0,Math.floor(Number(t.glasses)||0))})),bottles:input?.bottles&&typeof input.bottles==='object'?input.bottles:{},bottlesPerTub:Math.max(1,Math.floor(Number(input?.bottlesPerTub)||24)),iceKgPerTub:Math.max(0,Number(input?.iceKgPerTub??8))};
 }
 export function beerBarRequirements(plan:BeerBarPlan){
  const tapped=plan.taps.map(t=>({...t,kegs:Math.ceil(t.glasses*0.25/8)}));

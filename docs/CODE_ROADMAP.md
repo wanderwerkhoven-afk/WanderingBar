@@ -75,3 +75,10 @@
 - [ ] Sync op twee apparaten, event-hernoemen, verwijderde evenementen, conflict en rollback testen.
 - [ ] Pas daarna v3 activeren; legacy-data voorlopig behouden.
 **Live-status:** de applicatie gebruikt nog `users/{uid}`; er zijn geen Firestore-documenten verplaatst.
+
+## V3-migratiewizard — voortgang
+- [x] Handmatige wizard voor inspectie, lokale/cloudvergelijking, downloadback-up, kopiëren en document-voor-document controle toegevoegd.
+- [x] Concept Security Rules voor v3 toegevoegd met eigenaarcontrole en behoud van legacy-regels.
+- [ ] Regels publiceren in Firebase Console en autorisatie controleren.
+- [ ] Wizard uitvoeren op echte accountdata; categorieën en ID-conflicten inspecteren.
+- [ ] V3-referenties en live sync omschakelen na geverifieerde kopie; daarna pas legacy opruimen.

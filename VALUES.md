@@ -65,3 +65,9 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - Stabiele ID's onafhankelijk van product-/evenementnamen. Historische documenten bewaren relevante snapshots. Eén eigenaar voor nu, toekomstig team optioneel.
 - **Veiligheidscontract:** geen destructieve migratie, geen automatische omschakeling, geen verwijdering van legacy-data vóór back-up, productieaudit, gepubliceerde en geteste Security Rules, referentiemigratie en geslaagde controles.
 - `src/cloud/firestoreV3.ts` is alleen een schema-/paddefinitie; `docs/FIRESTORE_V3_MIGRATION.md` is het uitvoeringsplan. Live Firestore en localStorage blijven vooralsnog ongewijzigd.
+
+## V3-migratiewizard — uitvoeringscontract
+- In de ingelogde app staat een optionele wizard die legacy-cloudgegevens controleert, lokale data vergelijkt, JSON-back-up laat downloaden en een niet-destructieve kopie naar v3 schrijft.
+- De wizard stopt bij onbekende categorieën of ontbrekende lokale/cloudrecords en verifieert gekopieerde documenten.
+- Nieuwe regels in `firestore.rules` moeten eerst apart worden gepubliceerd. De oude `users/{uid}`-synchronisatie blijft actief; de wizard schakelt niet automatisch over en ruimt niets op.
+- Een geslaagde GitHub-commit is **geen** bewijs dat de daadwerkelijke Firebase-database is gemigreerd.

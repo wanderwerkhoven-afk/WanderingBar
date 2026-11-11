@@ -53,3 +53,6 @@ WanderingBar/ [collection]
 ## Huidige implementatie
 - `src/cloud/firestoreV3.ts` definieert uitsluitend de beoogde paden en een helper voor stabiele ID's.
 - **Er is bewust geen productie-write of automatische migratie actief.** De oude app blijft functioneren met bestaande regels en gegevens.
+
+## Wizard beschikbaar in code
+`src/cloud/MigrationV3.tsx` is bereikbaar na inloggen via `CloudGate`. Controle → gecombineerde JSON-back-up → niet-destructieve kopie → Firestore-documentverificatie. De nieuwe `firestore.rules` moeten vooraf gepubliceerd worden. Bij onbekende categorieën stopt de controle; niet stilzwijgend indelen. De wizard activeert v3-sync niet en verwijdert niets.

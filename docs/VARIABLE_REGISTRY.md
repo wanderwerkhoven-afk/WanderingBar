@@ -102,3 +102,9 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 - Huidige live eigenaar blijft `src/cloud/storageSync.ts` → `collectionRef(uid,dataset)` onder `users/{uid}`; Firestore-regels blijven onveranderd.
 - Voor de geplande omschakeling moeten `src/cloud/localRows.ts` (catalogus-ID op naam), `src/data/menuCatalog.ts`, `src/types/event.ts`, `src/EventDetail.tsx`, `src/Inventory.tsx`, `src/Catalog.tsx`, repositories en alle planning-/documentafnemers samen gecontroleerd worden.
 - Volledige migratie- en veiligheidsvoorwaarden: `docs/FIRESTORE_V3_MIGRATION.md`.
+
+## V3-migratiewizard (code toegevoegd; geen cloudomschakeling)
+- `src/cloud/MigrationV3.tsx`: `readCloud()` leest legacy Firestore rechtstreeks; `inspect()` vergelijkt lokale IDs en valideert doelcategorieën; `download()` maakt gecombineerde JSON-back-up; `copy()` schrijft v3-documenten in batches en controleert elk document.
+- `target()` koppelt legacy catalogustype aan Cocktail/Mocktail/Wijn/Bier en inventariscategorie aan Dranken/BarMaterialen/Garneringen/Verbruiksartikelen; onbekende categorieën blokkeren kopiëren.
+- `CloudGate.tsx` toont de handmatige wizard voor een ingelogd account. `firestore.rules` bevat een bootstrap voor het legacy-workspace-account en eigenaar-gebonden v3-subcollecties; publicatie is nog nodig.
+- **Niet uitgevoerd:** live Firestore-kopie, referentiemigratie in UI, v3-sync-activatie, opruimen.

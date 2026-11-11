@@ -27,10 +27,10 @@ const INVENTORY_MIGRATION_KEY = 'wandering-barback-inventory-expanded-zero-v1';
 const collectionRef = (uid: string, dataset: Dataset) => collection(db, 'users', uid, dataset);
 type SyncMode = 'legacy' | 'v3';
 const v3Collections = (dataset: Dataset) => dataset === 'catalog'
-  ? CATALOG_CATEGORIES.map(category => collection(db, ...v3Paths.workspace(), 'catalog', category, 'products'))
+  ? CATALOG_CATEGORIES.map(category => collection(db, [...v3Paths.workspace(), 'catalog', category, 'products'].join('/')))
   : dataset === 'inventory'
-    ? INVENTORY_CATEGORIES.map(category => collection(db, ...v3Paths.workspace(), 'inventory', category, 'items'))
-    : [collection(db, ...v3Paths.workspace(), dataset)];
+    ? INVENTORY_CATEGORIES.map(category => collection(db, [...v3Paths.workspace(), 'inventory', category, 'items'].join('/')))
+    : [collection(db, [...v3Paths.workspace(), dataset].join('/'))];
 function v3Rows(snapshot: QuerySnapshot<DocumentData>): Row[] {
   return snapshot.docs.map(entry => {
     const data = entry.data();
@@ -67,7 +67,7 @@ function v3Path(dataset: Dataset, row: Row): string {
   return v3Paths.catalogProduct(v3Category(dataset, row) as typeof CATALOG_CATEGORIES[number], productId).join('/');
 }
 async function detectMode(uid: string): Promise<SyncMode> {
-  const root = await getDocFromServer(doc(db, ...v3Paths.workspace()));
+  const root = await getDocFromServer(doc(db, v3Paths.workspace().join('/')));
   if (!root.exists()) return 'legacy';
   const data = root.data();
   if (data.ownerUid !== uid) throw new Error('De WanderingBar-workspace hoort bij een ander account.');

@@ -93,3 +93,6 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 6. Draai `npm test` en `npm run build`; controleer GitHub Actions én de live app. Werk daarna dit register, roadmap en VALUES bij.
 
 **Geen automatische Firestore-only migratie en geen gegarandeerde referentiële integriteit:** evenementmenu's bewaren productnamen, niet stabiele product-ID's. Hernoemen/verwijderen van catalogusproducten kan daardoor bestaande menuverwijzingen raken.
+
+## Wijzigingscontrole
+- 2026-11-11 — Repositorybrede documentatieplicht toegevoegd in `AGENTS.md`; automatische bestandscontrole in `.github/workflows/documentation-contract.yml`. De check vereist bij code-/configuratiewijzigingen updates aan dit register, `CODE_ROADMAP.md` en `VALUES.md`. Geen wijziging aan runtime-variabelen of datarelaties.

@@ -59,3 +59,16 @@
 }
 .catalog-image-lightbox{isolation:isolate;z-index:2147483000}
 @media(prefers-reduced-motion:reduce){.catalog-product-image-button img{transition:none}}
+
+/* Hover: enlarge the bottle over its own card, but never outside the card boundary.
+   Default and touch layouts remain fully contained in the photo frame. */
+@media(hover:hover) and (pointer:fine){
+ .catalog-product-card{overflow:hidden}
+ .catalog-product-media{isolation:auto}
+ .catalog-product-image-button:hover{overflow:visible}
+ .catalog-product-media:has(.catalog-product-image-button:hover){overflow:visible;z-index:2}
+ .catalog-product-image-button img{transform-origin:center 35%;transition:transform .22s ease,filter .22s ease}
+ .catalog-product-image-button:hover img{transform:scale(1.55);filter:drop-shadow(0 10px 12px rgba(30,19,12,.2))}
+ .catalog-product-image-button:hover .catalog-product-zoom-hint{z-index:3}
+}
+@media(prefers-reduced-motion:reduce){.catalog-product-image-button img{transition:none}}

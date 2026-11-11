@@ -1,5 +1,31 @@
 # Wandering BarBack — Variable Registry
 
+## Actuele product- en cloudvariabelen — 11 november 2026
+
+Deze sectie is leidend voor catalogus, inventaris, bierbar en Firestore. Historische tabellen verderop kunnen oude migratiefasen beschrijven; verwijderde symbolen zijn uit de tabellen geschrapt.
+
+| Symbool / veld | Bestand | Actuele betekenis |
+|---|---|---|
+| `MenuEntry`, `MenuKind` | `src/data/menuCatalog.ts` | Productmodel en drankcategorieën; geen vaste productrecords |
+| `sourceUrl`, `imageUrl`, `image` | `src/data/menuCatalog.ts` | Productpagina, externe productfoto en geüploade afbeelding, afzonderlijk opgeslagen |
+| `CATALOG_STORAGE_KEY` | `src/data/menuCatalog.ts` | Legacy lokale cataloguscache; wordt nog gesynchroniseerd |
+| `readMenuCatalog()`, `writeMenuCatalog()` | `src/data/menuCatalog.ts` | Lezen en schrijven via huidige lokale opslaglaag |
+| `CatalogProductImage`, `hoverRect`, `previewOpen` | `src/Catalog.tsx` | Foto, hoverpreview en fullscreenweergave |
+| `.catalog-hover-preview`, `.catalog-image-lightbox` | `src/Catalog.css` | Hoverlaag en fullscreen-overlay |
+| `readStoredInventory()`, `writeStoredInventory()` | `src/repositories/inventoryRepository.ts` | Huidige lokale inventarisopslag |
+| `webLink`, `imageUrl`, `image` | `src/types/inventory.ts` | Productpagina, afbeelding-URL en upload in inventaris |
+| `BeerBarPlan`, `defaultBeerBarPlan()`, `normalizeBeerBarPlan()` | `src/planning/beerBar.ts` | Biertap-/flesplanning zonder hardcoded biermerken |
+| `bottledBeerOptions`, `catalogEntries` | `src/EventDetail.tsx` | Bier- en overige productkeuzes uit opgeslagen catalogus; bestaande evenementselecties blijven behouden |
+| `beerDescription()`, `beerAlcoholLabel()` | `src/EventDetail.tsx` | Smaakprofiel en alcoholpercentage uit catalogusrecord |
+| `DATASETS`, `prepareSync()`, `startLiveSync()` | `src/cloud/storageSync.ts` | Firestore-synchronisatie van vier datasets via lokale cache |
+| `structuredRecord()`, `schemaVersion`, `slug`, `recordId` | `src/cloud/storageSync.ts` | Leesbare v2-velden naast legacy JSON-envelope |
+| `syncStatus` | `src/cloud/CloudGate.tsx` | Status gesynchroniseerd / synchroniseren / fout |
+
+**Verwijderd uit actieve productcode:** `MENU_CATALOG`, `COCKTAIL_RECIPES`, `BEER_TASTE_PROFILES`, `LEGACY_BEER_TASTE_PROFILES`, `DEFAULT_BEER_ABV`, `BLADE_BEERS`, `BOTTLED_BEER_CATALOG`, `BOTTLED_BEERS`, en de handmatige import-/synchronisatieknoppen voor standaardproducten.
+
+**Nog niet afgerond:** rechtstreeks Firestore-only lezen/schrijven, gecontroleerde v1→v2-backfill en verificatie van alle cloudrecords.
+
+
 ## Actuele menukaart-architectuur — 10 november 2026
 
 **Deze tabel is leidend.** Oudere verwijzingen naar `menuPdf.ts`, `downloadMenuPdf`, `sourceNodes` en `cloneNodes` zijn vervallen en zijn uit het historische register verwijderd.
@@ -14,7 +40,7 @@
 | `.ed-menu-print`, `.ed-menu-paper` | `src/EventDetail.css` | Basisontwerp van de menukaart |
 | `.ed-menu-drinks-grid`, `.ed-menu-drinks-five` | `src/EventDetail.css` | Twee kolommen vanaf vier dranken; vijfde drank gecentreerd |
 | `.ed-menu-print.ed-size-a5` | `src/EventDetail.css` | Proportionele schaal van volledige A4-preview met `zoom:326/460` |
-| `catalogEntries` | `src/EventDetail.tsx` | Niet-destructieve aanvulling van ontbrekende standaarddranken |
+| `catalogEntries` | `src/EventDetail.tsx` | Kopie van de opgeslagen catalogus voor evenementselectie; geen ingebouwde producten |
 | `maxMenuItems` | `src/EventDetail.tsx` | Selectielimiet van zes bij cocktail/mocktail-diensten |
 
 **Verwijderd:** `src/documents/menuPdf.ts` en de oude globale A4/A5-printregels uit `EventDetail.css`. De offerte- en factuur-PDF-generatoren zijn aparte functionaliteiten en vallen buiten deze menukaartopschoning.
@@ -136,8 +162,6 @@ Bij elke PR/commit met een nieuwe gedeelde variabele of opslagveld:
 | Symbool | Eigenaar | Gebruikt in | Betekenis |
 |---|---|---|---|
 | `MenuKind`, `MenuEntry` | `src/data/menuCatalog.ts` | `EventDetail.tsx` | Type van drankcategorie en recept/serveerhoeveelheden |
-| `COCKTAIL_RECIPES` | `src/data/menuCatalog.ts` | `MENU_CATALOG` | Bestaande cocktail- en mocktailrecepten, ongewijzigd overgenomen |
-| `MENU_CATALOG` | `src/data/menuCatalog.ts` | `EventDetail.tsx` | Cocktail-, wijn-, bier- en G&T-startcatalogus |
 | `serviceMenuKinds` | `src/data/menuCatalog.ts` | `EventDetail.tsx` | Toegestane drankcategorieën per dienst |
 | `getMenuEntry` | `src/data/menuCatalog.ts` | `EventDetail.tsx` | Naamgebaseerde receptlookup voor inkoop |
 | `allowedKinds`, `availableMenu`, `visibleMenu` | `EventDetail` | Menukaart-UI | Afgeleide filterwaarden; niet opgeslagen |
@@ -155,7 +179,6 @@ Bestaande persistente velden `event.service`, `event.menu` en `event.quantities`
 | Symbool | Eigenaar | Consument | Betekenis |
 |---|---|---|---|
 | `BeerBarPlan` | `src/planning/beerBar.ts` | `EventData.beerBarPlan`, `EventDetail` | Optionele configuratie voor 3 taps, flesbier en ijsbakken |
-| `BLADE_BEERS`, `BOTTLED_BEERS` | `src/planning/beerBar.ts` | `EventDetail` | Selecteerbare bieropties |
 | `defaultBeerBarPlan`, `normalizeBeerBarPlan` | `src/planning/beerBar.ts` | `EventDetail` | Niet-destructieve standaardconfiguratie voor oudere events |
 | `beerBarRequirements`, `beerBarPacking` | `src/planning/beerBar.ts` | `EventDetail` | Berekening van fusten, flesjes, ijsbakken, ijs en paklijst |
 | `beerIngredients` | `EventDetail` | `purchaseLines` | Inkoopbehoefte voor bierbar uit optioneel eventplan |
@@ -165,7 +188,6 @@ Bestaande persistente velden `event.service`, `event.menu` en `event.quantities`
 |---|---|---|---|
 | `bottledBeerCatalog` | `src/Inventory.tsx` | `addBeerBarOptions` | 28 merkgebonden flesbieropties met onbekende voorraad, zonder vaste prijzen of flesformaten |
 
-| `BOTTLED_BEER_CATALOG` | `src/planning/beerBar.ts` | `EventDetail` | Vaste fallback voor 28 flesbieropties, ook als inventaris nog niet is bezocht |
 | `bottledBeerOptions` | `EventDetail` | Flesbiersectie bij Speciaalbierbar | Unieke combinatie van catalogus, aanwezige inventarisopties en opgeslagen eventselecties |
 
 ## Dienstspecifieke menu-filtering (9 november 2026)
@@ -191,12 +213,10 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `Catalog` | `src/Catalog.tsx` | `src/main.tsx` | Beheerscherm voor drankcatalogus |
 | `kind`, `entries`, `editing`, `original`, `error` | `Catalog` | Catalogusfilter en editor | Tijdelijke React-state; `entries` afkomstig uit localStorage |
 | `CATALOG_STORAGE_KEY` | `src/data/menuCatalog.ts` | `readMenuCatalog`, `writeMenuCatalog` | Persistent `wandering-barback-catalog-v1`; nog niet centraal in `storageKeys.ts` |
-| `COCKTAIL_RECIPES`, `MENU_CATALOG` | `src/data/menuCatalog.ts` | Catalogusfallback | Startrecepten en -menu's |
 | `readMenuCatalog`, `writeMenuCatalog`, `getMenuEntry` | `src/data/menuCatalog.ts` | `Catalog`, `EventDetail` | Lezen, opslaan en lookup van recepten |
 | `catalog`, `setCatalog` | `EventDetail` | `availableMenu`, menukaart | React-state, herladen bij storage/catalogus-event |
 | `allowedKinds`, `availableMenu`, `activeMenu`, `visibleMenu` | `EventDetail` | Dienstspecifieke menukaart en inkoop | Afgeleide, niet-persistente filters |
 | `BeerBarPlan`, `EventData.beerBarPlan` | `src/planning/beerBar.ts`, `src/types/event.ts` | `EventDetail` | Optioneel persistent eventveld |
-| `BLADE_BEERS`, `BOTTLED_BEER_CATALOG`, `BOTTLED_BEERS` | `src/planning/beerBar.ts` | `EventDetail` | Tapopties, 28 flesbieropties, legacy generieke bieropties |
 | `bottledBeerCatalog`, `beerBarStarter`, `addBeerBarOptions` | `src/Inventory.tsx` | Inventarisload | Nieuwe bierproducten, `quantity:null` tot geteld |
 | `bottledBeerOptions`, `beerPlan`, `beerNeeds`, `beerPacking` | `EventDetail` | Speciaalbierbar, inkoop, paklijst | Afgeleid van catalogus/inventaris en eventplan |
 | `EVENT_STORAGE_KEY`, `DELETED_EVENTS_STORAGE_KEY`, `INVENTORY_STORAGE_KEY` | `src/repositories/storageKeys.ts` | Repositories, inventarisplanning | Bestaande persistente keys; ongewijzigd |
@@ -336,7 +356,6 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 
 
 
-| `catalogEntries` | `src/EventDetail.tsx` | Evenement > Menukaart | Niet-destructieve combinatie van opgeslagen catalogus en ontbrekende `MENU_CATALOG`-items; bewaart eigen recepten en toont standaarddranken |
 | `maxMenuItems` | `src/EventDetail.tsx` | Cocktail- en mocktailselectie | Maximaal 6 items bij uitsluitend Cocktail/Mocktail, passend bij PDF-layout |
 
 | `.ed-menu-print .ed-menu-drinks-grid` | `src/EventDetail.css` | Menukaart-preview | Drie begrensde rijen en compacte typografie om zes dranken binnen de sierlijst te houden |
@@ -359,10 +378,7 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 
 | `.ed-menu-drinks.ed-menu-drinks-grid` `transform:translateY(-16px)` | `src/EventDetail.css` | Menukaart preview en HTML-print | Verplaatst de volledige cocktailsectie 16px omhoog zonder de afstand tussen cocktailrijen te veranderen |
 
-| `missingRecipes`, `importRecipes`, `importMessage` | `src/Catalog.tsx` | Instellingen → Catalogus | Tijdelijke niet-destructieve import van ontbrekende standaardcocktails/mocktails naar persistente catalogus, als voorbereiding op Firestore-migratie |
-| `COCKTAIL_RECIPES` | `src/data/menuCatalog.ts` | Tijdelijke migratiebron | 13 vaste cocktail/mocktailrecepten; pas verwijderen na bevestigde Firestore-sync en verificatie op tweede apparaat |
 
-| `missingRecipes` / `importRecipes` (bron `MENU_CATALOG`) | `src/Catalog.tsx` | Catalogusimport | Niet-destructieve import van alle ontbrekende standaarddranken, waaronder drie G&T-recepten; vervangt eerdere beperkte `COCKTAIL_RECIPES`-import |
 
 | `editing`, `closeEditor`, `original` | `src/Catalog.tsx` | Catalogus | Regelen full-page recepteditor en terugkeer naar catalogus zonder modal |
 | `.catalog-editor-page`, `.catalog-editor-heading`, `.catalog-back`, `.catalog-editor` | `src/Catalog.css` | Catalogus | Responsieve editor als pagina-inhoud in plaats van fixed overlay |
@@ -372,12 +388,8 @@ Het register inventariseert gedeelde, persistente en domeinbepalende symbolen, *
 | `.more-route-page`, `.more-route-content` | `src/style.css` | Catalogus en verwijderde evenementen | Normale paginalayout in plaats van overlay |
 
 | `MenuEntry.tasteProfile?` | `src/data/menuCatalog.ts` | Biercatalogus / menukaart | Optionele bewerkbare smaakomschrijving, compatibel met bestaande records |
-| `BEER_TASTE_PROFILES` | `src/data/menuCatalog.ts` | Bierimport | Voorlopige smaakprofielen per biernaam; alleen gebruikt voor ontbrekende profielen |
-| `missingBeers`, `importBeers()` | `src/Catalog.tsx` | Catalogus → Bieren | Niet-destructief opslaan van BLADE-/flesbieren en aanvullen van lege smaakprofielen |
 | `beerDescription(name)` | `src/EventDetail.tsx` | Speciaalbierbar-menukaart | Leest opgeslagen smaakprofiel voor bier uit catalogus en toont dit onder de titel |
 
-| `LEGACY_BEER_TASTE_PROFILES` | `src/data/menuCatalog.ts` | Biercatalogus migratie | Vorige korte standaardteksten voor veilige detectie en vervanging zonder overschrijven van eigen teksten |
-| `BEER_TASTE_PROFILES` | `src/data/menuCatalog.ts` | Biercatalogus | 35 nieuwe uitgebreide indicatieve smaakomschrijvingen, bewerkbaar en te synchroniseren |
 
 | `printMenuItems[].beerType` | `src/EventDetail.tsx` | Speciaalbierbar-menukaart | `tap`, `bottle` of `null` bepaalt pictogram naast de naam in preview/print |
 | `beerPlan.taps[].glasses`, `beerPlan.bottles[name]` | `src/EventDetail.tsx` | Bierselectie | Aantal > 0 betekent aangevinkt voor menukaart; bestaande inkoopberekeningen behouden |

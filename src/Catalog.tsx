@@ -26,6 +26,7 @@ const wineCountryCodes:Record<string,string>={
  'turkije':'tr','turkey':'tr','türkiye':'tr','bulgarije':'bg','bulgaria':'bg',
  'tsjechië':'cz','tsjechie':'cz','czech republic':'cz',
  'moldavië':'md','moldavie':'md','moldova':'md',
+ 'noord-macedonië':'mk','noord macedonië':'mk','noord-macedonie':'mk','noord macedonie':'mk','north macedonia':'mk','macedonië':'mk','macedonie':'mk','macedonia':'mk',
  'china':'cn','japan':'jp','india':'in'
 };
 function WineCountryFlag({country}:{country?:string}){

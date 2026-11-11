@@ -110,3 +110,5 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 - **Niet uitgevoerd:** live Firestore-kopie, referentiemigratie in UI, v3-sync-activatie, opruimen.
 
 - Correctie: v3-workspace leesrecht apart van update-recht gedefinieerd; leesoperaties vereisen geen `request.resource`.
+
+- Buildfix v3: Firestore-documentpaden als slash-pad aan `doc()` doorgeven, geen `Array.at()` wegens huidige TS-target; `CloudGate` rendert migratie uitsluitend bij bestaande gebruiker.

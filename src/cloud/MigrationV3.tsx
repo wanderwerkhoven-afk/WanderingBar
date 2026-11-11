@@ -84,7 +84,7 @@ export default function MigrationV3({ uid }: { uid: string }) {
       if (JSON.stringify(current) !== JSON.stringify(snapshot) || JSON.stringify(readLocal()) !== JSON.stringify(local)) {
         throw new Error('Gegevens zijn gewijzigd sinds de back-up. Start de controle opnieuw.');
       }
-      const root = doc(db, ...v3Paths.workspace());
+      const root = doc(db, v3Paths.workspace().join('/'));
       const existing = await getDocFromServer(root);
       if (existing.exists() && existing.data().ownerUid !== uid) throw new Error('De nieuwe workspace is van een ander account.');
       if (!existing.exists()) await setDoc(root, { ownerUid: uid, schemaVersion: 3, migrationStatus: 'copying', createdAt: new Date().toISOString() });
@@ -95,17 +95,17 @@ export default function MigrationV3({ uid }: { uid: string }) {
         const batch = writeBatch(db);
         for (const item of items.slice(start, start + 150)) {
           const original = parse(item.row);
-          batch.set(doc(db, ...item.path), {
+          batch.set(doc(db, item.path.join('/')), {
             ...original, legacyValue: item.row.value, legacyId: item.row.id,
             position: item.row.position, schemaVersion: 3,
-            ...(item.dataset === 'catalog' ? { productId: item.path.at(-1) } : {}),
+            ...(item.dataset === 'catalog' ? { productId: item.path[item.path.length - 1] } : {}),
           });
         }
         await batch.commit();
         setMessage('Kopiëren: ' + Math.min(start + 150, items.length) + '/' + items.length);
       }
       for (const item of items) {
-        const check = await getDocFromServer(doc(db, ...item.path));
+        const check = await getDocFromServer(doc(db, item.path.join('/')));
         if (!check.exists() || check.data().legacyValue !== item.row.value) throw new Error('Controle mislukt bij ' + item.path.join('/'));
       }
       await setDoc(root, { ownerUid: uid, schemaVersion: 3, migrationStatus: 'copied-not-active', verifiedRecords: items.length, verifiedAt: new Date().toISOString() }, { merge: true });

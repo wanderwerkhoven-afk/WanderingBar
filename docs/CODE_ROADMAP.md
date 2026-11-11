@@ -84,3 +84,5 @@
 - [ ] V3-referenties en live sync omschakelen na geverifieerde kopie; daarna pas legacy opruimen.
 
 - Correctie: v3-workspace leesrecht apart van update-recht gedefinieerd; leesoperaties vereisen geen `request.resource`.
+
+- [x] TypeScript-fouten uit GitHub Actions annotaties in migratiewizard en CloudGate verholpen (Firestore `doc` overload, `Array.at`, nullable user). Buildstatus afzonderlijk via Actions controleren.

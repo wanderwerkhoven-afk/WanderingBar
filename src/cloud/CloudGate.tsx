@@ -147,7 +147,7 @@ export default function CloudGate({ children }: { children: ReactNode }) {
       <span>{error || 'Er zijn nieuwe gegevens van een ander apparaat. Vernieuw om ze te zien.'}</span>
       {remoteChange && <button type="button" onClick={() => window.location.reload()}>Vernieuwen</button>}
     </div>}
-    <MigrationV3 uid={user.uid}/>
+    {user && <MigrationV3 uid={user.uid}/>}
     {children}
   </>;
 }

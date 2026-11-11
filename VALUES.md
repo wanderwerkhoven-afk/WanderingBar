@@ -73,3 +73,5 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - Een geslaagde GitHub-commit is **geen** bewijs dat de daadwerkelijke Firebase-database is gemigreerd.
 
 - Correctie: v3-workspace leesrecht apart van update-recht gedefinieerd; leesoperaties vereisen geen `request.resource`.
+
+- Buildcorrectie migratiewizard: Firestore `doc()` krijgt een volledig pad, indexering zonder `Array.at`, en wizard wordt uitsluitend gerenderd wanneer de gebruiker bekend is. Geen data- of syncmigratie uitgevoerd.

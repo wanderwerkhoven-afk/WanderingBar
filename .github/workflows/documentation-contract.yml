@@ -1,0 +1,44 @@
+name: Documentation contract
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  docs-in-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify all three documentation files changed with code
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import os, subprocess, sys
+          event = os.environ["EVENT_NAME"]
+          base = os.environ["PR_BASE"] if event == "pull_request" else os.environ["PUSH_BEFORE"]
+          head = os.environ["HEAD_SHA"]
+          if not base or set(base) == {"0"}:
+              print("No valid base revision; checking full HEAD tree for initial push.")
+              files = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", head], text=True).splitlines()
+          else:
+              files = subprocess.check_output(["git", "diff", "--name-only", base, head], text=True).splitlines()
+          code = [p for p in files if p.startswith(("src/", "tests/", ".github/workflows/")) or p in ("package.json", "package-lock.json", "vite.config.ts", "tsconfig.json", "firebase.json", "firestore.rules", "index.html")]
+          required = ["docs/VARIABLE_REGISTRY.md", "docs/CODE_ROADMAP.md", "VALUES.md"]
+          if not code:
+              print("No application/configuration changes: documentation contract not required.")
+              sys.exit(0)
+          missing = [p for p in required if p not in files]
+          print("Changed code/config:", *code, sep="\n - ")
+          if missing:
+              print("ERROR: code changed without updating required documentation:", *missing, sep="\n - ")
+              sys.exit(1)
+          print("Documentation contract satisfied. Note: semantic accuracy still requires review.")
+          PY

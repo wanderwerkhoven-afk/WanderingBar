@@ -25,8 +25,6 @@ const OWNER_KEY = 'barback-firebase-local-owner-v1';
 const SYNC_PREFIX = 'barback-firebase-synced-v1-';
 const INVENTORY_MIGRATION_KEY = 'wandering-barback-inventory-expanded-zero-v1';
 
-const collectionRef = (uid: string, dataset: Dataset) => collection(db, 'users', uid, dataset);
-type SyncMode = 'legacy' | 'v3';
 const v3Collections = (dataset: Dataset) => dataset === 'catalog'
   ? CATALOG_CATEGORIES.map(category => collection(db, [...v3Paths.workspace(), 'catalog', category, 'products'].join('/')))
   : dataset === 'inventory'
@@ -67,33 +65,18 @@ function v3Path(dataset: Dataset, row: Row): string {
   const productId = 'prod_' + Array.from(new TextEncoder().encode(row.id), n => n.toString(16).padStart(2, '0')).join('');
   return v3Paths.catalogProduct(v3Category(dataset, row) as typeof CATALOG_CATEGORIES[number], productId).join('/');
 }
-async function detectMode(uid: string): Promise<SyncMode> {
-  let root;
-  try {
-    root = await getDocFromServer(doc(db, v3Paths.workspace().join('/')));
-  } catch (error) {
-    // A denied v3 root read must never lock the user out of their existing
-    // owner-scoped legacy workspace. Legacy access is checked separately.
-    if (error && typeof error === 'object' && 'code' in error &&
-        error.code === 'permission-denied') {
-      await getDocFromServer(doc(db, 'users', uid, 'meta', 'workspace'));
-      return 'legacy';
-    }
-    throw error;
-  }
-  if (!root.exists()) return 'legacy';
+async function verifyWorkspace(uid: string): Promise<void> {
+  const root = await getDocFromServer(doc(db, v3Paths.workspace().join('/')));
+  if (!root.exists()) throw new Error('WanderingBar/main bestaat niet. De v3-migratie moet eerst volledig afgerond zijn.');
   const data = root.data();
-  if (data.ownerUid !== uid) throw new Error('De WanderingBar-workspace hoort bij een ander account.');
-  if (data.migrationStatus !== 'copied-not-active' && data.migrationStatus !== 'active') return 'legacy';
-  if (!Number.isInteger(data.verifiedRecords)) throw new Error('De v3-kopie is niet aantoonbaar gecontroleerd.');
-  const legacy = await fetchRemote(uid, 'legacy');
-  const fresh = await fetchRemote(uid, 'v3');
-  const count = DATASETS.reduce((n, dataset) => n + fresh[dataset].length, 0);
-  if (count !== data.verifiedRecords || DATASETS.some(dataset =>
-    JSON.stringify(legacy[dataset].map(r => [r.id,r.value]).sort((a,b) => String(a[0]).localeCompare(String(b[0])))) !==
-    JSON.stringify(fresh[dataset].map(r => [r.id,r.value]).sort((a,b) => String(a[0]).localeCompare(String(b[0]))))
-  )) throw new Error('De v3-kopie wijkt af van de oude cloudgegevens. Er is niets overschreven; herstel de migratie eerst.');
-  return 'v3';
+  if (data.ownerUid !== uid) throw new Error('Dit Google-account is niet de eigenaar van WanderingBar/main.');
+  if (!['copied-not-active', 'active'].includes(String(data.migrationStatus))) {
+    throw new Error('De Firestore v3-migratie is nog niet afgerond.');
+  }
+  if (!Number.isInteger(data.verifiedRecords)) throw new Error('De migratiecontrole ontbreekt.');
+  const remote = await fetchRemote();
+  const count = DATASETS.reduce((n, dataset) => n + remote[dataset].length, 0);
+  if (count < data.verifiedRecords) throw new Error('V3 bevat minder records dan de geverifieerde migratie. Er is niets lokaal overschreven.');
 }
 
 export function localOwner(): string | null { return localStorage.getItem(OWNER_KEY); }
@@ -105,37 +88,6 @@ export function claimLocalOwner(uid: string): void {
 
 export function readLocal(): RawLocal {
   return Object.fromEntries(DATASETS.map(k => [k, localStorage.getItem(KEYS[k])])) as RawLocal;
-}
-
-function snapshotRows(snapshot: QuerySnapshot<DocumentData>): Row[] {
-  return snapshot.docs.map(entry => {
-    const data = entry.data();
-    if (typeof data.value !== 'string' || !Number.isInteger(data.position)) {
-      throw new Error('Cloudgegevens hebben een onbekend formaat. Er is niets lokaal overschreven.');
-    }
-    return { id: entry.id, value: data.value, position: data.position as number };
-  }).sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
-}
-
-/** Queryable Firestore fields alongside the legacy value envelope (v1-compatible). */
-function structuredRecord(dataset: Dataset, row: Row): Record<string, unknown> {
-  const value: unknown = JSON.parse(row.value);
-  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Ongeldig cloudrecord.');
-  const record = value as Record<string, unknown>;
-  const name = typeof record.name === 'string' ? record.name : '';
-  const slug = name.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('nl')
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80);
-  const fields: Record<string, unknown> = { schemaVersion: 2, recordId: row.id, slug, name };
-  const keys = dataset === 'catalog'
-    ? ['type','ingredients','tasteProfile','alcoholPercentage','wineCategory','grapes','country','region','sourceUrl','image','imageUrl']
-    : dataset === 'inventory'
-      ? ['id','category','subcategory','quantity','unit','location','notes','brand','price','supplier','priceCheckedAt','webLink','image','imageUrl','recipe']
-      : ['id','title','name','date','status'];
-  for (const key of keys) {
-    const field = record[key];
-    if (field !== undefined && field !== null && typeof field !== 'function') fields[key] = field;
-  }
-  return fields;
 }
 
 function toRaw(rows: Row[]): string { return JSON.stringify(rows.map(row => JSON.parse(row.value))); }
@@ -167,51 +119,39 @@ function replaceLocal(remote: RemoteData): void {
   }
 }
 
-async function fetchRemote(uid: string, mode: SyncMode): Promise<RemoteData> {
+async function fetchRemote(): Promise<RemoteData> {
   const entries = await Promise.all(DATASETS.map(async dataset =>
-    [dataset, mode === 'legacy' ? snapshotRows(await getDocsFromServer(collectionRef(uid, dataset))) :
-      (await Promise.all(v3Collections(dataset).map(ref => getDocsFromServer(ref)))).flatMap(v3Rows)
-        .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id))] as const));
+    [dataset, (await Promise.all(v3Collections(dataset).map(ref => getDocsFromServer(ref))))
+      .flatMap(v3Rows).sort((a, b) => a.position - b.position || a.id.localeCompare(b.id))] as const));
   return Object.fromEntries(entries) as RemoteData;
 }
 
-async function writeDataset(uid: string, dataset: Dataset, desired: Row[], previous: Row[], mode: SyncMode): Promise<void> {
+async function writeDataset(dataset: Dataset, desired: Row[], previous: Row[]): Promise<void> {
   const existing = new Map(previous.map(row => [row.id, row]));
   const wanted = new Map(desired.map(row => [row.id, row]));
   const changes: Array<{ type: 'set'; row: Row } | { type: 'delete'; id: string }> = [];
   for (const row of desired) {
     const old = existing.get(row.id);
-    if (!old || old.value !== row.value || old.position !== row.position) {
-      changes.push({ type: 'set', row });
-    }
+    if (!old || old.value !== row.value || old.position !== row.position) changes.push({ type: 'set', row });
   }
-  for (const old of previous) {
-    if (!wanted.has(old.id)) changes.push({ type: 'delete', id: old.id });
-  }
-  // Firestore batches are atomic. Chunking keeps migrations safe for large inventories.
-  for (let start = 0; start < changes.length; start += 250) {
+  for (const old of previous) if (!wanted.has(old.id)) changes.push({ type: 'delete', id: old.id });
+  for (let start = 0; start < changes.length; start += 200) {
     const batch = writeBatch(db);
-    for (const change of changes.slice(start, start + 250)) {
+    for (const change of changes.slice(start, start + 200)) {
       if (change.type === 'set') {
-        if (mode === 'legacy') {
-          batch.set(doc(collectionRef(uid, dataset), change.row.id), {
-            value: change.row.value, position: change.row.position,
-            ...structuredRecord(dataset, change.row),
-          });
-        } else {
-          const path = v3Path(dataset, change.row);
-          const record = JSON.parse(change.row.value) as Record<string, unknown>;
-          batch.set(doc(db, path), {
-            ...(firestoreSafeData(record) as Record<string, unknown>), legacyValue: change.row.value, legacyId: change.row.id,
-            position: change.row.position, schemaVersion: 3,
-            ...(dataset === 'catalog' ? { productId: path.split('/').pop() } : {}),
-          });
-          const old = existing.get(change.row.id);
-          if (old && v3Path(dataset, old) !== path) batch.delete(doc(db, v3Path(dataset, old)));
-        }
+        const path = v3Path(dataset, change.row);
+        const record = JSON.parse(change.row.value) as Record<string, unknown>;
+        batch.set(doc(db, path), {
+          ...(firestoreSafeData(record) as Record<string, unknown>),
+          legacyValue: change.row.value, legacyId: change.row.id,
+          position: change.row.position, schemaVersion: 3,
+          ...(dataset === 'catalog' ? { productId: path.split('/').pop() } : {}),
+        });
+        const old = existing.get(change.row.id);
+        if (old && v3Path(dataset, old) !== path) batch.delete(doc(db, v3Path(dataset, old)));
       } else {
         const old = existing.get(change.id);
-        if (old) batch.delete(mode === 'legacy' ? doc(collectionRef(uid, dataset), change.id) : doc(db, v3Path(dataset, old)));
+        if (old) batch.delete(doc(db, v3Path(dataset, old)));
       }
     }
     await batch.commit();
@@ -228,7 +168,6 @@ function mergeRows(dataset: Dataset, remote: Row[], local: string | null): Row[]
 export type PreparedSync = {
   uid: string;
   remote: RemoteData;
-  mode: SyncMode;
   hasConflict: boolean;
   canMerge: boolean;
   localProblem: string | null;
@@ -241,13 +180,11 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
   const local = readLocal();
   // Do not validate or normalize local rows before offering a cloud-only choice.
   // Legacy/corrupt browser records must not lock users out of their cloud data.
-  const mode = await detectMode(uid);
-  const [remote, workspace] = await Promise.all([
-    fetchRemote(uid, mode), getDocFromServer(doc(db, 'users', uid, 'meta', 'workspace')),
-  ]);
+  await verifyWorkspace(uid);
+  const remote = await fetchRemote();
   // Keep a permanent initialization marker. Without this, an intentionally
   // empty workspace could be mistaken for a new account and old events revived.
-  const cloudHasData = workspace.exists() || DATASETS.some(dataset => remote[dataset].length > 0);
+  const cloudHasData = true;
   const localHasData = DATASETS.some(dataset => local[dataset] !== null && local[dataset] !== '[]');
   let localProblem: string | null = null;
   try { for (const dataset of DATASETS) rowsFromLocal(dataset, local[dataset]); }
@@ -258,7 +195,7 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
   const hasConflict = differentOwner || Boolean(localProblem) || (cloudHasData && localHasData && !same && !lastSynced);
 
   return {
-    uid, remote, mode, hasConflict, canMerge: !differentOwner && !localProblem,
+    uid, remote, hasConflict, canMerge: !differentOwner && !localProblem,
     localProblem: differentOwner ? 'Dit apparaat heeft lokale gegevens van een ander Google-account.' : localProblem,
     exportBackup() {
       const file = { format: 'WanderingBarBack-backup-v1', exportedAt: new Date().toISOString(),
@@ -276,7 +213,7 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
       if (!cloudHasData && !(hasConflict && choice === 'cloud')) {
         for (const dataset of DATASETS) {
           const wanted = rowsFromLocal(dataset, local[dataset]);
-          await writeDataset(uid, dataset, wanted, [], mode);
+          await writeDataset(dataset, wanted, []);
           remote[dataset] = wanted;
           // Correct duplicate legacy inventory IDs in the local working copy
           // only after the cloud upload has completed successfully.
@@ -287,16 +224,14 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
       } else if (choice === 'merge' && hasConflict) {
         for (const dataset of DATASETS) {
           const merged = mergeRows(dataset, remote[dataset], local[dataset]);
-          await writeDataset(uid, dataset, merged, remote[dataset], mode);
+          await writeDataset(dataset, merged, remote[dataset]);
           remote[dataset] = merged;
         }
         replaceLocal(remote);
       } else {
         replaceLocal(remote);
       }
-      await setDoc(doc(db, 'users', uid, 'meta', 'workspace'), {
-        version: 1, initializedAt: workspace.data()?.initializedAt ?? new Date().toISOString(),
-      }, { merge: true });
+
       // Set owner only once cloud read/write has succeeded. Never clear legacy data.
       // The old inventory screen has a one-time migration that resets quantities
       // to zero. Do not run that on restored cloud inventory on a new device.
@@ -310,7 +245,7 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
 }
 
 export function startLiveSync(
-  uid: string, initial: RemoteData, mode: SyncMode,
+  uid: string, initial: RemoteData,
   onRemote: () => void, onError: (message: string) => void,
   onStatus: (status: 'synced' | 'syncing' | 'error') => void,
 ): () => void {
@@ -323,13 +258,13 @@ export function startLiveSync(
   onStatus('synced');
 
   for (const dataset of DATASETS) {
-    const refs = mode === 'v3' ? v3Collections(dataset) : [collectionRef(uid, dataset)];
+    const refs = v3Collections(dataset);
     const segments = new Map<string, Row[]>();
     for (const ref of refs) {
       const unsubscribe = onSnapshot(ref, snapshot => {
         if (stopped || snapshot.metadata.fromCache || snapshot.metadata.hasPendingWrites || busy.has(dataset)) return;
         try {
-          segments.set(ref.path, mode === 'v3' ? v3Rows(snapshot) : snapshotRows(snapshot));
+          segments.set(ref.path, v3Rows(snapshot));
           if (segments.size !== refs.length) return;
           const next = Array.from(segments.values()).flat()
             .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
@@ -363,7 +298,7 @@ export function startLiveSync(
       void (async () => {
         try {
           const wanted = rowsFromLocal(dataset, raw);
-          await writeDataset(uid, dataset, wanted, remote[dataset], mode);
+          await writeDataset(dataset, wanted, remote[dataset]);
           remote[dataset] = wanted;
           baseline[dataset] = raw;
           markSynced(uid, baseline);

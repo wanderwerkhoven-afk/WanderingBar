@@ -4,7 +4,6 @@ import { ArrowRight, Cloud, CloudOff, Download, LogOut, Martini, RefreshCw, Shie
 import { auth } from '../firebase';
 import { prepareSync, startLiveSync, type PreparedSync } from './storageSync';
 import LoginIllustration from './LoginIllustration';
-import MigrationV3 from './MigrationV3';
 import './cloud.css';
 
 type Phase = 'login' | 'loading' | 'conflict' | 'ready' | 'error';
@@ -57,7 +56,7 @@ export default function CloudGate({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!user || phase !== 'ready' || !initial) return;
-    return startLiveSync(user.uid, initial, prepared?.mode ?? 'legacy', () => setRemoteChange(true), e => setError(e), setSyncStatus);
+    return startLiveSync(user.uid, initial, () => setRemoteChange(true), e => setError(e), setSyncStatus);
   }, [user, phase, initial, prepared]);
 
   async function logIn() {
@@ -147,7 +146,6 @@ export default function CloudGate({ children }: { children: ReactNode }) {
       <span>{error || 'Er zijn nieuwe gegevens van een ander apparaat. Vernieuw om ze te zien.'}</span>
       {remoteChange && <button type="button" onClick={() => window.location.reload()}>Vernieuwen</button>}
     </div>}
-    {user && prepared?.mode === 'legacy' && <MigrationV3 uid={user.uid}/>}
     {children}
   </>;
 }

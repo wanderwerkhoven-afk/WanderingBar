@@ -406,3 +406,11 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [ ] V1 JSON-envelope en legacy IDs pas uitfaseren na succesvolle migratie, referentiecontrole en expliciete goedkeuring.
 - [ ] Externe Gall & Gall-afbeeldingen op beschikbaarheid controleren; gewenste afbeeldings-URL opslaan in imageUrl, niet alleen tijdelijk ophalen via een externe metadataservice.
 - [ ] Build, deployment en browser/Firebase Console-integratietest uitvoeren.
+
+## Productcatalogus als enige bron — 11 november 2026
+- [x] Hardcoded biernamen, bier-smaakprofielen en standaard alcoholpercentages uit de applicatiecode verwijderd.
+- [x] Evenementenbierkaart toont selecteerbare speciaalbieren uit de opgeslagen catalogus; reeds geselecteerde evenementproducten blijven zichtbaar voor bestaande events.
+- [x] Biertap start zonder vooraf ingestelde productnamen; maximaal drie taps blijven ondersteund.
+- [x] Bieromschrijvingen en alcoholpercentages worden uit opgeslagen catalogusrecords gelezen.
+- [ ] Verifieer in de live app dat alle gewenste speciaalbieren werkelijk in Firestore staan; codewijzigingen bewijzen geen volledige cloudmigratie.
+- [ ] Bouw Firestore-only repository zonder localStorage als primaire bron, na gecontroleerde back-up en migratie.

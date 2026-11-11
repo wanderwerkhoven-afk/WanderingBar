@@ -4,6 +4,7 @@ import { db } from '../firebase';
 import { DATASETS, readLocal } from './storageSync';
 import { rowsFromLocal, type Dataset, type Row } from './localRows';
 import { v3Paths, type CatalogCategory, type InventoryCategory } from './firestoreV3';
+import { firestoreSafeData } from './firestoreSafeData';
 
 type Data = Record<Dataset, Row[]>;
 const legacy = (uid: string, dataset: Dataset) => collection(db, 'users', uid, dataset);

@@ -67,7 +67,19 @@ function v3Path(dataset: Dataset, row: Row): string {
   return v3Paths.catalogProduct(v3Category(dataset, row) as typeof CATALOG_CATEGORIES[number], productId).join('/');
 }
 async function detectMode(uid: string): Promise<SyncMode> {
-  const root = await getDocFromServer(doc(db, v3Paths.workspace().join('/')));
+  let root;
+  try {
+    root = await getDocFromServer(doc(db, v3Paths.workspace().join('/')));
+  } catch (error) {
+    // A denied v3 root read must never lock the user out of their existing
+    // owner-scoped legacy workspace. Legacy access is checked separately.
+    if (error && typeof error === 'object' && 'code' in error &&
+        error.code === 'permission-denied') {
+      await getDocFromServer(doc(db, 'users', uid, 'meta', 'workspace'));
+      return 'legacy';
+    }
+    throw error;
+  }
   if (!root.exists()) return 'legacy';
   const data = root.data();
   if (data.ownerUid !== uid) throw new Error('De WanderingBar-workspace hoort bij een ander account.');

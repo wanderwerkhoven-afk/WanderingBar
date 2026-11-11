@@ -1,4 +1,5 @@
 import {useEffect,useState} from 'react';
+import {createPortal} from 'react-dom';
 import {imageToBase64} from './eventImage';
 import {readMenuCatalog,writeMenuCatalog,type MenuEntry,type MenuKind} from './data/menuCatalog';
 import {BLADE_BEERS,BOTTLED_BEER_CATALOG} from './planning/beerBar';
@@ -24,7 +25,7 @@ function CatalogProductImage({entry}:{entry:MenuEntry}){
   return()=>{active=false};
  },[entry.type,entry.image,entry.imageUrl,entry.sourceUrl]);
  const src=entry.image||entry.imageUrl||gallImage;
- return <><div className="catalog-product-media">{src&&!failed?<button type="button" className="catalog-product-image-button" onClick={()=>setPreviewOpen(true)} aria-label={'Bekijk productfoto van '+entry.name+' op volledig scherm'} title="Foto vergroten"><img src={src} alt={entry.name} loading="lazy" onError={()=>setFailed(true)}/><span className="catalog-product-zoom-hint">Vergroten</span></button>:<span className="catalog-product-placeholder" aria-hidden="true">{entry.type==='Wijn'?'W':entry.type==='Speciaalbier'?'B':entry.type==='G&T'?'G':'C'}</span>}</div>{previewOpen&&src&&!failed&&<div className="catalog-image-lightbox" role="dialog" aria-modal="true" aria-label={'Productfoto van '+entry.name} onClick={()=>setPreviewOpen(false)}><div className="catalog-image-lightbox-inner" onClick={event=>event.stopPropagation()}><button type="button" className="catalog-image-lightbox-close" onClick={()=>setPreviewOpen(false)} aria-label="Sluit foto">×</button><img src={src} alt={entry.name}/><p>{entry.name}</p></div></div>}</>;
+ return <><div className="catalog-product-media">{src&&!failed?<button type="button" className="catalog-product-image-button" onClick={()=>setPreviewOpen(true)} aria-label={'Bekijk productfoto van '+entry.name+' op volledig scherm'} title="Foto vergroten"><img src={src} alt={entry.name} loading="lazy" onError={()=>setFailed(true)}/><span className="catalog-product-zoom-hint">Vergroten</span></button>:<span className="catalog-product-placeholder" aria-hidden="true">{entry.type==='Wijn'?'W':entry.type==='Speciaalbier'?'B':entry.type==='G&T'?'G':'C'}</span>}</div>{previewOpen&&src&&!failed&&createPortal(<div className="catalog-image-lightbox" role="dialog" aria-modal="true" aria-label={'Productfoto van '+entry.name} onClick={()=>setPreviewOpen(false)}><div className="catalog-image-lightbox-inner" onClick={event=>event.stopPropagation()}><button type="button" className="catalog-image-lightbox-close" onClick={()=>setPreviewOpen(false)} aria-label="Sluit foto">×</button><img src={src} alt={entry.name}/><p>{entry.name}</p></div></div>,document.body)}</>;
 }
 const kinds:MenuKind[]=['Cocktail','Mocktail','Wijn','Speciaalbier','G&T'];
 export default function Catalog(){

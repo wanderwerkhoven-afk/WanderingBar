@@ -52,7 +52,7 @@ function structuredRecord(dataset: Dataset, row: Row): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Ongeldig cloudrecord.');
   const record = value as Record<string, unknown>;
   const name = typeof record.name === 'string' ? record.name : '';
-  const slug = name.normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '').toLocaleLowerCase('nl')
+  const slug = name.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('nl')
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80);
   const fields: Record<string, unknown> = { schemaVersion: 2, recordId: row.id, slug, name };
   const keys = dataset === 'catalog'

@@ -2,36 +2,37 @@ import {useEffect,useState} from 'react';
 import {createPortal} from 'react-dom';
 import {imageToBase64} from './eventImage';
 import {readMenuCatalog,writeMenuCatalog,type MenuEntry,type MenuKind} from './data/menuCatalog';
+import 'flag-icons/css/flag-icons.min.css';
 import './Catalog.css';
 
 // Country flags are derived from the wine's existing country field, not stored separately.
-const wineCountryFlags:Record<string,string>={
- 'nederland':'🇳🇱','netherlands':'🇳🇱','frankrijk':'🇫🇷','france':'🇫🇷',
- 'italië':'🇮🇹','italie':'🇮🇹','italy':'🇮🇹','spanje':'🇪🇸','spain':'🇪🇸',
- 'duitsland':'🇩🇪','germany':'🇩🇪','oostenrijk':'🇦🇹','austria':'🇦🇹',
- 'portugal':'🇵🇹','belgië':'🇧🇪','belgie':'🇧🇪','belgium':'🇧🇪',
- 'griekenland':'🇬🇷','greece':'🇬🇷','hongarije':'🇭🇺','hungary':'🇭🇺',
- 'roemenië':'🇷🇴','roemenie':'🇷🇴','romania':'🇷🇴','kroatië':'🇭🇷','kroatie':'🇭🇷','croatia':'🇭🇷',
- 'slovenië':'🇸🇮','slovenie':'🇸🇮','slovenia':'🇸🇮','zwitserland':'🇨🇭','switzerland':'🇨🇭',
- 'verenigd koninkrijk':'🇬🇧','engeland':'🇬🇧','united kingdom':'🇬🇧','england':'🇬🇧',
- 'verenigde staten':'🇺🇸','amerika':'🇺🇸','usa':'🇺🇸','united states':'🇺🇸',
- 'argentinie':'🇦🇷','argentinië':'🇦🇷','argentina':'🇦🇷','chili':'🇨🇱','chile':'🇨🇱',
- 'zuid-afrika':'🇿🇦','zuid afrika':'🇿🇦','south africa':'🇿🇦',
- 'australië':'🇦🇺','australie':'🇦🇺','australia':'🇦🇺',
- 'nieuw-zeeland':'🇳🇿','nieuw zeeland':'🇳🇿','new zealand':'🇳🇿',
- 'canada':'🇨🇦','brazilië':'🇧🇷','brazil':'🇧🇷','brazilie':'🇧🇷',
- 'uruguay':'🇺🇾','georgië':'🇬🇪','georgie':'🇬🇪','georgia':'🇬🇪',
- 'libanon':'🇱🇧','lebanon':'🇱🇧','israël':'🇮🇱','israel':'🇮🇱',
- 'turkije':'🇹🇷','turkey':'🇹🇷','türkiye':'🇹🇷','bulgarije':'🇧🇬','bulgaria':'🇧🇬',
- 'tsjechië':'🇨🇿','tsjechie':'🇨🇿','czech republic':'🇨🇿',
- 'moldavië':'🇲🇩','moldavie':'🇲🇩','moldova':'🇲🇩',
- 'china':'🇨🇳','japan':'🇯🇵','india':'🇮🇳'
+const wineCountryCodes:Record<string,string>={
+ 'nederland':'nl','netherlands':'nl','frankrijk':'fr','france':'fr',
+ 'italië':'it','italie':'it','italy':'it','spanje':'es','spain':'es',
+ 'duitsland':'de','germany':'de','oostenrijk':'at','austria':'at',
+ 'portugal':'pt','belgië':'be','belgie':'be','belgium':'be',
+ 'griekenland':'gr','greece':'gr','hongarije':'hu','hungary':'hu',
+ 'roemenië':'ro','roemenie':'ro','romania':'ro','kroatië':'hr','kroatie':'hr','croatia':'hr',
+ 'slovenië':'si','slovenie':'si','slovenia':'si','zwitserland':'ch','switzerland':'ch',
+ 'verenigd koninkrijk':'gb','engeland':'gb','united kingdom':'gb','england':'gb',
+ 'verenigde staten':'us','amerika':'us','usa':'us','united states':'us',
+ 'argentinië':'ar','argentinie':'ar','argentina':'ar','chili':'cl','chile':'cl',
+ 'zuid-afrika':'za','zuid afrika':'za','south africa':'za',
+ 'australië':'au','australie':'au','australia':'au',
+ 'nieuw-zeeland':'nz','nieuw zeeland':'nz','new zealand':'nz',
+ 'canada':'ca','brazilië':'br','brazil':'br','brazilie':'br',
+ 'uruguay':'uy','georgië':'ge','georgie':'ge','georgia':'ge',
+ 'libanon':'lb','lebanon':'lb','israël':'il','israel':'il',
+ 'turkije':'tr','turkey':'tr','türkiye':'tr','bulgarije':'bg','bulgaria':'bg',
+ 'tsjechië':'cz','tsjechie':'cz','czech republic':'cz',
+ 'moldavië':'md','moldavie':'md','moldova':'md',
+ 'china':'cn','japan':'jp','india':'in'
 };
 function WineCountryFlag({country}:{country?:string}){
  const label=country?.trim();
  if(!label)return null;
- const flag=wineCountryFlags[label.toLocaleLowerCase('nl')];
- return flag?<span className="catalog-wine-country-flag" title={label} aria-label={'Herkomst: '+label} role="img">{flag}</span>:null;
+ const code=wineCountryCodes[label.toLocaleLowerCase('nl')] || (/^[a-z]{2}$/i.test(label)?label.toLowerCase():'');
+ return code?<span className="catalog-wine-country-flag" title={label} aria-label={'Herkomst: '+label} role="img"><span className={'fi fi-'+code} aria-hidden="true"/></span>:null;
 }
 function CatalogProductImage({entry}:{entry:MenuEntry}){
  const [gallImage,setGallImage]=useState('');

@@ -96,3 +96,9 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 
 ## Wijzigingscontrole
 - 2026-11-11 — Repositorybrede documentatieplicht toegevoegd in `AGENTS.md`; automatische bestandscontrole in `.github/workflows/documentation-contract.yml`. De check vereist bij code-/configuratiewijzigingen updates aan dit register, `CODE_ROADMAP.md` en `VALUES.md`. Geen wijziging aan runtime-variabelen of datarelaties.
+
+## Firestore v3 — nieuwe codekoppelingen (nog niet live)
+- `src/cloud/firestoreV3.ts`: `WORKSPACE_COLLECTION='WanderingBar'`, `WORKSPACE_DOCUMENT='main'`, `WORKSPACE_ROOT`; `CATALOG_CATEGORIES`, `INVENTORY_CATEGORIES`, `v3Paths.workspace/catalogProduct/inventoryItem/event/eventItem/deletedEvent/customer/setting`; `newRecordId(prefix)` genereert naam-onafhankelijke UUID's. **Geen runtime-consumenten**: de bestaande synchronisatie blijft legacy.
+- Huidige live eigenaar blijft `src/cloud/storageSync.ts` → `collectionRef(uid,dataset)` onder `users/{uid}`; Firestore-regels blijven onveranderd.
+- Voor de geplande omschakeling moeten `src/cloud/localRows.ts` (catalogus-ID op naam), `src/data/menuCatalog.ts`, `src/types/event.ts`, `src/EventDetail.tsx`, `src/Inventory.tsx`, `src/Catalog.tsx`, repositories en alle planning-/documentafnemers samen gecontroleerd worden.
+- Volledige migratie- en veiligheidsvoorwaarden: `docs/FIRESTORE_V3_MIGRATION.md`.

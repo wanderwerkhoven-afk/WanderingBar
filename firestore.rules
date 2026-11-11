@@ -19,7 +19,8 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.resource.data.ownerUid == request.auth.uid
         && exists(/databases/$(database)/documents/users/$(request.auth.uid)/meta/workspace);
-      allow read, update: if owner() && request.resource.data.ownerUid == resource.data.ownerUid;
+      allow read: if owner();
+      allow update: if owner() && request.resource.data.ownerUid == resource.data.ownerUid;
       allow delete: if false;
       match /{path=**} {
         allow read, write: if owner();

@@ -71,3 +71,5 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - De wizard stopt bij onbekende categorieën of ontbrekende lokale/cloudrecords en verifieert gekopieerde documenten.
 - Nieuwe regels in `firestore.rules` moeten eerst apart worden gepubliceerd. De oude `users/{uid}`-synchronisatie blijft actief; de wizard schakelt niet automatisch over en ruimt niets op.
 - Een geslaagde GitHub-commit is **geen** bewijs dat de daadwerkelijke Firebase-database is gemigreerd.
+
+- Correctie: v3-workspace leesrecht apart van update-recht gedefinieerd; leesoperaties vereisen geen `request.resource`.

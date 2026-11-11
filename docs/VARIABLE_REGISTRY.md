@@ -108,3 +108,5 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 - `target()` koppelt legacy catalogustype aan Cocktail/Mocktail/Wijn/Bier en inventariscategorie aan Dranken/BarMaterialen/Garneringen/Verbruiksartikelen; onbekende categorieën blokkeren kopiëren.
 - `CloudGate.tsx` toont de handmatige wizard voor een ingelogd account. `firestore.rules` bevat een bootstrap voor het legacy-workspace-account en eigenaar-gebonden v3-subcollecties; publicatie is nog nodig.
 - **Niet uitgevoerd:** live Firestore-kopie, referentiemigratie in UI, v3-sync-activatie, opruimen.
+
+- Correctie: v3-workspace leesrecht apart van update-recht gedefinieerd; leesoperaties vereisen geen `request.resource`.

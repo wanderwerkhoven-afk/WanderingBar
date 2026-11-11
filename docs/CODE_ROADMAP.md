@@ -394,3 +394,15 @@ Dit document en `docs/VARIABLE_REGISTRY.md` zijn de actuele referentie bij ieder
 - [x] Speciaalbier-menukaart: bij precies 11 of 12 geselecteerde bieren (6 rasterrijen) wordt de verticale rijafstand 16 px; tot en met 10 bieren blijft 28 px. Specifieke CSS-klasse `ed-beer-menu-six-rows` voorkomt wijzigingen aan cocktail-/mocktailkaarten. [ ] Visuele controle preview en print.
 
 - [x] Dynamische speciaalbier-menukaart voor 7+ rijen: bij 11–12 bieren 16px rijafstand mét smaakprofielen; bij 13+ bieren blijft de rijafstand 16px, maar worden smaakprofielen uitsluitend in de menukaartweergave en print verborgen. Biernamen en tap-/flesiconen blijven zichtbaar. Catalogusdata/smaakprofielen worden niet gewijzigd. [ ] Visuele test bij 13–16+ bieren en A4/A5-afdruk.
+
+
+## Firestore database-architectuur v2 — november 2026
+- [x] V2-velden bij nieuwe/gewijzigde Firestore-records: schemaVersion, recordId, leesbare slug, naam en afzonderlijke productvelden; bestaande v1-records blijven intact.
+- [x] Catalogus en inventaris hebben aparte productpagina- en afbeelding-URL-velden; bestaande uploads blijven ondersteund.
+- [x] Compatibiliteit met de huidige realtime synchronisatie behouden; geen destructieve migratie.
+- [ ] Live Firestore-inventarisatie en volledige export/back-up van alle gebruikersdatasets, inclusief aantal documenten en verwijzingen.
+- [ ] Gecontroleerde backfill van alle bestaande v1-documenten naar v2 met dry-run, controle van duplicaten, validatie van aantallen en herstelplan.
+- [ ] Alle schermen direct op Firestore laten lezen/schrijven in plaats van lokale JSON als primaire gegevensbron.
+- [ ] V1 JSON-envelope en legacy IDs pas uitfaseren na succesvolle migratie, referentiecontrole en expliciete goedkeuring.
+- [ ] Externe Gall & Gall-afbeeldingen op beschikbaarheid controleren; gewenste afbeeldings-URL opslaan in imageUrl, niet alleen tijdelijk ophalen via een externe metadataservice.
+- [ ] Build, deployment en browser/Firebase Console-integratietest uitvoeren.

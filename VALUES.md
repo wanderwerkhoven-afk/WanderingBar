@@ -56,3 +56,12 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 
 ## Wijzigingscontrole
 - 2026-11-11 — De verplichte documentatieprocedure staat in `AGENTS.md`; de GitHub Actions-controle in `.github/workflows/documentation-contract.yml` verlangt updates aan alle drie de referentiedocumenten bij code-/configuratiewijzigingen. Geen wijziging aan opslagcontract of runtime-architectuur. Deze workflow controleert bestandswijzigingen, niet inhoudelijke juistheid.
+
+## Firestore v3 — overeengekomen doelarchitectuur (niet live)
+- Bedrijfsroot: collectie `WanderingBar`, document `main` (Firestore vereist afwisseling van collectie en document).
+- Catalogus: `catalog/{Cocktail|Mocktail|Wijn|Bier}/products/{productId}`; G&T onder Cocktail.
+- Inventaris: `inventory/{Dranken|BarMaterialen|Garneringen|Verbruiksartikelen}/items/{itemId}`; bestaande categorieën eerst expliciet mappen.
+- Evenementen: `events/{eventId}`, met aanpasbare naam als veld en subcollecties `menu`, `schedule`, `packing`, `tasks`, `staff`, `documents`. Verwijderde evenementen: `deletedEvents/{eventId}`.
+- Stabiele ID's onafhankelijk van product-/evenementnamen. Historische documenten bewaren relevante snapshots. Eén eigenaar voor nu, toekomstig team optioneel.
+- **Veiligheidscontract:** geen destructieve migratie, geen automatische omschakeling, geen verwijdering van legacy-data vóór back-up, productieaudit, gepubliceerde en geteste Security Rules, referentiemigratie en geslaagde controles.
+- `src/cloud/firestoreV3.ts` is alleen een schema-/paddefinitie; `docs/FIRESTORE_V3_MIGRATION.md` is het uitvoeringsplan. Live Firestore en localStorage blijven vooralsnog ongewijzigd.

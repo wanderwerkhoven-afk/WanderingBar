@@ -4,6 +4,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { CATALOG_CATEGORIES, INVENTORY_CATEGORIES, v3Paths } from './firestoreV3';
+import { firestoreSafeData } from './firestoreSafeData';
 import { CATALOG_STORAGE_KEY } from '../data/menuCatalog';
 import {
   DELETED_EVENTS_STORAGE_KEY, EVENT_STORAGE_KEY, INVENTORY_STORAGE_KEY,
@@ -201,7 +202,7 @@ async function writeDataset(uid: string, dataset: Dataset, desired: Row[], previ
           const path = v3Path(dataset, change.row);
           const record = JSON.parse(change.row.value) as Record<string, unknown>;
           batch.set(doc(db, path), {
-            ...record, legacyValue: change.row.value, legacyId: change.row.id,
+            ...(firestoreSafeData(record) as Record<string, unknown>), legacyValue: change.row.value, legacyId: change.row.id,
             position: change.row.position, schemaVersion: 3,
             ...(dataset === 'catalog' ? { productId: path.split('/').pop() } : {}),
           });

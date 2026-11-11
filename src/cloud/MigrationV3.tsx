@@ -122,7 +122,7 @@ export default function MigrationV3({ uid }: { uid: string }) {
         for (const item of items.slice(start, start + 150)) {
           const original = parse(item.row);
           batch.set(doc(db, item.path.join('/')), {
-            ...original, legacyValue: item.row.value, legacyId: item.row.id,
+            ...(firestoreSafeData(original) as Record<string, unknown>), legacyValue: item.row.value, legacyId: item.row.id,
             position: item.row.position, schemaVersion: 3,
             ...(item.dataset === 'catalog' ? { productId: item.path[item.path.length - 1] } : {}),
           });

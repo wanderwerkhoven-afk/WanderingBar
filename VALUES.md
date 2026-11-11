@@ -27,7 +27,7 @@ De definitieve catalogussleutel wordt in `src/data/menuCatalog.ts` beheerd; wijz
 
 - Eerste aanmelding met een lege Firestore-workspace: aanwezige browsergegevens uploaden.
 - Een bestaande cloudversie met andere lokale gegevens: back-up downloaden en daarna expliciet samenvoegen of cloudversie kiezen.
-- Na aanmelden: lokale wijzigingen ongeveer elke 1,2 seconde naar Firestore; via het synchronisatie-icoon kan de controle direct plaatsvinden.
+- Na aanmelden: lokale wijzigingen worden ongeveer elke 1,2 seconde gecontroleerd en naar Firestore geschreven; de status is zichtbaar in de cloudstatusbalk. Er is geen handmatige synchronisatieknop meer.
 - Externe wijzigingen: verversmelding tonen, zodat open formulieren niet ongemerkt oude waarden terugschrijven.
 - Bij verbindingsfouten: lokale gegevens laten staan, fout tonen en later opnieuw synchroniseren.
 
@@ -47,3 +47,12 @@ De definitieve catalogussleutel wordt in `src/data/menuCatalog.ts` beheerd; wijz
 - Een slug is een leesbaar zoekveld, **niet** de document-ID; een productnaam kan wijzigen zonder dat een document zijn identiteit verliest.
 - Bestaande v1-records blijven leesbaar en worden **niet automatisch verwijderd, hernoemd of overschreven**. De v2-velden worden momenteel toegevoegd wanneer een record opnieuw wordt opgeslagen. Dit is een compatibele tussenfase, **geen voltooide databasebrede migratie**.
 - Een definitieve omschakeling naar Firestore-only en het vervangen van de v1 JSON-envelope vereisen een gecontroleerde back-up, volledige inventarisatie, migratie met idempotente controles, verificatie op aantallen en referenties, en pas daarna een afzonderlijke verwijderfase.
+
+
+## Producten en UI — actuele afspraken (11 november 2026)
+- De catalogus bevat **geen hardcoded standaardproducten**; producten worden door de gebruiker beheerd en via de huidige synchronisatielaag gedeeld met Firestore.
+- Bierselecties in evenementen worden uit opgeslagen catalogusrecords opgebouwd; oude evenementselecties blijven zichtbaar. De bierplanning start zonder vaste tapmerken.
+- Smaakprofielen en alcoholpercentages worden uit catalogusrecords gelezen, niet uit vaste tabellen in de broncode.
+- Catalogus- en inventarisproducten bewaren de productlink en afbeeldingslink in afzonderlijke velden; een geüploade foto blijft een aparte bron.
+- Catalogusfoto's tonen een begrensde afbeelding, een hoverpreview en een fullscreenviewer bij klik.
+- De **lokale cache is nog de primaire applicatiebron**; Firestore-only en volledige v2-migratie zijn openstaande werkzaamheden. De daadwerkelijke inhoud van Firestore is niet vanuit de GitHub-repository te verifiëren.

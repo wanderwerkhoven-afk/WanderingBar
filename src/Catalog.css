@@ -48,16 +48,14 @@
 .catalog-image-lightbox-close{position:absolute;z-index:1;top:0;right:0;display:grid;place-items:center;width:44px;height:44px;border:1px solid rgba(255,255,255,.5);border-radius:50%;background:rgba(45,30,23,.75);color:#fff;font-size:30px;line-height:1;cursor:pointer}
 @media(max-width:520px){.catalog-product-media{height:185px;min-height:185px;padding:8px}.catalog-product-zoom-hint{opacity:1}.catalog-image-lightbox{padding:12px}.catalog-image-lightbox-inner img{max-height:calc(100dvh - 100px)}}
 
-/* Hover is a stable, non-interactive visual enlargement; click opens the independent portal viewer. */
-.catalog-product-card{position:relative;isolation:isolate}
-.catalog-product-card:hover{z-index:5}
-.catalog-product-media{position:relative;isolation:isolate}
+/* Keep product photos inside their own card, including on hover. */
+.catalog-product-card{position:relative}
+.catalog-product-media{position:relative;overflow:hidden}
+.catalog-product-image-button{overflow:hidden;border-radius:inherit}
+.catalog-product-image-button img{pointer-events:none;display:block;width:100%;height:100%;object-fit:contain;object-position:center;transform:none;transition:filter .18s ease}
 @media(hover:hover) and (pointer:fine){
- .catalog-product-card:has(.catalog-product-image-button:hover){z-index:20}
- .catalog-product-media:has(.catalog-product-image-button:hover){z-index:21;overflow:visible}
- .catalog-product-image-button img{pointer-events:none;transition:transform .2s ease,filter .2s ease;transform-origin:center center}
- .catalog-product-image-button:hover img{transform:scale(1.65);filter:drop-shadow(0 12px 14px rgba(30,19,12,.28))}
- .catalog-product-image-button:hover .catalog-product-zoom-hint{z-index:22}
+ .catalog-product-image-button:hover img{transform:none;filter:drop-shadow(0 5px 8px rgba(30,19,12,.2))}
+ .catalog-product-image-button:hover .catalog-product-zoom-hint{opacity:1}
 }
 .catalog-image-lightbox{isolation:isolate;z-index:2147483000}
 @media(prefers-reduced-motion:reduce){.catalog-product-image-button img{transition:none}}

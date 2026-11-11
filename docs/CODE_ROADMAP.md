@@ -59,3 +59,8 @@
 6. Verplaats afgeronde taken naar **Gereed in code**, maar markeer live-/cloudverificatie pas afgerond na echte controle.
 
 **Laatste inhoudelijke productwijziging vóór deze audit:** vaste bierproductlijsten verwijderd en bierselectie catalogusgestuurd gemaakt. **Documentatiecorrectie van deze audit:** de inventaris bevat nog wel hardcoded producten; eerder geformuleerde claims dat álle hardcoded producten weg waren, waren te ruim.
+
+## Documentatiebeheer — verplicht
+- [x] `AGENTS.md` bevat het repositorybrede protocol: bij elke codewijziging alle drie de documenten actualiseren.
+- [x] `.github/workflows/documentation-contract.yml` controleert bij push en pull request of code-/configuratiewijzigingen samen met updates aan `VARIABLE_REGISTRY.md`, `CODE_ROADMAP.md` en `VALUES.md` worden aangeleverd.
+- [ ] Controleren dat de nieuwe workflow daadwerkelijk slaagt op GitHub Actions; inhoudelijke correctheid blijft een handmatige code-audit.

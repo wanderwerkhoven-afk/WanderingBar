@@ -75,3 +75,9 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - Correctie: v3-workspace leesrecht apart van update-recht gedefinieerd; leesoperaties vereisen geen `request.resource`.
 
 - Buildcorrectie migratiewizard: Firestore `doc()` krijgt een volledig pad, indexering zonder `Array.at`, en wizard wordt uitsluitend gerenderd wanneer de gebruiker bekend is. Geen data- of syncmigratie uitgevoerd.
+
+## V3 runtime-omschakeling (2026-11-11)
+- `storageSync.ts` controleert bij inloggen de v3-root, eigenaar, `verifiedRecords` en exacte legacy/v3-inhoud per dataset. Bij overeenstemming kiest de app v3; anders wordt de sessie geblokkeerd zonder gegevens te overschrijven. Bij ontbrekende v3-root blijft legacy actief.
+- V3 leest catalogus- en inventariscategorieën uit de nieuwe subcollecties, en events/deletedEvents rechtstreeks; schrijft met stabiele paden en `legacyValue`/`legacyId` voor compatibiliteit. Hernoemen van evenement verandert de document-ID niet. De oude Firestore blijft bewaard.
+- `CloudGate` gebruikt de gekozen modus voor live sync. Migratiewizard verschijnt alleen in legacy-modus.
+- **Nog niet live geverifieerd:** werkelijke browserflows, Firestore-regels, build en synchronisatie op twee apparaten. Er is geen opruimactie uitgevoerd.

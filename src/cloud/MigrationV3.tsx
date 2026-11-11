@@ -3,7 +3,7 @@ import { collection, doc, getDocFromServer, getDocsFromServer, setDoc, writeBatc
 import { db } from '../firebase';
 import { DATASETS, readLocal } from './storageSync';
 import { rowsFromLocal, type Dataset, type Row } from './localRows';
-import { CATALOG_CATEGORIES, INVENTORY_CATEGORIES, v3Paths, type CatalogCategory, type InventoryCategory } from './firestoreV3';
+import { v3Paths, type CatalogCategory, type InventoryCategory } from './firestoreV3';
 
 type Data = Record<Dataset, Row[]>;
 const legacy = (uid: string, dataset: Dataset) => collection(db, 'users', uid, dataset);

@@ -3,6 +3,7 @@ import {
   type DocumentData, type QuerySnapshot, type Unsubscribe,
 } from 'firebase/firestore';
 import { db } from '../firebase';
+import { CATALOG_CATEGORIES, INVENTORY_CATEGORIES, v3Paths } from './firestoreV3';
 import { CATALOG_STORAGE_KEY } from '../data/menuCatalog';
 import {
   DELETED_EVENTS_STORAGE_KEY, EVENT_STORAGE_KEY, INVENTORY_STORAGE_KEY,
@@ -24,6 +25,63 @@ const SYNC_PREFIX = 'barback-firebase-synced-v1-';
 const INVENTORY_MIGRATION_KEY = 'wandering-barback-inventory-expanded-zero-v1';
 
 const collectionRef = (uid: string, dataset: Dataset) => collection(db, 'users', uid, dataset);
+type SyncMode = 'legacy' | 'v3';
+const v3Collections = (dataset: Dataset) => dataset === 'catalog'
+  ? CATALOG_CATEGORIES.map(category => collection(db, ...v3Paths.workspace(), 'catalog', category, 'products'))
+  : dataset === 'inventory'
+    ? INVENTORY_CATEGORIES.map(category => collection(db, ...v3Paths.workspace(), 'inventory', category, 'items'))
+    : [collection(db, ...v3Paths.workspace(), dataset)];
+function v3Rows(snapshot: QuerySnapshot<DocumentData>): Row[] {
+  return snapshot.docs.map(entry => {
+    const data = entry.data();
+    if (typeof data.legacyValue !== 'string' || typeof data.legacyId !== 'string' || !Number.isInteger(data.position)) {
+      throw new Error('Onbekend v3-record. De lokale gegevens zijn niet gewijzigd.');
+    }
+    return { id: data.legacyId, value: data.legacyValue, position: data.position as number };
+  });
+}
+function v3Category(dataset: Dataset, row: Row): string {
+  const value = JSON.parse(row.value) as Record<string, unknown>;
+  const type = String(dataset === 'catalog' ? value.type ?? '' : value.category ?? '').toLowerCase();
+  if (dataset === 'catalog') {
+    if (type.includes('mocktail') || type.includes('alcoholvrij')) return 'Mocktail';
+    if (type.includes('wine') || type.includes('wijn')) return 'Wijn';
+    if (type.includes('beer') || type.includes('bier')) return 'Bier';
+    if (type.includes('cocktail') || type.includes('gin') || type.includes('g&t')) return 'Cocktail';
+  } else if (dataset === 'inventory') {
+    if (/drank|alcohol|bier|wijn|gin|spirit|siroop|fris|beverage/.test(type)) return 'Dranken';
+    if (/garner|fruit|garnish|kruid/.test(type)) return 'Garneringen';
+    if (/verbruik|dispos|servet|rietje/.test(type)) return 'Verbruiksartikelen';
+    if (/bar|materiaal|glas|apparatuur|equipment|tools/.test(type)) return 'BarMaterialen';
+  }
+  throw new Error('Onbekende v3-categorie voor ' + dataset + ': ' + type);
+}
+function v3Path(dataset: Dataset, row: Row): string {
+  if (dataset === 'events') return v3Paths.event(row.id).join('/');
+  if (dataset === 'deletedEvents') {
+    const event = (JSON.parse(row.value) as { event?: { id?: string } }).event;
+    return v3Paths.deletedEvent(String(event?.id ?? row.id)).join('/');
+  }
+  if (dataset === 'inventory') return v3Paths.inventoryItem(v3Category(dataset, row) as typeof INVENTORY_CATEGORIES[number], row.id).join('/');
+  const productId = 'prod_' + Array.from(new TextEncoder().encode(row.id), n => n.toString(16).padStart(2, '0')).join('');
+  return v3Paths.catalogProduct(v3Category(dataset, row) as typeof CATALOG_CATEGORIES[number], productId).join('/');
+}
+async function detectMode(uid: string): Promise<SyncMode> {
+  const root = await getDocFromServer(doc(db, ...v3Paths.workspace()));
+  if (!root.exists()) return 'legacy';
+  const data = root.data();
+  if (data.ownerUid !== uid) throw new Error('De WanderingBar-workspace hoort bij een ander account.');
+  if (data.migrationStatus !== 'copied-not-active' && data.migrationStatus !== 'active') return 'legacy';
+  if (!Number.isInteger(data.verifiedRecords)) throw new Error('De v3-kopie is niet aantoonbaar gecontroleerd.');
+  const legacy = await fetchRemote(uid, 'legacy');
+  const fresh = await fetchRemote(uid, 'v3');
+  const count = DATASETS.reduce((n, dataset) => n + fresh[dataset].length, 0);
+  if (count !== data.verifiedRecords || DATASETS.some(dataset =>
+    JSON.stringify(legacy[dataset].map(r => [r.id,r.value]).sort((a,b) => String(a[0]).localeCompare(String(b[0])))) !==
+    JSON.stringify(fresh[dataset].map(r => [r.id,r.value]).sort((a,b) => String(a[0]).localeCompare(String(b[0]))))
+  )) throw new Error('De v3-kopie wijkt af van de oude cloudgegevens. Er is niets overschreven; herstel de migratie eerst.');
+  return 'v3';
+}
 
 export function localOwner(): string | null { return localStorage.getItem(OWNER_KEY); }
 export function claimLocalOwner(uid: string): void {
@@ -96,13 +154,15 @@ function replaceLocal(remote: RemoteData): void {
   }
 }
 
-async function fetchRemote(uid: string): Promise<RemoteData> {
+async function fetchRemote(uid: string, mode: SyncMode): Promise<RemoteData> {
   const entries = await Promise.all(DATASETS.map(async dataset =>
-    [dataset, snapshotRows(await getDocsFromServer(collectionRef(uid, dataset)))] as const));
+    [dataset, mode === 'legacy' ? snapshotRows(await getDocsFromServer(collectionRef(uid, dataset))) :
+      (await Promise.all(v3Collections(dataset).map(ref => getDocsFromServer(ref)))).flatMap(v3Rows)
+        .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id))] as const));
   return Object.fromEntries(entries) as RemoteData;
 }
 
-async function writeDataset(uid: string, dataset: Dataset, desired: Row[], previous: Row[]): Promise<void> {
+async function writeDataset(uid: string, dataset: Dataset, desired: Row[], previous: Row[], mode: SyncMode): Promise<void> {
   const existing = new Map(previous.map(row => [row.id, row]));
   const wanted = new Map(desired.map(row => [row.id, row]));
   const changes: Array<{ type: 'set'; row: Row } | { type: 'delete'; id: string }> = [];
@@ -120,12 +180,25 @@ async function writeDataset(uid: string, dataset: Dataset, desired: Row[], previ
     const batch = writeBatch(db);
     for (const change of changes.slice(start, start + 250)) {
       if (change.type === 'set') {
-        batch.set(doc(collectionRef(uid, dataset), change.row.id), {
-          value: change.row.value, position: change.row.position,
-          ...structuredRecord(dataset, change.row),
-        });
+        if (mode === 'legacy') {
+          batch.set(doc(collectionRef(uid, dataset), change.row.id), {
+            value: change.row.value, position: change.row.position,
+            ...structuredRecord(dataset, change.row),
+          });
+        } else {
+          const path = v3Path(dataset, change.row);
+          const record = JSON.parse(change.row.value) as Record<string, unknown>;
+          batch.set(doc(db, path), {
+            ...record, legacyValue: change.row.value, legacyId: change.row.id,
+            position: change.row.position, schemaVersion: 3,
+            ...(dataset === 'catalog' ? { productId: path.split('/').pop() } : {}),
+          });
+          const old = existing.get(change.row.id);
+          if (old && v3Path(dataset, old) !== path) batch.delete(doc(db, v3Path(dataset, old)));
+        }
       } else {
-        batch.delete(doc(collectionRef(uid, dataset), change.id));
+        const old = existing.get(change.id);
+        if (old) batch.delete(mode === 'legacy' ? doc(collectionRef(uid, dataset), change.id) : doc(db, v3Path(dataset, old)));
       }
     }
     await batch.commit();
@@ -142,6 +215,7 @@ function mergeRows(dataset: Dataset, remote: Row[], local: string | null): Row[]
 export type PreparedSync = {
   uid: string;
   remote: RemoteData;
+  mode: SyncMode;
   hasConflict: boolean;
   canMerge: boolean;
   localProblem: string | null;
@@ -154,8 +228,9 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
   const local = readLocal();
   // Do not validate or normalize local rows before offering a cloud-only choice.
   // Legacy/corrupt browser records must not lock users out of their cloud data.
+  const mode = await detectMode(uid);
   const [remote, workspace] = await Promise.all([
-    fetchRemote(uid), getDocFromServer(doc(db, 'users', uid, 'meta', 'workspace')),
+    fetchRemote(uid, mode), getDocFromServer(doc(db, 'users', uid, 'meta', 'workspace')),
   ]);
   // Keep a permanent initialization marker. Without this, an intentionally
   // empty workspace could be mistaken for a new account and old events revived.
@@ -170,7 +245,7 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
   const hasConflict = differentOwner || Boolean(localProblem) || (cloudHasData && localHasData && !same && !lastSynced);
 
   return {
-    uid, remote, hasConflict, canMerge: !differentOwner && !localProblem,
+    uid, remote, mode, hasConflict, canMerge: !differentOwner && !localProblem,
     localProblem: differentOwner ? 'Dit apparaat heeft lokale gegevens van een ander Google-account.' : localProblem,
     exportBackup() {
       const file = { format: 'WanderingBarBack-backup-v1', exportedAt: new Date().toISOString(),
@@ -188,7 +263,7 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
       if (!cloudHasData && !(hasConflict && choice === 'cloud')) {
         for (const dataset of DATASETS) {
           const wanted = rowsFromLocal(dataset, local[dataset]);
-          await writeDataset(uid, dataset, wanted, []);
+          await writeDataset(uid, dataset, wanted, [], mode);
           remote[dataset] = wanted;
           // Correct duplicate legacy inventory IDs in the local working copy
           // only after the cloud upload has completed successfully.
@@ -199,7 +274,7 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
       } else if (choice === 'merge' && hasConflict) {
         for (const dataset of DATASETS) {
           const merged = mergeRows(dataset, remote[dataset], local[dataset]);
-          await writeDataset(uid, dataset, merged, remote[dataset]);
+          await writeDataset(uid, dataset, merged, remote[dataset], mode);
           remote[dataset] = merged;
         }
         replaceLocal(remote);
@@ -222,7 +297,7 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
 }
 
 export function startLiveSync(
-  uid: string, initial: RemoteData,
+  uid: string, initial: RemoteData, mode: SyncMode,
   onRemote: () => void, onError: (message: string) => void,
   onStatus: (status: 'synced' | 'syncing' | 'error') => void,
 ): () => void {
@@ -235,28 +310,33 @@ export function startLiveSync(
   onStatus('synced');
 
   for (const dataset of DATASETS) {
-    const unsubscribe = onSnapshot(collectionRef(uid, dataset), snapshot => {
-      if (stopped || snapshot.metadata.fromCache || snapshot.metadata.hasPendingWrites || busy.has(dataset)) return;
-      try {
-        const next = snapshotRows(snapshot);
-        if (JSON.stringify(next) === JSON.stringify(remote[dataset])) return;
-        if (readLocal()[dataset] !== baseline[dataset]) {
+    const refs = mode === 'v3' ? v3Collections(dataset) : [collectionRef(uid, dataset)];
+    const segments = new Map<string, Row[]>();
+    for (const ref of refs) {
+      const unsubscribe = onSnapshot(ref, snapshot => {
+        if (stopped || snapshot.metadata.fromCache || snapshot.metadata.hasPendingWrites || busy.has(dataset)) return;
+        try {
+          segments.set(ref.path, mode === 'v3' ? v3Rows(snapshot) : snapshotRows(snapshot));
+          if (segments.size !== refs.length) return;
+          const next = Array.from(segments.values()).flat()
+            .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
+          if (JSON.stringify(next) === JSON.stringify(remote[dataset])) return;
+          if (readLocal()[dataset] !== baseline[dataset]) {
+            conflict = true;
+            onStatus('error');
+            onError('Er zijn tegelijkertijd lokale en online wijzigingen. Maak een back-up en herlaad de pagina om ze samen te voegen.');
+            return;
+          }
+          remote[dataset] = next;
+          localStorage.setItem(KEYS[dataset], toRaw(next));
+          baseline[dataset] = readLocal()[dataset];
+          markSynced(uid, baseline);
           conflict = true;
-          onStatus('error');
-          onError('Er zijn tegelijkertijd lokale en online wijzigingen. Maak een back-up en herlaad de pagina om ze samen te voegen.');
-          return;
-        }
-        remote[dataset] = next;
-        localStorage.setItem(KEYS[dataset], toRaw(next));
-        baseline[dataset] = readLocal()[dataset];
-        markSynced(uid, baseline);
-        // Existing mounted screens still have their own React state; prevent an
-        // edit in a stale screen from silently overwriting these remote changes.
-        conflict = true;
-        onRemote();
-      } catch (error) { onStatus('error'); onError(error instanceof Error ? error.message : 'Cloudgegevens lezen mislukt.'); }
-    }, error => { onStatus('error'); onError(`Firestore: ${error.message}`); });
-    unsubscribers.push(unsubscribe);
+          onRemote();
+        } catch (error) { onStatus('error'); onError(error instanceof Error ? error.message : 'Cloudgegevens lezen mislukt.'); }
+      }, error => { onStatus('error'); onError('Firestore: ' + error.message); });
+      unsubscribers.push(unsubscribe);
+    }
   }
 
   const flush = () => {
@@ -270,7 +350,7 @@ export function startLiveSync(
       void (async () => {
         try {
           const wanted = rowsFromLocal(dataset, raw);
-          await writeDataset(uid, dataset, wanted, remote[dataset]);
+          await writeDataset(uid, dataset, wanted, remote[dataset], mode);
           remote[dataset] = wanted;
           baseline[dataset] = raw;
           markSynced(uid, baseline);

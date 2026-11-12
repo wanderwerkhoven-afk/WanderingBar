@@ -1,4 +1,5 @@
 import {useEffect,useMemo,useState} from 'react';
+import {createPortal} from 'react-dom';
 import {Martini, Wine, Citrus, Package, Search, Plus, ChevronRight, X, Pencil, Trash2, ArrowLeft, BookOpen, type LucideIcon} from 'lucide-react';
 import './inventory.css';
 import {imageToBase64} from './eventImage';
@@ -7,6 +8,16 @@ import type {Category,Item} from './types/inventory';
 import {INVENTORY_STORAGE_KEY} from './repositories/storageKeys';
 export type {Item} from './types/inventory';
 export {INVENTORY_STORAGE_KEY} from './repositories/storageKeys';
+function InventoryProductImage({item}:{item:Item}){
+ const [open,setOpen]=useState(false);
+ const [hover,setHover]=useState<{top:number;left:number;width:number;height:number}|null>(null);
+ const [failed,setFailed]=useState(false);
+ const src=item.image||item.imageUrl;
+ useEffect(()=>{setFailed(false);setOpen(false);setHover(null)},[src]);
+ useEffect(()=>{if(!open)return;const onKey=(event:KeyboardEvent)=>{if(event.key==='Escape')setOpen(false)};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey)},[open]);
+ useEffect(()=>{if(!hover)return;const dismiss=()=>setHover(null);window.addEventListener('scroll',dismiss,true);window.addEventListener('resize',dismiss);return()=>{window.removeEventListener('scroll',dismiss,true);window.removeEventListener('resize',dismiss)}},[hover]);
+ return <><div className="inventory-product-media">{src&&!failed?<button type="button" className="inventory-product-image-button" aria-label={'Vergroot foto van '+item.name} title="Foto vergroten" onMouseEnter={event=>{if(!window.matchMedia('(hover: hover) and (pointer: fine)').matches)return;const rect=event.currentTarget.closest('.inventory-product-card')?.getBoundingClientRect();if(rect)setHover({top:rect.top,left:rect.left,width:rect.width,height:rect.height})}} onMouseLeave={()=>setHover(null)} onClick={()=>{setHover(null);setOpen(true)}}><img src={src} alt={item.name} loading="lazy" onError={()=>setFailed(true)}/><span className="inventory-product-zoom-hint">Vergroten</span></button>:<Package size={27}/>}</div>{hover&&src&&!failed&&!open&&createPortal(<div className="catalog-hover-preview" aria-hidden="true" style={{top:Math.max(8,hover.top),left:hover.left,width:hover.width,height:Math.min(hover.height,window.innerHeight-16)}}><img src={src} alt=""/><span className="catalog-hover-preview-close">×</span></div>,document.body)}{open&&src&&!failed&&createPortal(<div className="catalog-image-lightbox" role="dialog" aria-modal="true" aria-label={'Productfoto van '+item.name} onClick={()=>setOpen(false)}><div className="catalog-image-lightbox-inner" onClick={event=>event.stopPropagation()}><button type="button" className="catalog-image-lightbox-close" onClick={()=>setOpen(false)} aria-label="Sluiten">×</button><img src={src} alt={item.name}/><p>{item.name}</p></div></div>,document.body)}</>;
+}
 const categories:{name:Category;description:string;icon:LucideIcon;subcategories:string[]}[]=[
 {name:'Bar & materialen',description:'Tools, glaswerk, deco',icon:Martini,subcategories:['Bar & inrichting','Bar tools','Glaswerk','Logistiek']},
 {name:'Dranken',description:'Spirits, mixers, siropen',icon:Wine,subcategories:['Spirits','Likeuren','Sappen','Siropen','Mixers','Frisdranken','Wijn & bubbels','Bier','Overig']},
@@ -438,12 +449,14 @@ return <section className="inventory-page">
 <div className="inventory-heading">{category?<button className="inventory-back" onClick={()=>{setCategory(null);setSub('Alles');setSearch('')}} aria-label="Terug naar categorieën"><ArrowLeft size={23}/></button>:<Package size={25}/>}<h1>{category||'Inventaris'}</h1></div>
 {!category?<><div className="inventory-summary"><span>INVENTARISOVERZICHT</span><strong>{items.length} <small>artikelen</small></strong><p>{items.filter(i=>i.quantity===0||i.quantity===null).length} artikelen op nul</p></div><div className="inventory-categories">{categories.map(({name,description,icon:Icon})=><button key={name} className="inventory-category" onClick={()=>{setCategory(name);setSub('Alles')}}><Icon size={28}/><strong>{name}</strong><span>{description}<ChevronRight size={17}/></span><em>{items.filter(i=>i.category===name).length} artikelen</em></button>)}</div></>:<><div className="inventory-search"><Search size={18}/><input placeholder="Zoek artikelen..." aria-label="Zoek artikelen" value={search} onChange={e=>setSearch(e.target.value)}/></div><div className="inventory-subfilters">{['Alles',...categories.find(c=>c.name===category)!.subcategories].map(s=><button key={s} className={sub===s?'selected':''} onClick={()=>setSub(s)}>{s}</button>)}</div><p className="inventory-count">{visible.length} artikelen</p><div className="inventory-items">{visible.map(item=><article className="inventory-product-card" key={item.id}>
 <div className="inventory-product-top"><span className="inventory-product-type">{item.subcategory}</span><span className="inventory-product-stock">{item.quantity===null?'0':item.quantity} {item.unit}</span></div>
-<button type="button" className="inventory-product-main" onClick={()=>{setDraft({...item});setConfirmDelete(false)}} aria-label={'Bewerk '+item.name}>
-<span className="inventory-product-media">{(item.image||item.imageUrl)?<img src={item.image||item.imageUrl} alt="" loading="lazy"/>:<Package size={27}/>}</span>
+<div className="inventory-product-main">
+<InventoryProductImage item={item}/>
+<button type="button" className="inventory-product-details" onClick={()=>{setDraft({...item});setConfirmDelete(false)}} aria-label={'Bewerk '+item.name}>
 <strong>{item.name}</strong>
 {item.brand&&<span className="inventory-product-brand">{item.brand}</span>}
 <span className="inventory-product-meta">{[item.price!=null?'€ '+item.price.toFixed(2).replace('.',','):null,item.location].filter(Boolean).join(' · ')||'Bekijk artikelgegevens'}</span>
 </button>
+</div>
 <div className="inventory-product-footer"><button type="button" className="inventory-product-edit" onClick={()=>{setDraft({...item});setConfirmDelete(false)}}><Pencil size={14}/> Bewerken</button>{item.recipe?.trim()&&<button type="button" className="inventory-recipe-button" aria-label={'Bekijk recept voor '+item.name} onClick={()=>setRecipeItem(item)}><BookOpen size={15}/><span>Recept</span></button>}</div>
 </article>)}{visible.length===0&&<p className="inventory-empty">Geen artikelen gevonden.</p>}</div></>}
 <button className={category?'inventory-fab':'inventory-add'} onClick={()=>{setDraft(blank(category||'Bar & materialen'));setConfirmDelete(false)}} aria-label="Artikel toevoegen"><Plus size={23}/>{!category&&' Artikel toevoegen'}</button>

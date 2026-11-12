@@ -232,3 +232,7 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 ## Inventariskaarten gelijk aan catalogus (2026-11-12)
 - `src/inventory.css`: inventariskaarten gebruiken dezelfde productfotohoogte (230px desktop, 185px mobiel), binnenpadding, `object-fit:contain`, gecentreerde foto, achtergrond en kaartpadding als de cataloguskaarten. De eerdere `cover`/absolute-positioning overrides worden expliciet overschreven zodat productfoto's volledig zichtbaar blijven.
 - Geen aanpassing aan inventarisrecords, afbeeldingsbytes, Firebase of eventgegevens. Geüploade foto's met ingebakken witruimte kunnen die witruimte nog tonen; CSS kan dat niet betrouwbaar verwijderen zonder bijsnijden.
+
+## Inventarisfoto hover en lightbox (2026-11-12)
+- `InventoryProductImage` in `src/Inventory.tsx` hergebruikt de bestaande catalogus-hover-preview en fullscreen-lightbox styling. Desktop-hover toont grote preview; klikken/tikken op foto opent een modal met sluitknop, buitenklik en Escape.
+- De fotoknop is los van de productdetails-/bewerkknop, zodat foto vergroten niet de inventariseditor opent. `inventory-product-zoom-hint` en `inventory-product-details` zijn in `src/inventory.css` vastgelegd. Geen wijziging aan data of afbeeldingen.

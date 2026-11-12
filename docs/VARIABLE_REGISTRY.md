@@ -316,3 +316,8 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 - `Item.imageRef` verwijst naar externe Firestore-afbeelding. Nieuwe uploads worden eerst in de aparte Firestore-collectie geschreven en daarna wordt de kleine referentie lokaal opgeslagen en door bestaande synchronisatie overgenomen.
 - `InventoryProductImage` laadt `imageRef` asynchroon; bestaande embedded `image` blijft compatibel en wordt niet automatisch verwijderd. Afbeelding verwijderen wist referentie en gekoppelde chunks. De afbeeldings-URL van een externe website wordt uitsluitend uit het record verwijderd.
 - Bestaande Base64-foto's zijn voorlopig compatibel en moeten pas na gecontroleerde migratie uit legacy records worden verwijderd; verwijder geen oude data voordat de nieuwe afbeelding is geverifieerd.
+
+## Live synchronisatie inventarisafbeeldingen tussen apparaten (2026-11-12)
+- `CloudGate` verhoogt `cloudVersion` bij een bevestigde remote Firestore-wijziging. De app-inhoud wordt opnieuw gemount op basis van de bijgewerkte localStorage, zonder handmatig op Vernieuwen te hoeven klikken. Dit maakt nieuwe `imageRef`-verwijzingen en andere records direct zichtbaar op een reeds ingelogd apparaat.
+- `InventoryProductImage` reset de laad-/foutstatus ook bij een wijziging van `imageRef`, zodat een eerder mislukte afbeelding opnieuw geladen wordt.
+- Dit is alleen een UI-refresh na een geaccepteerde remote snapshot; de bestaande conflictdetectie en cloud-authoriteit blijven behouden. Er wordt geen data gewist of overschreven buiten de bestaande synchronisatielogica.

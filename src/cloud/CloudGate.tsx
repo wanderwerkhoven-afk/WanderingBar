@@ -26,6 +26,7 @@ export default function CloudGate({ children }: { children: ReactNode }) {
   const [error, setError] = useState('');
   const [exported, setExported] = useState(false);
   const [remoteChange, setRemoteChange] = useState(false);
+  const [cloudVersion, setCloudVersion] = useState(0);
   const [syncStatus, setSyncStatus] = useState<'synced' | 'syncing' | 'error'>('syncing');
   const [retry, setRetry] = useState(0);
   const [signingIn, setSigningIn] = useState(false);
@@ -56,7 +57,7 @@ export default function CloudGate({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!user || phase !== 'ready' || !initial) return;
-    return startLiveSync(user.uid, initial, () => setRemoteChange(true), e => setError(e), setSyncStatus);
+    return startLiveSync(user.uid, initial, () => { setCloudVersion(version => version + 1); setRemoteChange(false); }, e => setError(e), setSyncStatus);
   }, [user, phase, initial, prepared]);
 
   async function logIn() {
@@ -143,6 +144,6 @@ export default function CloudGate({ children }: { children: ReactNode }) {
       <span>{error || 'Er zijn nieuwe gegevens van een ander apparaat. Vernieuw om ze te zien.'}</span>
       {remoteChange && <button type="button" onClick={() => window.location.reload()}>Vernieuwen</button>}
     </div>}
-    {children}
+    <div key={cloudVersion}>{children}</div>
   </>;
 }

@@ -195,3 +195,8 @@
 - `MenuEntry.cocktailCategory?: 'Signature'|'Classics'|'Show'` is optionele persistente categorisatie van cocktailrecords; geen automatische toekenning of seed.
 - `cocktailFilter` is lokale UI-state, standaard Alle cocktails; opties Signature, Classics, Show en Niet ingedeeld voor oude records.
 - Cocktailkaarten tonen de categorie als badge boven de afbeelding, of Cocktail als fallback; editor biedt een categorie-select. Filter wijzigt alleen weergave en schrijft niets naar Firestore.
+
+## Mocktailcategorieën en filters (2026-11-12)
+- `MenuEntry.mocktailCategory?: 'Signature'|'Classics'|'Show'` is optionele categorie voor mocktails, los van `cocktailCategory`; wordt via bestaande catalogusopslag en Firebase v3 gesynchroniseerd.
+- `mocktailFilter` is lokale UI-state met Alle mocktails, Signature, Classics, Show en Niet ingedeeld; bestaande mocktails krijgen niet automatisch een categorie.
+- Mocktailkaarten tonen de geselecteerde categorie als bovenste tag, of Mocktail als fallback. In de mocktaileditor is een categorie-select toegevoegd. Filter wijzigt alleen de weergave.

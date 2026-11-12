@@ -279,3 +279,8 @@
 - Root cause: Firestore v3 schreef de Base64-afbeelding tweemaal in één document (`image` én `legacyValue`). `storageSync.writeDataset` schrijft `image` niet meer als afgevlakt veld voor inventaris; `legacyValue` behoudt de volledige afbeelding en bestaande records blijven leesbaar. Andere velden en datasets blijven onveranderd.
 - `Inventory.save` schrijft de volledige nieuwe inventaris eerst expliciet naar `localStorage` en toont bij quota-/opslagfouten een fout in plaats van een misleidende succes-toast. Ook achtergrondopslagfouten worden zichtbaar. De cloud blijft autoritatief; toast betekent uitsluitend lokaal opgeslagen, niet cloudbevestigd.
 - Geen bestaande cloudrecords of afbeeldingen verwijderd. Al mislukte uploads moeten na deployment opnieuw worden opgeslagen.
+
+## Inventarisafbeelding verwijderen uit opslag (2026-11-12)
+- `Inventory.removeImage()` verwijdert zowel `image` (Base64) als `imageUrl` (link) zodat geen fallbackafbeelding terugkomt.
+- Bij een bestaand artikel slaat de verwijderknop onmiddellijk het gewijzigde record op in lokale opslag en triggert de bestaande Firestore-sync; de gebruiker hoeft niet apart op Opslaan te klikken. De modal sluit na lokale opslag, met een expliciete toast dat cloudsync nog volgt.
+- Firestore v3 gebruikt `batch.set` zonder merge en herschrijft `legacyValue` zonder de afbeelding; daarmee verdwijnen ook eventuele oudere afgevlakte `image`-velden uit het document na succesvolle sync. Bij lokale opslagfout blijft de bestaande afbeelding behouden. Een externe afbeeldings-URL wordt alleen als verwijzing verwijderd; de externe bron zelf wordt niet gewist.

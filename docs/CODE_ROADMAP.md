@@ -355,3 +355,7 @@
 - De kaarten onder `Meer > Verwijderde evenementen` tonen evenementnaam, datum en locatie nu over de volle kaartbreedte, met de knoppen Herstellen en Definitief verwijderen op een aparte regel eronder.
 - Voorkomt de letter-voor-letter tekstafbreking op smalle iPhones door de eerdere horizontale flex-layout. Acties mogen netjes doorlopen; de bestaande herstel- en verwijderlogica verandert niet.
 - CSS-override in `src/style.css`; geen schema-, PWA- of opslagwijzigingen.
+
+## Chronologische volgorde evenementen (12 november 2026)
+- De evenementlijst sorteert automatisch op datum: eerst toekomstige evenementen vanaf vandaag (dichtstbijzijnde bovenaan), daarna verstreken evenementen (meest recente eerst), en evenementen zonder geldige ISO-datum als laatste.
+- Sortering geldt binnen de bestaande filters en zoekresultaten, zonder opgeslagen evenementgegevens of Firebase-volgorde te wijzigen. De bestaande datumparser valideert YYYY-MM-DD.

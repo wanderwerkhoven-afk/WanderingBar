@@ -200,3 +200,8 @@
 - `MenuEntry.mocktailCategory?: 'Signature'|'Classics'|'Show'` is optionele categorie voor mocktails, los van `cocktailCategory`; wordt via bestaande catalogusopslag en Firebase v3 gesynchroniseerd.
 - `mocktailFilter` is lokale UI-state met Alle mocktails, Signature, Classics, Show en Niet ingedeeld; bestaande mocktails krijgen niet automatisch een categorie.
 - Mocktailkaarten tonen de geselecteerde categorie als bovenste tag, of Mocktail als fallback. In de mocktaileditor is een categorie-select toegevoegd. Filter wijzigt alleen de weergave.
+
+## Bier alcoholpercentage editor (2026-11-12)
+- Biereditor heeft een invoerveld `Alcoholpercentage (%)` met numerieke validatie 0–100, stap 0,1 en lege waarde toegestaan.
+- Gebruikt het bestaande `MenuEntry.alcoholPercentage?: number` (geen schemawijziging); opslag via `writeMenuCatalog` en bestaande Firestore v3 sync.
+- Bierkaart toont reeds `alcoholPercentage` als percentage-tag. `EventDetail.tsx` leest dit bestaande veld al bij het genereren van de biermenukaart; ontbrekende waarden worden niet ingevuld of verzonnen.

@@ -66,7 +66,7 @@ export default function CloudGate({ children }: { children: ReactNode }) {
     finally { setSigningIn(false); }
   }
 
-  async function choose(choice: 'cloud' | 'merge') {
+  async function choose(choice: 'cloud') {
     if (!prepared || !exported) return;
     setPhase('loading'); setError('');
     try {
@@ -109,7 +109,7 @@ export default function CloudGate({ children }: { children: ReactNode }) {
         {phase === 'loading' && <p role="status">Je gegevens veilig controleren en synchroniseren…</p>}
         {phase === 'conflict' && <>
           <h2>Welke gegevens wil je gebruiken?</h2>
-          <p>Dit apparaat bevat nog lokale BarBack-gegevens. Je kunt de Firebase-gegevens van je andere apparaat gebruiken of beide versies samenvoegen. Download eerst een back-up van <strong>beide</strong> versies.</p>
+          <p>Dit apparaat bevat lokale BarBack-gegevens die afwijken van Firebase. Firebase is de bron van waarheid. Download eerst een back-up van beide versies; daarna kun je de apparaatcache veilig vervangen.</p>
           {prepared?.localProblem && <p role="status">{prepared.localProblem} Je kunt wel veilig verdergaan met de gegevens uit Firebase.</p>}
           <button className="cloud-secondary" type="button" onClick={() => {
             prepared?.exportBackup(); setExported(true);
@@ -117,10 +117,7 @@ export default function CloudGate({ children }: { children: ReactNode }) {
           <button className="cloud-primary" disabled={!exported} type="button" onClick={() => void choose('cloud')}>
             Apparaatcache vervangen door Firebase
           </button>
-          <button className="cloud-secondary" disabled={!exported || !prepared?.canMerge} type="button" onClick={() => void choose('merge')}>
-            Lokale gegevens samenvoegen met Firebase
-          </button>
-          <small>De eerste optie vervangt alleen de BarBack-gegevens in deze browser, niet je account of gegevens op je telefoon. De gedownloade back-up bewaart beide originele versies. Bij samenvoegen blijven unieke records behouden; bij gelijke ID's krijgt de lokale versie voorrang.</small>
+          <small>Dit vervangt alleen de lokale BarBack-cache van dit apparaat. Firebase blijft ongewijzigd. De gedownloade back-up bevat beide oorspronkelijke versies.</small>
         </>}
         {phase === 'error' && <>
           <p>De cloudverbinding is nog niet gereed. Je bestaande gegevens zijn niet verwijderd.</p>

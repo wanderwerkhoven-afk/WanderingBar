@@ -74,9 +74,8 @@ async function verifyWorkspace(uid: string): Promise<void> {
     throw new Error('De Firestore v3-migratie is nog niet afgerond.');
   }
   if (!Number.isInteger(data.verifiedRecords)) throw new Error('De migratiecontrole ontbreekt.');
-  const remote = await fetchRemote();
-  const count = DATASETS.reduce((n, dataset) => n + remote[dataset].length, 0);
-  if (count < data.verifiedRecords) throw new Error('V3 bevat minder records dan de geverifieerde migratie. Er is niets lokaal overschreven.');
+  // verifiedRecords is a historical migration audit count, not a permanent minimum.
+  // Legitimate deletions must never block access to the authoritative workspace.
 }
 
 export function localOwner(): string | null { return localStorage.getItem(OWNER_KEY); }
@@ -192,10 +191,11 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
   const cloudRaw = remoteRaws(remote);
   const same = DATASETS.every(dataset => (local[dataset] ?? '[]') === cloudRaw[dataset]);
   const lastSynced = localStorage.getItem(SYNC_PREFIX + uid) === fingerprint(local);
-  const hasConflict = differentOwner || Boolean(localProblem) || (cloudHasData && localHasData && !same && !lastSynced);
+  // Unknown unsynced local data needs a backup before the cloud replaces it.
+  const hasConflict = differentOwner || Boolean(localProblem) || (localHasData && !same && !lastSynced);
 
   return {
-    uid, remote, hasConflict, canMerge: !differentOwner && !localProblem,
+    uid, remote, hasConflict, canMerge: false,
     localProblem: differentOwner ? 'Dit apparaat heeft lokale gegevens van een ander Google-account.' : localProblem,
     exportBackup() {
       const file = { format: 'WanderingBarBack-backup-v1', exportedAt: new Date().toISOString(),
@@ -207,30 +207,10 @@ export async function prepareSync(uid: string): Promise<PreparedSync> {
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     },
     async activate(choice = 'cloud') {
-      if (hasConflict && choice === 'merge' && (differentOwner || localProblem)) {
-        throw new Error('Deze lokale gegevens kunnen niet veilig worden samengevoegd. Download de back-up en kies daarna dit apparaat opnieuw instellen.');
-      }
-      if (!cloudHasData && !(hasConflict && choice === 'cloud')) {
-        for (const dataset of DATASETS) {
-          const wanted = rowsFromLocal(dataset, local[dataset]);
-          await writeDataset(dataset, wanted, []);
-          remote[dataset] = wanted;
-          // Correct duplicate legacy inventory IDs in the local working copy
-          // only after the cloud upload has completed successfully.
-          if (local[dataset] !== null && toRaw(wanted) !== local[dataset]) {
-            localStorage.setItem(KEYS[dataset], toRaw(wanted));
-          }
-        }
-      } else if (choice === 'merge' && hasConflict) {
-        for (const dataset of DATASETS) {
-          const merged = mergeRows(dataset, remote[dataset], local[dataset]);
-          await writeDataset(dataset, merged, remote[dataset]);
-          remote[dataset] = merged;
-        }
-        replaceLocal(remote);
-      } else {
-        replaceLocal(remote);
-      }
+      if (choice !== 'cloud') throw new Error('Firebase is de enige bron van waarheid; samenvoegen is uitgeschakeld.');
+      // Only the verified server snapshot may initialize this device.
+      // Never upload old local rows during sign-in.
+      replaceLocal(remote);
 
       // Set owner only once cloud read/write has succeeded. Never clear legacy data.
       // The old inventory screen has a one-time migration that resets quantities
@@ -279,7 +259,6 @@ export function startLiveSync(
           localStorage.setItem(KEYS[dataset], toRaw(next));
           baseline[dataset] = readLocal()[dataset];
           markSynced(uid, baseline);
-          conflict = true;
           onRemote();
         } catch (error) { onStatus('error'); onError(error instanceof Error ? error.message : 'Cloudgegevens lezen mislukt.'); }
       }, error => { onStatus('error'); onError('Firestore: ' + error.message); });

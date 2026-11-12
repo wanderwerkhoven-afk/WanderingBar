@@ -273,3 +273,9 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - `Inventory.removeImage()` verwijdert zowel `image` (Base64) als `imageUrl` (link) zodat geen fallbackafbeelding terugkomt.
 - Bij een bestaand artikel slaat de verwijderknop onmiddellijk het gewijzigde record op in lokale opslag en triggert de bestaande Firestore-sync; de gebruiker hoeft niet apart op Opslaan te klikken. De modal sluit na lokale opslag, met een expliciete toast dat cloudsync nog volgt.
 - Firestore v3 gebruikt `batch.set` zonder merge en herschrijft `legacyValue` zonder de afbeelding; daarmee verdwijnen ook eventuele oudere afgevlakte `image`-velden uit het document na succesvolle sync. Bij lokale opslagfout blijft de bestaande afbeelding behouden. Een externe afbeeldings-URL wordt alleen als verwijzing verwijderd; de externe bron zelf wordt niet gewist.
+
+## Firestore afbeeldingen los van inventaris (2026-11-12)
+- `src/cloud/inventoryImages.ts`: PNG/JPEG data-URL in Firestore `WanderingBar/main/inventoryImages/{imageRef}/chunks/{index}`; chunks van 160.000 tekens, browsercache alleen in geheugen, geen Firebase Storage vereist.
+- `Item.imageRef` verwijst naar externe Firestore-afbeelding. Nieuwe uploads worden eerst in de aparte Firestore-collectie geschreven en daarna wordt de kleine referentie lokaal opgeslagen en door bestaande synchronisatie overgenomen.
+- `InventoryProductImage` laadt `imageRef` asynchroon; bestaande embedded `image` blijft compatibel en wordt niet automatisch verwijderd. Afbeelding verwijderen wist referentie en gekoppelde chunks. De afbeeldings-URL van een externe website wordt uitsluitend uit het record verwijderd.
+- Bestaande Base64-foto's zijn voorlopig compatibel en moeten pas na gecontroleerde migratie uit legacy records worden verwijderd; verwijder geen oude data voordat de nieuwe afbeelding is geverifieerd.

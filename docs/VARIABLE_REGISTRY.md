@@ -346,3 +346,9 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 - Live sync voert bij terugkeer naar de zichtbare PWA direct een flush uit; de 1200 ms fallback blijft bestaan voor bestaande schrijvers die geen expliciet sync-event sturen. Listener wordt bij unmount verwijderd.
 - De grote inventariscomponent en historische seed-/prijslogica blijven voorlopig staan: verwijderen of opsplitsen zonder build-, PWA- en Firebase-regressietests is niet veilig.
 - Te verifiëren vóór merge: `npm ci`, `npm test`, `npm run build`, offline/PWA-herstart, voorraadbehoud bij migratie, Google-login en synchronisatie op twee apparaten. Geen live Firebase-mutaties door deze branch.
+
+## Firebase-autosave per bestaand invoerveld (12 november 2026)
+- Bestaande formulieren schrijven hun volledige record via lokale repository en v3-sync naar Firestore. `writeDataset` gebruikt `batch.set` en maakt een document automatisch bij de eerste opslag; nieuwe velden in bestaande records worden als documentvelden opgeslagen en blijven daarnaast in `legacyValue` voor compatibiliteit.
+- Event-, verwijderde-event-, inventaris- en catalogusrepositories sturen na een geslaagde lokale write nu `barback-sync-request`. Hierdoor wordt de bestaande Firestore-flush direct getriggerd in plaats van uitsluitend op de 1200ms fallback te wachten. Bij Firestore-fouten blijven lokale gegevens bewaard en verschijnt de bestaande sync-fout.
+- **Niet voltooid:** werkelijk Firestore-first veldniveau lezen/schrijven, subcollecties voor alle afzonderlijke evenementvelden, generieke documentcreatie voor nog niet bestaande formulieren, conflictvrije realtime samenwerking en volledige offline/PWA-regressietests. Het huidige model is cloud-authoritatief bij login en lokale cache tijdens bewerken.
+- Nog vereist: build en browser-/Firebase-tests op twee apparaten vóór merge. Geen productiegegevens gemigreerd of gewist.

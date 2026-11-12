@@ -4,7 +4,7 @@ import {Martini, Wine, Citrus, Package, Search, Plus, ChevronRight, X, Pencil, T
 import './inventory.css';
 import './Catalog.css';
 import {imageToBase64} from './eventImage';
-import {readInventoryImage,writeInventoryImage,deleteInventoryImage,cachedInventoryImage} from './cloud/inventoryImages';
+import {readInventoryImage,writeInventoryImage,deleteInventoryImage,cachedInventoryImage,migrateLegacyInventoryImage} from './cloud/inventoryImages';
 
 import type {Category,Item} from './types/inventory';
 import {INVENTORY_STORAGE_KEY} from './repositories/storageKeys';
@@ -448,6 +448,33 @@ const [imageError,setImageError]=useState('');
 const [saveToast,setSaveToast]=useState('');
 const [storageError,setStorageError]=useState('');
 const [pendingImage,setPendingImage]=useState('');
+const [migrationBusy,setMigrationBusy]=useState(false);
+const [migrationProgress,setMigrationProgress]=useState('');
+const legacyImageCount=items.filter(i=>typeof i.image==='string'&&i.image.startsWith('data:image/')).length;
+async function migrateLegacyImages(){
+ if(migrationBusy||!legacyImageCount)return;
+ setMigrationBusy(true);setMigrationProgress('Migratie voorbereiden…');
+ let migrated=0;
+ try{
+  // Work on one item at a time, keeping all originals until cloud data is verified.
+  for(const original of items){
+   if(!original.image?.startsWith('data:image/'))continue;
+   setMigrationProgress('Afbeelding '+(migrated+1)+' van '+legacyImageCount+' controleren…');
+   const ref=await migrateLegacyInventoryImage(original.image);
+   const raw=localStorage.getItem(key);
+   if(!raw)throw new Error('Lokale inventaris ontbreekt. Migratie gestopt.');
+   const current=JSON.parse(raw) as Item[];
+   const index=current.findIndex(i=>i.id===original.id&&i.image===original.image);
+   if(index<0)throw new Error('Artikel is ondertussen gewijzigd. Originele gegevens behouden.');
+   const next=[...current];next[index]={...current[index],image:'',imageRef:ref};
+   localStorage.setItem(key,JSON.stringify(next));
+   setItems(next);migrated++;
+   window.dispatchEvent(new Event('barback-sync-request'));
+  }
+  setMigrationProgress(migrated+' afbeeldingen lokaal gemigreerd. Wacht op status Gesynchroniseerd voor je de app sluit.');
+ }catch(error){setMigrationProgress('Migratie gestopt na '+migrated+' afbeeldingen: '+(error instanceof Error?error.message:String(error))+'. Overige afbeeldingen zijn behouden.');}
+ finally{setMigrationBusy(false)}
+}
 useEffect(()=>{if(!saveToast)return;const timer=window.setTimeout(()=>setSaveToast(''),3500);return()=>window.clearTimeout(timer)},[saveToast]);
 const [recipeItem,setRecipeItem]=useState<Item|null>(null);
 useEffect(()=>{try{localStorage.setItem(key,JSON.stringify(items));setStorageError('')}catch(error){setStorageError('Opslaan op dit apparaat mislukt (opslagruimte vol). De afbeelding is NIET opgeslagen of gesynchroniseerd. Maak ruimte vrij of gebruik een kleinere afbeelding.');setSaveToast('');console.error('Inventory local storage failed',error)}},[items]);
@@ -484,6 +511,8 @@ async function removeImage(){
 }
 return <section className="inventory-page">
 {storageError&&<p role="alert" className="inventory-storage-error">{storageError}</p>}
+{legacyImageCount>0&&<div className="inventory-storage-error"><strong>{legacyImageCount} oudere inventarisafbeeldingen</strong> staan nog in de oude opslag. <button type="button" disabled={migrationBusy} onClick={()=>void migrateLegacyImages()}>{migrationBusy?'Migreren…':'Veilig migreren naar Firestore'}</button></div>}
+{migrationProgress&&<p role="status" className="inventory-storage-error">{migrationProgress}</p>}
 {saveToast&&<div className="inventory-save-toast" role="status" aria-live="polite"><span aria-hidden="true">✓</span>{saveToast}</div>}
 <div className="inventory-heading">{category?<button className="inventory-back" onClick={()=>{setCategory(null);setSub('Alles');setSearch('')}} aria-label="Terug naar categorieën"><ArrowLeft size={23}/></button>:<Package size={25}/>}<h1>{category||'Inventaris'}</h1></div>
 {!category?<><div className="inventory-summary"><span>INVENTARISOVERZICHT</span><strong>{items.length} <small>artikelen</small></strong><p>{items.filter(i=>i.quantity===0||i.quantity===null).length} artikelen op nul</p></div><div className="inventory-categories">{categories.map(({name,description,icon:Icon})=><button key={name} className="inventory-category" onClick={()=>{setCategory(name);setSub('Alles')}}><Icon size={28}/><strong>{name}</strong><span>{description}<ChevronRight size={17}/></span><em>{items.filter(i=>i.category===name).length} artikelen</em></button>)}</div></>:<><div className="inventory-search"><Search size={18}/><input placeholder="Zoek artikelen..." aria-label="Zoek artikelen" value={search} onChange={e=>setSearch(e.target.value)}/></div><div className="inventory-subfilters">{['Alles',...categories.find(c=>c.name===category)!.subcategories].map(s=><button key={s} className={sub===s?'selected':''} onClick={()=>setSub(s)}>{s}</button>)}</div><p className="inventory-count">{visible.length} artikelen</p><div className="inventory-items catalog-product-grid">{visible.map(item=><article className="inventory-product-card catalog-card catalog-product-card" key={item.id}>

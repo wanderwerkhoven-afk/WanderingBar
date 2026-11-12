@@ -19,6 +19,16 @@ export async function writeInventoryImage(ref:string,data:string):Promise<void>{
  rows.docs.forEach(x=>{if(Number(x.id)>=parts.length)batch.delete(x.ref)});
  await batch.commit();cache.set(ref,data);
 }
+export async function migrateLegacyInventoryImage(data:string):Promise<string>{
+ if(!data.startsWith('data:image/'))throw new Error('Geen geldige Base64-afbeelding om te migreren.');
+ const ref='img_'+crypto.randomUUID();
+ await writeInventoryImage(ref,data);
+ // Read from the server rather than trusting the in-memory upload cache.
+ cache.delete(ref);
+ const verified=await readInventoryImage(ref);
+ if(verified!==data)throw new Error('Migratiecontrole mislukt: originele afbeelding behouden.');
+ return ref;
+}
 export async function deleteInventoryImage(ref:string):Promise<void>{
  const rows=await getDocs(collection(doc(root,ref),'chunks'));
  for(let i=0;i<rows.docs.length;i+=400){const batch=writeBatch(db);rows.docs.slice(i,i+400).forEach(x=>batch.delete(x.ref));await batch.commit();}

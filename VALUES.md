@@ -284,3 +284,9 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - `CloudGate` verhoogt `cloudVersion` bij een bevestigde remote Firestore-wijziging. De app-inhoud wordt opnieuw gemount op basis van de bijgewerkte localStorage, zonder handmatig op Vernieuwen te hoeven klikken. Dit maakt nieuwe `imageRef`-verwijzingen en andere records direct zichtbaar op een reeds ingelogd apparaat.
 - `InventoryProductImage` reset de laad-/foutstatus ook bij een wijziging van `imageRef`, zodat een eerder mislukte afbeelding opnieuw geladen wordt.
 - Dit is alleen een UI-refresh na een geaccepteerde remote snapshot; de bestaande conflictdetectie en cloud-authoriteit blijven behouden. Er wordt geen data gewist of overschreven buiten de bestaande synchronisatielogica.
+
+## Legacy-inventarisafbeeldingen opruimen (2026-11-12)
+- Inventarispagina toont een expliciete actie `Veilig migreren naar Firestore` als een of meer items nog `image: data:image/...` bevatten. Dit voorkomt een onzichtbare achtergrondmigratie die met live-sync kan botsen.
+- `migrateLegacyInventoryImage`: schrijf afbeelding naar `inventoryImages/{ref}/chunks`, verwijder geheugen-cache, lees de volledige afbeelding opnieuw uit Firestore en vergelijk byte-voor-byte met het origineel. Pas daarna wordt de lokale `image` vervangen door `imageRef`.
+- Migratie gebeurt artikel voor artikel. Bij fout blijft het origineel behouden en stopt de migratie. Bestaande sync schrijft vervolgens de kleine inventarisrecords naar Firestore; wacht op `Gesynchroniseerd` voordat de app wordt gesloten.
+- Historische backups en ongebruikte chunks worden niet automatisch verwijderd. Opschonen daarvan vereist afzonderlijke gecontroleerde referentie-audit. Geen automatische bulk-delete of datareset.

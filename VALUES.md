@@ -320,3 +320,7 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - Na succesvol lokaal opslaan van een inventarisproduct toont de toast nu `Product {naam} is opgeslagen` in plaats van technische synchronisatietekst.
 - De toast bevestigt de lokale opslag; Firebase-synchronisatie loopt via de bestaande statusafhandeling en wordt hiermee niet ten onrechte als voltooid aangeduid.
 - Geen wijziging aan PWA, Firebase-schema, opslagkeys of bestaande productgegevens.
+
+## Inventaris-toast tekst (12 november 2026)
+- De toast na het opslaan van een product toont `Wijzigingen voor {productnaam} zijn opgeslagen`.
+- Dit bevestigt lokale opslag, niet reeds afgeronde Firebase-synchronisatie; verder geen functionele wijzigingen.

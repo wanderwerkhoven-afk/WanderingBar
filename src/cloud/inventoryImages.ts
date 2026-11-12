@@ -1,4 +1,4 @@
-import {collection,doc,getDocs,writeBatch} from 'firebase/firestore';
+import {collection,doc,getDocs,getDocsFromServer,writeBatch} from 'firebase/firestore';
 import {db} from '../firebase';
 const root=collection(db,'WanderingBar/main/inventoryImages');
 const cache=new Map<string,string>();
@@ -33,4 +33,27 @@ export async function deleteInventoryImage(ref:string):Promise<void>{
  const rows=await getDocs(collection(doc(root,ref),'chunks'));
  for(let i=0;i<rows.docs.length;i+=400){const batch=writeBatch(db);rows.docs.slice(i,i+400).forEach(x=>batch.delete(x.ref));await batch.commit();}
  cache.delete(ref);
+}
+
+/** Read-only inventory audit. Firestore cannot list orphaned chunk-only parents. */
+export async function inspectInventoryImageStorage():Promise<{items:number;references:number;legacy:number;broken:string[]}>{
+ const categories=['Dranken','BarMaterialen','Garneringen','Verbruiksartikelen'];
+ let items=0,legacy=0;
+ const refs=new Set<string>();
+ for(const category of categories){
+  const snapshot=await getDocsFromServer(collection(db,'WanderingBar','main','inventory',category,'items'));
+  for(const row of snapshot.docs){
+   items++;
+   const data=row.data();
+   const record=typeof data.legacyValue==='string'?JSON.parse(data.legacyValue):data;
+   if(typeof record.image==='string'&&record.image.startsWith('data:image/'))legacy++;
+   for(const value of [record.imageRef,data.imageRef])if(typeof value==='string'&&value)refs.add(value);
+  }
+ }
+ const broken:string[]=[];
+ for(const ref of refs){
+  const snapshot=await getDocsFromServer(collection(doc(root,ref),'chunks'));
+  if(snapshot.empty)broken.push(ref);
+ }
+ return {items,references:refs.size,legacy,broken};
 }

@@ -290,3 +290,7 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - `migrateLegacyInventoryImage`: schrijf afbeelding naar `inventoryImages/{ref}/chunks`, verwijder geheugen-cache, lees de volledige afbeelding opnieuw uit Firestore en vergelijk byte-voor-byte met het origineel. Pas daarna wordt de lokale `image` vervangen door `imageRef`.
 - Migratie gebeurt artikel voor artikel. Bij fout blijft het origineel behouden en stopt de migratie. Bestaande sync schrijft vervolgens de kleine inventarisrecords naar Firestore; wacht op `Gesynchroniseerd` voordat de app wordt gesloten.
 - Historische backups en ongebruikte chunks worden niet automatisch verwijderd. Opschonen daarvan vereist afzonderlijke gecontroleerde referentie-audit. Geen automatische bulk-delete of datareset.
+
+## Firestore-opslagcontrole (2026-11-12)
+- Inventaris heeft een altijd zichtbare knop `Opslag controleren`, die via `inspectInventoryImageStorage` de vier inventariscategorieën rechtstreeks vanaf Firestore leest, afbeeldingsverwijzingen telt, legacy Base64-records identificeert en controleert of gebruikte chunkcollecties bestaan.
+- Read-only: geen automatische deletions. Firestore kan chunk-only afbeeldingen zonder parent-document/index niet veilig enumereren; daarom is orphan cleanup expliciet geblokkeerd totdat een volledig afbeeldingsregister en verificatie zijn geïmplementeerd.

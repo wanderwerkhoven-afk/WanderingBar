@@ -4,7 +4,7 @@ import {Martini, Wine, Citrus, Package, Search, Plus, ChevronRight, X, Pencil, T
 import './inventory.css';
 import './Catalog.css';
 import {imageToBase64} from './eventImage';
-import {readInventoryImage,writeInventoryImage,deleteInventoryImage,cachedInventoryImage,migrateLegacyInventoryImage} from './cloud/inventoryImages';
+import {readInventoryImage,writeInventoryImage,deleteInventoryImage,cachedInventoryImage,migrateLegacyInventoryImage,inspectInventoryImageStorage} from './cloud/inventoryImages';
 
 import type {Category,Item} from './types/inventory';
 import {INVENTORY_STORAGE_KEY} from './repositories/storageKeys';
@@ -449,6 +449,9 @@ const [saveToast,setSaveToast]=useState('');
 const [storageError,setStorageError]=useState('');
 const [pendingImage,setPendingImage]=useState('');
 const [migrationBusy,setMigrationBusy]=useState(false);
+const [auditBusy,setAuditBusy]=useState(false);
+const [auditReport,setAuditReport]=useState('');
+async function auditStorage(){setAuditBusy(true);setAuditReport('');try{const result=await inspectInventoryImageStorage();setAuditReport('Firestore gecontroleerd: '+result.items+' inventarisartikelen, '+result.references+' gebruikte afbeeldingsverwijzingen, '+result.legacy+' oude Base64-afbeeldingen en '+result.broken.length+' ontbrekende afbeeldingen. Ongebruikte chunks zijn niet veilig te inventariseren zonder afbeeldingsregister; er is niets verwijderd.');}catch(error){setAuditReport('Controle mislukt; er is niets gewijzigd: '+String(error));}finally{setAuditBusy(false)}}
 const [migrationProgress,setMigrationProgress]=useState('');
 const legacyImageCount=items.filter(i=>typeof i.image==='string'&&i.image.startsWith('data:image/')).length;
 async function migrateLegacyImages(){
@@ -511,6 +514,7 @@ async function removeImage(){
 }
 return <section className="inventory-page">
 {storageError&&<p role="alert" className="inventory-storage-error">{storageError}</p>}
+<div className="inventory-storage-error"><button type="button" disabled={auditBusy} onClick={()=>void auditStorage()}>{auditBusy?'Opslag controleren…':'Opslag controleren'}</button>{auditReport&&<p role="status">{auditReport}</p>}</div>
 {legacyImageCount>0&&<div className="inventory-storage-error"><strong>{legacyImageCount} oudere inventarisafbeeldingen</strong> staan nog in de oude opslag. <button type="button" disabled={migrationBusy} onClick={()=>void migrateLegacyImages()}>{migrationBusy?'Migreren…':'Veilig migreren naar Firestore'}</button></div>}
 {migrationProgress&&<p role="status" className="inventory-storage-error">{migrationProgress}</p>}
 {saveToast&&<div className="inventory-save-toast" role="status" aria-live="polite"><span aria-hidden="true">✓</span>{saveToast}</div>}

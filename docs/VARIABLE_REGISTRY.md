@@ -326,14 +326,10 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 - Inventarispagina toont een expliciete actie `Veilig migreren naar Firestore` als een of meer items nog `image: data:image/...` bevatten. Dit voorkomt een onzichtbare achtergrondmigratie die met live-sync kan botsen.
 - `migrateLegacyInventoryImage`: schrijf afbeelding naar `inventoryImages/{ref}/chunks`, verwijder geheugen-cache, lees de volledige afbeelding opnieuw uit Firestore en vergelijk byte-voor-byte met het origineel. Pas daarna wordt de lokale `image` vervangen door `imageRef`.
 - Migratie gebeurt artikel voor artikel. Bij fout blijft het origineel behouden en stopt de migratie. Bestaande sync schrijft vervolgens de kleine inventarisrecords naar Firestore; wacht op `Gesynchroniseerd` voordat de app wordt gesloten.
-- Historische backups en ongebruikte chunks worden niet automatisch verwijderd. Opschonen daarvan vereist afzonderlijke gecontroleerde referentie-audit. Geen automatische bulk-delete of datareset.
+- Historische back-ups en ongebruikte chunks worden niet automatisch verwijderd. Geen automatische bulk-delete of datareset.
 
-## Firestore-opslagcontrole (2026-11-12)
-- Inventaris heeft een altijd zichtbare knop `Opslag controleren`, die via `inspectInventoryImageStorage` de vier inventariscategorieën rechtstreeks vanaf Firestore leest, afbeeldingsverwijzingen telt, legacy Base64-records identificeert en controleert of gebruikte chunkcollecties bestaan.
-- Read-only: geen automatische deletions. Firestore kan chunk-only afbeeldingen zonder parent-document/index niet veilig enumereren; daarom is orphan cleanup expliciet geblokkeerd totdat een volledig afbeeldingsregister en verificatie zijn geïmplementeerd.
-
-## Afbeeldingsopslag: controle en opschoning (2026-11-12)
-- Inventariscontrole gebruikt een Firestore collection-group query op `chunks` om ook afbeeldingen zonder parent-document te ontdekken; vergelijkt de gevonden refs met alle vier v3-inventariscategorieën.
-- De UI toont aantallen afbeeldingen/chunks, ontbrekende refs en ongebruikte refs. Verwijderen vereist een aparte bevestiging en hercontrole vanaf de server; bij wijzigingen stopt de actie.
-- `firestore.rules` bevat een eigenaar-beperkte collection-group leesregel voor `chunks`. **Publiceer de bijgewerkte regels in Firebase Console** voordat de nieuwe controle werkt; GitHub Pages publiceert Firestore Rules niet automatisch.
-- Nog te verifiëren: daadwerkelijke Firebase collection-group toegang, audit op productiegegevens, build en opschoning. Er zijn vanuit deze codewijziging geen live chunks verwijderd.
+## Afronding inventarisafbeeldingen (2026-11-12)
+- De productiecontrole is door de gebruiker uitgevoerd: 278 inventarisartikelen, 15 gebruikte en opgeslagen afbeeldingen, 20 chunks, 0 ongebruikte afbeeldingen, 0 ontbrekende afbeeldingen en 0 legacy Base64-afbeeldingen.
+- Tijdelijke UI-knoppen voor opslagcontrole en orphan-opruiming en bijbehorende collection-group query en Firestore-regel zijn uit de repository verwijderd.
+- De reguliere afbeeldingsfuncties (upload, ophalen, vervangen, verwijderen en veilige migratie van oude afbeeldingen) blijven behouden.
+- Geen databasegegevens verwijderd door deze code-opschoning. De live Firestore Rules moeten apart worden teruggezet naar de versie zonder de tijdelijke collection-group leesregel.

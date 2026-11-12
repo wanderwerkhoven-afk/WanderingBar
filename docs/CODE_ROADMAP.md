@@ -179,3 +179,8 @@
 ## Biercatalogus sortering (2026-11-12)
 - `compareBeerEntries` sorteert alleen de weergave, niet de Firestore-records: Tap/BLADE/fust eerst alfabetisch; daarna fles en blik samen in stijlclusters Pils, Lager, Blond, Witbier, Weizen, Dunkelweizen, Pale Ale, IPA, Dubbel, Tripel, Saison, Bock, Porter, Stout, Fruitbier, Alcoholvrij IPA, Overig; onbekende stijlen achteraan. Binnen stijlen alfabetisch op naam.
 - Wijnsortering blijft ongewijzigd totdat de gewenste wijnvolgorde is opgegeven.
+
+## Bierclusterfilters (2026-11-12)
+- `beerClusterFilter` is lokale UI-state, standaard `Alle bieren`. Filteropties: Tapbier, Licht en toegankelijk, Tarwebieren, Hoppige bieren, Belgische en kruidige stijlen, Donkere bieren, Fruitbier, Alcoholvrij IPA, Overig.
+- `beerClusters` groepeert biersoorten volgens de bestaande vaste sortering; bij geselecteerd stijlcluster worden alleen fles- en blikbieren getoond, omdat Tapbier een afzonderlijke eerste groep is. `isTapBeer` ondersteunt expliciete Tap en oude BLADE/fust-naam.
+- `shownBeers` filtert en sorteert zonder Firestore of localStorage te muteren; teller toont aantal zichtbare resultaten. Onbekende bierstijlen vallen onder Overig.

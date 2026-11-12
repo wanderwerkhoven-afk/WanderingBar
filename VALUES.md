@@ -324,3 +324,8 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 ## Inventaris-toast tekst (12 november 2026)
 - De toast na het opslaan van een product toont `Wijzigingen voor {productnaam} zijn opgeslagen`.
 - Dit bevestigt lokale opslag, niet reeds afgeronde Firebase-synchronisatie; verder geen functionele wijzigingen.
+
+## Toastmeldingen bij toevoegen (12 november 2026)
+- Nieuw inventarisartikel of ingrediënt: `{naam} is toegevoegd aan de inventaris`; bestaand artikel bewerken behoudt `Wijzigingen voor {naam} zijn opgeslagen`.
+- Nieuw catalogusproduct: `{naam} is toegevoegd aan de catalogus`; bestaand product bewerken toont `Wijzigingen voor {naam} zijn opgeslagen`.
+- Beide meldingen verschijnen pas na geslaagde lokale opslag, verdwijnen na 3,5 seconden en beweren geen voltooide cloudsync. Catalogus gebruikt eigen toaststijl met dezelfde visuele vorm als inventaris. Geen wijzigingen aan PWA of Firebase-schema.

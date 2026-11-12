@@ -376,3 +376,8 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 - In `Meer > Verwijderde evenementen` heeft elk verwijderd evenement nu naast Herstellen een knop `Definitief verwijderen`, met een expliciete bevestiging inclusief evenementnaam.
 - Na bevestiging wordt het record verwijderd uit `deletedEvents` via `writeStoredDeletedEvents`, zodat de bestaande synchronisatie de bijbehorende Firestore-recordverwijdering kan uitvoeren. Bij een lokale opslagfout blijft het record staan.
 - De bestaande Herstellen-actie en opslagkeys blijven behouden. Firebase-synchronisatie is asynchroon; de UI claimt geen onmiddellijke cloudbevestiging.
+
+## Mobiele opmaak verwijderde evenementen (12 november 2026)
+- De kaarten onder `Meer > Verwijderde evenementen` tonen evenementnaam, datum en locatie nu over de volle kaartbreedte, met de knoppen Herstellen en Definitief verwijderen op een aparte regel eronder.
+- Voorkomt de letter-voor-letter tekstafbreking op smalle iPhones door de eerdere horizontale flex-layout. Acties mogen netjes doorlopen; de bestaande herstel- en verwijderlogica verandert niet.
+- CSS-override in `src/style.css`; geen schema-, PWA- of opslagwijzigingen.

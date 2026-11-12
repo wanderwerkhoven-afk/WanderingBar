@@ -25,12 +25,14 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Affligem Blond fles",
+    "sourceUrl": "https://beerquest.nl/bieren/affligem-brouwerij-affligem-blonde",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
   },
   {
     "name": "Birra Moretti fles",
+    "sourceUrl": "https://www.jumbo.com/producten/birra-moretti-l-autentica-bier-fles-6-x-300ml-468722DS",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -58,6 +60,7 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Brouwerij Kees Caramel Fudge Stout",
+    "sourceUrl": "https://brouwerijkees.nl/onze-bieren/core-range/caramel-fudge-stout/",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -70,6 +73,7 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Corona Extra",
+    "sourceUrl": "https://www.jumbo.com/producten/bier-en-wijn/corona/",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -90,6 +94,7 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Frontaal Juice Punch",
+    "sourceUrl": "https://www.jumbo.com/producten/frontaal-juice-punch-ipa-blik-330ml-579800BLK",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -145,6 +150,7 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Moersleutel Motor Oil",
+    "sourceUrl": "https://moersleutel.com/nl/product/motor-oil/",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -158,6 +164,7 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Sol",
+    "sourceUrl": "https://www.jumbo.com/producten/sol-bier-fles-33cl-223965FLS",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -177,6 +184,7 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Tripel Karmeliet",
+    "sourceUrl": "https://www.jumbo.com/producten/tripel-karmeliet-bier-fles-750-ml-507990FLS",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -197,6 +205,7 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Uiltje Wit",
+    "sourceUrl": "https://uiltjebrewing.com/en/witbier/",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -230,7 +239,7 @@ export function appendMissingBeers(existing: MenuEntry[]): { entries: MenuEntry[
 
 /** Only fetch an image for an independently verified, exact product page. */
 export async function enrichBeerImages(entries: MenuEntry[]): Promise<MenuEntry[]> {
-  const allowedHosts = new Set(['eu.beerwulf.com', 'beerwulf.com', 'www.hanos.nl', 'www.mitra.nl', 'www.jopenbier.nl', 'www.sterkwaterlooplein.nl', 'moersleutel.com', 'brouwerijdemolen.nl', 'www.bockje.nl', 'www.jumbo.com', 'drankdirect.nl', 'beerquest.nl']);
+  const allowedHosts = new Set(['eu.beerwulf.com', 'beerwulf.com', 'www.hanos.nl', 'www.mitra.nl', 'www.jopenbier.nl', 'www.sterkwaterlooplein.nl', 'moersleutel.com', 'brouwerijdemolen.nl', 'www.bockje.nl', 'www.jumbo.com', 'drankdirect.nl', 'beerquest.nl', 'brouwerijkees.nl', 'uiltjebrewing.com']);
   return Promise.all(entries.map(async entry => {
     if (!entry.sourceUrl || entry.imageUrl || entry.image) return entry;
     try {

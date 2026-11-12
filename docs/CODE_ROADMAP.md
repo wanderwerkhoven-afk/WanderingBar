@@ -260,3 +260,7 @@
 ## Automatische compressie van transparante PNG's (2026-11-12)
 - `imageToBase64` probeert tot 12 resolutiestappen (80% per as) tot een data-URL onder 700.000 tekens past. Bij transparantie wordt op iedere stap PNG met alpha-kanaal behouden; ondoorzichtige foto's blijven JPEG. Dit verhelpt Firestore-afwijzing van grote PNG's zonder zwart vlak te introduceren.
 - Geen mutatie aan bestaande Firestore-afbeeldingen of records; nieuwe uploads krijgen automatisch de kleinst noodzakelijke resolutie.
+
+## Firestore-documentlimiet inventaris (2026-11-12)
+- `imageToBase64` verkleint transparante PNG's stapsgewijs tot maximaal 400.000 data-URL-tekens, met behoud van alpha. Dit reserveert ruimte voor overige productvelden en Firestore-serialisatie.
+- `Inventory.save` meet de UTF-8-grootte van het volledige artikel vóór opslag en blokkeert artikelen boven 750.000 bytes met een concrete melding. Zo wordt een te grote reeds lokaal aanwezige afbeelding niet opnieuw naar Firestore geschreven. Herupload origineel PNG of verwijder oude afbeelding; bestaande data worden niet automatisch verwijderd.

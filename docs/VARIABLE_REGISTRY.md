@@ -240,3 +240,9 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 ## Blond bier verplaatst naar Belgisch cluster (2026-11-12)
 - `beerClusters`: Licht en toegankelijk bevat alleen Pils en Lager; Blond valt onder Belgische en kruidige stijlen, samen met Dubbel, Tripel en Saison.
 - `beerStyleOrder` sorteert Blond voortaan binnen het Belgische cluster (na IPA, vóór Dubbel). Bestaande `beerStyle: 'Blond'` records blijven ongewijzigd in Firestore; alleen filtergroepering en weergavevolgorde wijzigen.
+
+## Eventselecties gekoppeld aan catalogus (2026-11-12)
+- `EventDetail` leest bestaande catalogusrecords via `readMenuCatalog`, luistert naar `wandering-catalog-updated` en `storage`, en gebruikt dezelfde objecten voor selectie, beschrijvingen, alcoholpercentages en inkoopberekening.
+- `BEER_CLUSTERS`, `beerCluster`, `isTapBeer`, `compareBeerEntries` in `src/data/menuCatalog.ts` zijn gedeelde biercategorie- en verpakkingsregels voor events; tapbier en fles/blik worden afzonderlijk geselecteerd, inclusief historische eventselecties.
+- `eventBeerFilter` ondersteunt Alle bieren, Tapbier en alle actuele bierclusters; `eventCategoryFilter` ondersteunt Signature, Classics, Show en Niet ingedeeld voor cocktail-/mocktailevents. Eventlijst toont de cataloguscategorietags.
+- Ingrediënten voor inkoop worden uit de actieve catalogusstate afgeleid en opnieuw berekend bij cataloguswijziging (niet uit een apart opnieuw gelezen snapshot). Geen catalogusdata gekopieerd naar eventrecords; events bewaren alleen namen, aantallen en menukaartinstellingen.

@@ -184,3 +184,9 @@
 - `beerClusterFilter` is lokale UI-state, standaard `Alle bieren`. Filteropties: Tapbier, Licht en toegankelijk, Tarwebieren, Hoppige bieren, Belgische en kruidige stijlen, Donkere bieren, Fruitbier, Alcoholvrij IPA, Overig.
 - `beerClusters` groepeert biersoorten volgens de bestaande vaste sortering; bij geselecteerd stijlcluster worden alleen fles- en blikbieren getoond, omdat Tapbier een afzonderlijke eerste groep is. `isTapBeer` ondersteunt expliciete Tap en oude BLADE/fust-naam.
 - `shownBeers` filtert en sorteert zonder Firestore of localStorage te muteren; teller toont aantal zichtbare resultaten. Onbekende bierstijlen vallen onder Overig.
+
+## Tijdelijke bierimport verwijderd (2026-11-12)
+- `src/data/temporaryBeerSeed.ts` is uit de repository verwijderd, inclusief alle hardcoded bierrecords, leverancierslinks, automatische metadata-import en backfillfuncties.
+- `src/Catalog.tsx`: tijdelijke importknop, importstatus en import-afhankelijke state en import verwijderd. De biercatalogus leest uitsluitend bestaande records uit de normale catalogus/Firebase-synchronisatie; bestaande biersoort/verpakking-tags, bewerken en bierclusterfilters blijven intact.
+- `src/Catalog.css`: ongebruikte `.catalog-beer-import`-styling verwijderd.
+- Er is geen Firestore-delete of migratie uitgevoerd: bestaande gesynchroniseerde bierrecords blijven bewaard. Eerdere documentatie over de tijdelijke import is historische context, niet langer actief.

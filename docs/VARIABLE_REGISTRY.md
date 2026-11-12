@@ -331,3 +331,9 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 ## Firestore-opslagcontrole (2026-11-12)
 - Inventaris heeft een altijd zichtbare knop `Opslag controleren`, die via `inspectInventoryImageStorage` de vier inventariscategorieën rechtstreeks vanaf Firestore leest, afbeeldingsverwijzingen telt, legacy Base64-records identificeert en controleert of gebruikte chunkcollecties bestaan.
 - Read-only: geen automatische deletions. Firestore kan chunk-only afbeeldingen zonder parent-document/index niet veilig enumereren; daarom is orphan cleanup expliciet geblokkeerd totdat een volledig afbeeldingsregister en verificatie zijn geïmplementeerd.
+
+## Afbeeldingsopslag: controle en opschoning (2026-11-12)
+- Inventariscontrole gebruikt een Firestore collection-group query op `chunks` om ook afbeeldingen zonder parent-document te ontdekken; vergelijkt de gevonden refs met alle vier v3-inventariscategorieën.
+- De UI toont aantallen afbeeldingen/chunks, ontbrekende refs en ongebruikte refs. Verwijderen vereist een aparte bevestiging en hercontrole vanaf de server; bij wijzigingen stopt de actie.
+- `firestore.rules` bevat een eigenaar-beperkte collection-group leesregel voor `chunks`. **Publiceer de bijgewerkte regels in Firebase Console** voordat de nieuwe controle werkt; GitHub Pages publiceert Firestore Rules niet automatisch.
+- Nog te verifiëren: daadwerkelijke Firebase collection-group toegang, audit op productiegegevens, build en opschoning. Er zijn vanuit deze codewijziging geen live chunks verwijderd.

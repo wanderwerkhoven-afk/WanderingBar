@@ -222,3 +222,6 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - `Catalog.exportDatasheet(type)` downloadt een UTF-8 CSV met BOM en puntkomma-scheiding van alle actuele catalogusproducten van type `Speciaalbier` of `Wijn`, ongeacht actieve zoek- of clusterfilters.
 - Exportvelden: naam, type, bierstijl, biercluster, verpakking, alcoholpercentage, smaakprofiel, wijnsoort, druiven, land, regio, productlink, `menuDescriptionFull`, `menuDescriptionShort`, `menuDescriptionKeywords`.
 - Bestandsnamen `wanderingbar-bieren-datasheet.csv` en `wanderingbar-wijnen-datasheet.csv`. Alleen-lezen export; geen mutaties in lokale opslag of Firebase; productfoto's en base64 uitgesloten.
+
+## Inventarisafbeeldingen gecentreerd (2026-11-12)
+- `.inventory-product-media img` gebruikt `object-fit: cover` en `object-position: center center` zodat zowel geüploade Base64-foto's als afbeeldingslinks het volledige afbeeldingsvlak van de inventariskaart vullen zonder onderaan te hangen. De bestaande afbeeldingbytes en Firebase-inventarisdata worden niet gewijzigd. Foto's kunnen aan de randen worden bijgesneden.

@@ -245,3 +245,7 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - `imageToBase64` in `src/eventImage.ts` controleert het alpha-kanaal na resizen: afbeeldingen met transparante pixels worden als `image/png` opgeslagen, ondoorzichtige foto's blijven compacte `image/jpeg`.
 - Hiermee wordt voorkomen dat transparante inventaris-/catalogus-PNG's bij upload een zwarte achtergrond krijgen. De bestaande Firestore-limiet van 700.000 tekens blijft gelden; een te grote PNG krijgt een foutmelding en wordt niet opgeslagen.
 - Eerder naar JPEG omgezette bestanden zijn niet automatisch te herstellen: upload daarvoor het originele PNG-bestand opnieuw. Bestaande opgeslagen data worden niet gemigreerd of overschreven.
+
+## Automatische compressie van transparante PNG's (2026-11-12)
+- `imageToBase64` probeert tot 12 resolutiestappen (80% per as) tot een data-URL onder 700.000 tekens past. Bij transparantie wordt op iedere stap PNG met alpha-kanaal behouden; ondoorzichtige foto's blijven JPEG. Dit verhelpt Firestore-afwijzing van grote PNG's zonder zwart vlak te introduceren.
+- Geen mutatie aan bestaande Firestore-afbeeldingen of records; nieuwe uploads krijgen automatisch de kleinst noodzakelijke resolutie.

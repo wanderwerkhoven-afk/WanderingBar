@@ -86,3 +86,7 @@
 .catalog-beer-filter{display:flex;flex-direction:column;align-items:flex-start;gap:9px;margin:12px 0 16px}.catalog-beer-filter label{font-size:13px;font-weight:700;color:#664a36}.catalog-beer-filter select{width:100%;max-width:390px;min-height:42px;padding:10px 12px;border:1px solid #dac9b9;border-radius:8px;background:#fff;color:#493426}.catalog-beer-filter small{color:#876b56}
 
 .catalog-cocktail-filter{display:flex;flex-direction:column;align-items:flex-start;gap:9px;margin:12px 0 16px}.catalog-cocktail-filter label{font-size:13px;font-weight:700;color:#664a36}.catalog-cocktail-filter select{width:100%;max-width:390px;min-height:42px;padding:10px 12px;border:1px solid #dac9b9;border-radius:8px;background:#fff;color:#493426}.catalog-cocktail-filter small{color:#876b56}
+
+/* Save feedback matches the inventory toast without importing inventory layout styles. */
+.catalog-save-toast{position:fixed;z-index:10020;bottom:calc(95px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:9px;max-width:min(92vw,440px);width:max-content;padding:13px 17px;border-radius:14px;background:#4b2d20;color:#fff9ee;box-shadow:0 8px 26px #35251b35;font-size:14px;font-weight:600;text-align:center;pointer-events:none}
+.catalog-save-toast span{font-size:18px;color:#e6c69c}

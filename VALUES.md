@@ -209,3 +209,8 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - `BEER_CLUSTERS`, `beerCluster`, `isTapBeer`, `compareBeerEntries` in `src/data/menuCatalog.ts` zijn gedeelde biercategorie- en verpakkingsregels voor events; tapbier en fles/blik worden afzonderlijk geselecteerd, inclusief historische eventselecties.
 - `eventBeerFilter` ondersteunt Alle bieren, Tapbier en alle actuele bierclusters; `eventCategoryFilter` ondersteunt Signature, Classics, Show en Niet ingedeeld voor cocktail-/mocktailevents. Eventlijst toont de cataloguscategorietags.
 - Ingrediënten voor inkoop worden uit de actieve catalogusstate afgeleid en opnieuw berekend bij cataloguswijziging (niet uit een apart opnieuw gelezen snapshot). Geen catalogusdata gekopieerd naar eventrecords; events bewaren alleen namen, aantallen en menukaartinstellingen.
+
+## Afzonderlijke menukaartteksten per catalogusproduct (2026-11-12)
+- `MenuEntry.menuDescriptionFull`, `menuDescriptionShort`, `menuDescriptionKeywords` zijn optionele bewerkbare velden voor 3-, 2- en 1-regelige eventmenukaartvarianten, onafhankelijk van `tasteProfile`.
+- De cataloguseditor toont deze velden voor alle producttypen; de bestaande catalogusopslag/Firebase-sync bewaart ze zonder migratie.
+- Bij bier- en wijnmenukaarten wordt de gekozen tekstvariant rechtstreeks uit de catalogus gelezen. Indien leeg, blijft de bestaande automatische omschrijvingslogica werken. Alcoholpercentage blijft apart uit `alcoholPercentage` komen. Bij andere menu's heeft de uitgebreide tekst voorrang boven smaakprofiel en ingrediënten.

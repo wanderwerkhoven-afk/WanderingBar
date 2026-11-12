@@ -121,6 +121,9 @@ const beerAlcoholLabel=(name:string)=>{
 };
 const formatBeerSubtitle=(name:string,description:string)=>{
  if(beerSubtitleStyle==='none')return '';
+ const product=catalogEntries.find(item=>item.type==='Speciaalbier'&&item.name.toLocaleLowerCase('nl')===name.toLocaleLowerCase('nl'));
+ const custom=beerSubtitleStyle==='full'?product?.menuDescriptionFull:beerSubtitleStyle==='short'?product?.menuDescriptionShort:product?.menuDescriptionKeywords;
+ if(custom?.trim())return [beerAlcoholLabel(name),custom.trim()].filter(Boolean).join(' · ');
  if(beerSubtitleStyle==='full')return description;
  // Read ABV from the beer catalog directly; don't depend on parsing the subtitle.
  const abv=beerAlcoholLabel(name);
@@ -142,6 +145,9 @@ const wineDescription=(name:string)=>{
 };
 const wineSubtitle=(name:string)=>{
  if(wineSubtitleStyle==='none')return '';
+ const product=catalogEntries.find(item=>item.type==='Wijn'&&item.name.toLocaleLowerCase('nl')===name.toLocaleLowerCase('nl'));
+ const custom=wineSubtitleStyle==='full'?product?.menuDescriptionFull:wineSubtitleStyle==='short'?product?.menuDescriptionShort:product?.menuDescriptionKeywords;
+ if(custom?.trim())return [product?.alcoholPercentage!=null&&Number.isFinite(product.alcoholPercentage)?product.alcoholPercentage.toLocaleString('nl-NL',{maximumFractionDigits:2})+'%':'',custom.trim()].filter(Boolean).join(' · ');
  const description=wineDescription(name);
  if(wineSubtitleStyle==='full')return description;
  const abv=catalogEntries.find(item=>item.type==='Wijn'&&item.name===name)?.alcoholPercentage;
@@ -150,7 +156,7 @@ const wineSubtitle=(name:string)=>{
  if(wineSubtitleStyle==='short')return [prefix,profile.split(/\\s+/).slice(0,9).join(' ')].filter(Boolean).join(' · ');
  return [prefix,...profile.split(/[·,;]|\\s+en\\s+/i).map(x=>x.trim()).filter(Boolean).slice(0,3)].filter(Boolean).join(' · ');
 };
-const printMenuItems=isBeerBar?[...beerPlan.taps.filter(t=>t.glasses>0).map(t=>({name:t.beer.replace(/ BLADE 8 L$/,''),description:formatBeerSubtitle(t.beer,beerDescription(t.beer)),abv:beerAlcoholLabel(t.beer),beerType:'tap' as const})),...Object.entries(beerPlan.bottles).filter(([,n])=>n>0).map(([name])=>({name,description:formatBeerSubtitle(name,beerDescription(name)),abv:beerAlcoholLabel(name),beerType:'bottle' as const}))]:activeMenu.map(name=>({name,description:isWineBar?wineSubtitle(name):catalogEntries.find(item=>item.name===name)?.ingredients.map(([ingredient])=>ingredient).slice(0,4).join(' · ')||'',abv:isWineBar?(()=>{const a=catalogEntries.find(item=>item.type==='Wijn'&&item.name===name)?.alcoholPercentage;return a!=null&&Number.isFinite(a)?a.toLocaleString('nl-NL',{maximumFractionDigits:2})+'%':''})():'',beerType:null}));
+const printMenuItems=isBeerBar?[...beerPlan.taps.filter(t=>t.glasses>0).map(t=>({name:t.beer.replace(/ BLADE 8 L$/,''),description:formatBeerSubtitle(t.beer,beerDescription(t.beer)),abv:beerAlcoholLabel(t.beer),beerType:'tap' as const})),...Object.entries(beerPlan.bottles).filter(([,n])=>n>0).map(([name])=>({name,description:formatBeerSubtitle(name,beerDescription(name)),abv:beerAlcoholLabel(name),beerType:'bottle' as const}))]:activeMenu.map(name=>({name,description:isWineBar?wineSubtitle(name):(()=>{const product=catalogEntries.find(item=>item.name===name);return product?.menuDescriptionFull?.trim()||product?.tasteProfile?.trim()||product?.ingredients.map(([ingredient])=>ingredient).slice(0,4).join(' · ')||''})(),abv:isWineBar?(()=>{const a=catalogEntries.find(item=>item.type==='Wijn'&&item.name===name)?.alcoholPercentage;return a!=null&&Number.isFinite(a)?a.toLocaleString('nl-NL',{maximumFractionDigits:2})+'%':''})():'',beerType:null}));
 // Explicit, event-persisted ordering replaces unreliable automatic line-count sorting.
 const menuGridRef=useRef<HTMLDivElement|null>(null);
 const [draggedBeer,setDraggedBeer]=useState<string|null>(null);

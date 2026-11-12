@@ -269,3 +269,9 @@
 .more-route-page .more-fullscreen-header{position:static;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
 .more-route-content{width:100%;max-width:1100px;margin:0 auto}
 .more-route-page .more-fullscreen-back,.more-route-page .more-fullscreen-close{cursor:pointer}
+
+/* Deleted events: separate recovery from destructive permanent removal. */
+.deleted-event-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.permanent-delete-event{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #ba6a60;border-radius:10px;padding:9px 12px;background:transparent;color:#a83c32;font:inherit;font-weight:600;cursor:pointer}
+.permanent-delete-event:hover{background:#a83c3210}
+.permanent-delete-event:focus-visible{outline:3px solid #a83c32;outline-offset:2px}

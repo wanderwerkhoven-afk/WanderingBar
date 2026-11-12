@@ -296,3 +296,7 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 - `imageToBase64` reduceert afbeeldingen automatisch tot maximaal 180.000 data-URL-tekens, inclusief transparante PNG met intact alpha-kanaal.
 - `Inventory.save` controleert voortaan `2 × JSON-bytegrootte + 10 KB` tegen een conservatieve grens van 700 KB, in plaats van enkel de lokale recordgrootte.
 - Syncfouten melden expliciet dat Firebase niet heeft opgeslagen en dat herstarten lokale wijzigingen kan laten verdwijnen. Bestaande cloudrecords worden niet gewijzigd. Na update moeten eerder te grote PNG's opnieuw worden geselecteerd en opgeslagen.
+
+## Inventaris opslaan: toast (2026-11-12)
+- `Inventory.tsx`: na geslaagde lokale kaartopslag verschijnt 3,5 seconden een toegankelijke toast `Artikel lokaal opgeslagen · synchronisatie met Firebase volgt`.
+- De toast wordt niet getoond bij validatiefouten of te grote afbeeldingen en claimt geen succesvolle cloudsync voordat Firebase heeft bevestigd. `inventory-save-toast` is vormgegeven in `inventory.css`.

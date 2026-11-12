@@ -4,7 +4,7 @@ import {Martini, Wine, Citrus, Package, Search, Plus, ChevronRight, X, Pencil, T
 import './inventory.css';
 import './Catalog.css';
 import {imageToBase64} from './eventImage';
-import {readInventoryImage,writeInventoryImage,deleteInventoryImage,cachedInventoryImage,migrateLegacyInventoryImage,inspectInventoryImageStorage} from './cloud/inventoryImages';
+import {readInventoryImage,writeInventoryImage,deleteInventoryImage,cachedInventoryImage,migrateLegacyInventoryImage,inspectInventoryImageStorage,cleanupOrphanInventoryImages} from './cloud/inventoryImages';
 
 import type {Category,Item} from './types/inventory';
 import {INVENTORY_STORAGE_KEY} from './repositories/storageKeys';
@@ -451,7 +451,27 @@ const [pendingImage,setPendingImage]=useState('');
 const [migrationBusy,setMigrationBusy]=useState(false);
 const [auditBusy,setAuditBusy]=useState(false);
 const [auditReport,setAuditReport]=useState('');
-async function auditStorage(){setAuditBusy(true);setAuditReport('');try{const result=await inspectInventoryImageStorage();setAuditReport('Firestore gecontroleerd: '+result.items+' inventarisartikelen, '+result.references+' gebruikte afbeeldingsverwijzingen, '+result.legacy+' oude Base64-afbeeldingen en '+result.broken.length+' ontbrekende afbeeldingen. Ongebruikte chunks zijn niet veilig te inventariseren zonder afbeeldingsregister; er is niets verwijderd.');}catch(error){setAuditReport('Controle mislukt; er is niets gewijzigd: '+String(error));}finally{setAuditBusy(false)}}
+const [orphanImageRefs,setOrphanImageRefs]=useState<string[]>([]);
+async function auditStorage(){
+ setAuditBusy(true);setAuditReport('');setOrphanImageRefs([]);
+ try{
+  const result=await inspectInventoryImageStorage();
+  setOrphanImageRefs(result.orphanRefs);
+  setAuditReport('Firestore: '+result.items+' inventarisartikelen, '+result.references+' gebruikte afbeeldingen, '+result.storedImages+' opgeslagen afbeeldingen ('+result.storedChunks+' chunks), '+result.orphanRefs.length+' ongebruikte afbeeldingen ('+result.orphanChunks+' chunks), '+result.broken.length+' ontbrekende afbeeldingen en '+result.legacy+' oude Base64-afbeeldingen. Er is nog niets verwijderd.');
+ }catch(error){setAuditReport('Controle mislukt; er is niets gewijzigd: '+String(error))}
+ finally{setAuditBusy(false)}
+}
+async function cleanupStorage(){
+ if(auditBusy||!orphanImageRefs.length)return;
+ if(!window.confirm('Definitief '+orphanImageRefs.length+' ongebruikte afbeeldingen verwijderen? De inventarisreferenties worden vooraf opnieuw gecontroleerd.'))return;
+ setAuditBusy(true);setAuditReport('Afbeeldingsreferenties opnieuw controleren en ongebruikte chunks verwijderen…');
+ try{
+  const result=await cleanupOrphanInventoryImages(orphanImageRefs);
+  setOrphanImageRefs([]);
+  setAuditReport('Opschoning afgerond: '+result.deletedImages+' ongebruikte afbeeldingen en '+result.deletedChunks+' chunks verwijderd. Gebruikte afbeeldingen zijn behouden.');
+ }catch(error){setOrphanImageRefs([]);setAuditReport('Opschoning gestopt: '+String(error)+' Voer Opslag controleren opnieuw uit.')}
+ finally{setAuditBusy(false)}
+}
 const [migrationProgress,setMigrationProgress]=useState('');
 const legacyImageCount=items.filter(i=>typeof i.image==='string'&&i.image.startsWith('data:image/')).length;
 async function migrateLegacyImages(){
@@ -514,7 +534,7 @@ async function removeImage(){
 }
 return <section className="inventory-page">
 {storageError&&<p role="alert" className="inventory-storage-error">{storageError}</p>}
-<div className="inventory-storage-error"><button type="button" disabled={auditBusy} onClick={()=>void auditStorage()}>{auditBusy?'Opslag controleren…':'Opslag controleren'}</button>{auditReport&&<p role="status">{auditReport}</p>}</div>
+<div className="inventory-storage-error"><button type="button" disabled={auditBusy} onClick={()=>void auditStorage()}>{auditBusy?'Opslag controleren…':'Opslag controleren'}</button>{orphanImageRefs.length>0&&<button type="button" disabled={auditBusy} onClick={()=>void cleanupStorage()}>Verwijder {orphanImageRefs.length} ongebruikte afbeeldingen</button>}{auditReport&&<p role="status">{auditReport}</p>}</div>
 {legacyImageCount>0&&<div className="inventory-storage-error"><strong>{legacyImageCount} oudere inventarisafbeeldingen</strong> staan nog in de oude opslag. <button type="button" disabled={migrationBusy} onClick={()=>void migrateLegacyImages()}>{migrationBusy?'Migreren…':'Veilig migreren naar Firestore'}</button></div>}
 {migrationProgress&&<p role="status" className="inventory-storage-error">{migrationProgress}</p>}
 {saveToast&&<div className="inventory-save-toast" role="status" aria-live="polite"><span aria-hidden="true">✓</span>{saveToast}</div>}

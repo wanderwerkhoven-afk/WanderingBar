@@ -333,3 +333,10 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 - Tijdelijke UI-knoppen voor opslagcontrole en orphan-opruiming en bijbehorende collection-group query en Firestore-regel zijn uit de repository verwijderd.
 - De reguliere afbeeldingsfuncties (upload, ophalen, vervangen, verwijderen en veilige migratie van oude afbeeldingen) blijven behouden.
 - Geen databasegegevens verwijderd door deze code-opschoning. De live Firestore Rules moeten apart worden teruggezet naar de versie zonder de tijdelijke collection-group leesregel.
+
+## Veilige consolidatie — 12 november 2026
+- Inventaris gebruikt nu de bestaande repositoryhelpers voor standaard lokale reads en writes. De bestaande sleutel en JSON-vorm blijven behouden.
+- Demo-evenementen worden niet meer automatisch toegevoegd bij een ontbrekende lokale eventlijst; een lege lijst blijft leeg.
+- V3 Firestore blijft de cloudautoriteit, met lokale UI-cache. Polling van 1200 ms blijft behouden totdat regressietests voor alternatieve sync zijn uitgevoerd.
+- Open: veilige inventaris-seedmigratie, componentopsplitsing, eventgestuurde sync, volledige build en PWA- en tweeapparatentests.
+- Service worker, manifest, GitHub Pages en live Firebase-data zijn niet gewijzigd.

@@ -24,7 +24,7 @@ export async function imageToBase64(file:File):Promise<string>{
     for(let i=3;i<pixels.length;i+=4){if(pixels[i]<255){transparent=true;break}}
    }
    data=transparent?canvas.toDataURL('image/png'):canvas.toDataURL('image/jpeg',0.75);
-   if(data.length<=400000)return data;
+   if(data.length<=180000)return data;
    // PNG has no browser quality setting: reduce pixel count instead.
    // The 0.8 multiplier lowers area by 36% per attempt.
    if(width<=1&&height<=1)break;

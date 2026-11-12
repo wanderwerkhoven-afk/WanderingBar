@@ -290,3 +290,9 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 ## Firestore-documentlimiet inventaris (2026-11-12)
 - `imageToBase64` verkleint transparante PNG's stapsgewijs tot maximaal 400.000 data-URL-tekens, met behoud van alpha. Dit reserveert ruimte voor overige productvelden en Firestore-serialisatie.
 - `Inventory.save` meet de UTF-8-grootte van het volledige artikel vóór opslag en blokkeert artikelen boven 750.000 bytes met een concrete melding. Zo wordt een te grote reeds lokaal aanwezige afbeelding niet opnieuw naar Firestore geschreven. Herupload origineel PNG of verwijder oude afbeelding; bestaande data worden niet automatisch verwijderd.
+
+## Inventarisfoto's: Firestore dubbele opslag en synchronisatiefout (2026-11-12)
+- Cloud v3 slaat inventarisvelden én `legacyValue` (het volledige JSON-object als string) in hetzelfde document op. Daarom is de werkelijke Firestore-documentgrootte ongeveer tweemaal de lokale JSON-grootte.
+- `imageToBase64` reduceert afbeeldingen automatisch tot maximaal 180.000 data-URL-tekens, inclusief transparante PNG met intact alpha-kanaal.
+- `Inventory.save` controleert voortaan `2 × JSON-bytegrootte + 10 KB` tegen een conservatieve grens van 700 KB, in plaats van enkel de lokale recordgrootte.
+- Syncfouten melden expliciet dat Firebase niet heeft opgeslagen en dat herstarten lokale wijzigingen kan laten verdwijnen. Bestaande cloudrecords worden niet gewijzigd. Na update moeten eerder te grote PNG's opnieuw worden geselecteerd en opgeslagen.

@@ -282,8 +282,9 @@ export function startLiveSync(
           baseline[dataset] = raw;
           markSynced(uid, baseline);
         } catch (error) {
+          // Keep the unsynced local data and never claim cloud success after a failed write.
           onStatus('error');
-          onError(error instanceof Error ? error.message : 'Synchroniseren mislukt. Lokale gegevens zijn behouden.');
+          onError('Niet opgeslagen in Firebase. Herstart de app nog niet: wijzigingen kunnen anders verdwijnen. ' + (error instanceof Error ? error.message : 'Synchroniseren mislukt.'));
         } finally {
           busy.delete(dataset);
           if (!stopped && !conflict && busy.size === 0 &&

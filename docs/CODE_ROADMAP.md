@@ -345,3 +345,8 @@
 - Nieuwe inventarisartikelen tonen nu `{productnaam} is toegevoegd aan {categorie} inventaris`, met de werkelijke categorie (`Dranken`, `Bar & materialen`, `Garneringen`, `Verbruiksartikelen`).
 - Nieuwe catalogusproducten tonen `{productnaam} is toegevoegd aan {type} catalogus` met het producttype (cocktail, mocktail, wijn, speciaalbier of gin-tonic).
 - De bestaande wijzigingentoast `Wijzigingen voor {naam} zijn opgeslagen` blijft ongewijzigd. Alleen de meldingstekst is aangepast; opslag en PWA blijven intact.
+
+## Definitief verwijderen uit prullenbak (12 november 2026)
+- In `Meer > Verwijderde evenementen` heeft elk verwijderd evenement nu naast Herstellen een knop `Definitief verwijderen`, met een expliciete bevestiging inclusief evenementnaam.
+- Na bevestiging wordt het record verwijderd uit `deletedEvents` via `writeStoredDeletedEvents`, zodat de bestaande synchronisatie de bijbehorende Firestore-recordverwijdering kan uitvoeren. Bij een lokale opslagfout blijft het record staan.
+- De bestaande Herstellen-actie en opslagkeys blijven behouden. Firebase-synchronisatie is asynchroon; de UI claimt geen onmiddellijke cloudbevestiging.

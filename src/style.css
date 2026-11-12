@@ -270,6 +270,13 @@
 .more-route-content{width:100%;max-width:1100px;margin:0 auto}
 .more-route-page .more-fullscreen-back,.more-route-page .more-fullscreen-close{cursor:pointer}
 
+/* Deleted event cards: full-width text above actions at every viewport size. */
+.deleted-event-card{display:flex;flex-direction:column;align-items:stretch;gap:14px;min-width:0}
+.deleted-event-info{flex:0 1 auto;width:100%;min-width:0;overflow-wrap:break-word;word-break:normal}
+.deleted-event-info strong,.deleted-event-info span,.deleted-event-info small{display:block;max-width:100%;overflow-wrap:break-word;word-break:normal}
+.deleted-event-actions{width:100%;min-width:0;display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:8px}
+.deleted-event-actions .restore-event{align-self:auto}
+@media(max-width:360px){.deleted-event-card{align-items:stretch}.deleted-event-actions .restore-event{align-self:auto}}
 /* Deleted events: separate recovery from destructive permanent removal. */
 .deleted-event-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .permanent-delete-event{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #ba6a60;border-radius:10px;padding:9px 12px;background:transparent;color:#a83c32;font:inherit;font-weight:600;cursor:pointer}

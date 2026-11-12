@@ -61,12 +61,12 @@ function CatalogProductImage({entry}:{entry:MenuEntry}){
  return <><div className="catalog-product-media">{entry.type==='Wijn'&&<WineCountryFlag country={entry.country}/>}{src&&!failed?<button type="button" className="catalog-product-image-button" onMouseEnter={event=>{if(!window.matchMedia("(hover: hover) and (pointer: fine)").matches)return;const card=event.currentTarget.closest(".catalog-product-card");if(!card)return;const r=card.getBoundingClientRect();setHoverRect({top:r.top,left:r.left,width:r.width,height:r.height})}} onMouseLeave={()=>setHoverRect(null)} onClick={()=>{setHoverRect(null);setPreviewOpen(true)}} aria-label={'Bekijk productfoto van '+entry.name+' op volledig scherm'} title="Foto vergroten"><img src={src} alt={entry.name} loading="lazy" onError={()=>setFailed(true)}/><span className="catalog-product-zoom-hint">Vergroten</span></button>:<span className="catalog-product-placeholder" aria-hidden="true">{entry.type==='Wijn'?'W':entry.type==='Speciaalbier'?'B':entry.type==='G&T'?'G':'C'}</span>}</div>{hoverRect&&!previewOpen&&src&&!failed&&createPortal(<div className="catalog-hover-preview" aria-hidden="true" style={{top:Math.max(8,hoverRect.top),left:hoverRect.left,width:hoverRect.width,height:Math.min(hoverRect.height,window.innerHeight-16)}}><img src={src} alt=""/><span className="catalog-hover-preview-close">×</span></div>,document.body)}{previewOpen&&src&&!failed&&createPortal(<div className="catalog-image-lightbox" role="dialog" aria-modal="true" aria-label={'Productfoto van '+entry.name} onClick={()=>setPreviewOpen(false)}><div className="catalog-image-lightbox-inner" onClick={event=>event.stopPropagation()}><button type="button" className="catalog-image-lightbox-close" onClick={()=>setPreviewOpen(false)} aria-label="Sluit foto">×</button><img src={src} alt={entry.name}/><p>{entry.name}</p></div></div>,document.body)}</>;
 }
 const cocktailCategories=['Signature','Classics','Show'] as const;
-const beerStyleOrder=['Pils','Lager','Blond','Witbier','Weizen','Dunkelweizen','Pale Ale','IPA','Dubbel','Tripel','Saison','Bock','Porter','Stout','Fruitbier','Alcoholvrij','Alcoholvrij IPA','Overig'];
+const beerStyleOrder=['Pils','Lager','Witbier','Weizen','Dunkelweizen','Pale Ale','IPA','Blond','Dubbel','Tripel','Saison','Bock','Porter','Stout','Fruitbier','Alcoholvrij','Alcoholvrij IPA','Overig'];
 const beerClusters=[
- {id:'Licht en toegankelijk',styles:['Pils','Lager','Blond']},
+ {id:'Licht en toegankelijk',styles:['Pils','Lager']},
  {id:'Tarwebieren',styles:['Witbier','Weizen','Dunkelweizen']},
  {id:'Hoppige bieren',styles:['Pale Ale','IPA']},
- {id:'Belgische en kruidige stijlen',styles:['Dubbel','Tripel','Saison']},
+ {id:'Belgische en kruidige stijlen',styles:['Blond','Dubbel','Tripel','Saison']},
  {id:'Donkere bieren',styles:['Bock','Porter','Stout']},
  {id:'Fruitbier',styles:['Fruitbier']},
  {id:'Alcoholvrij',styles:['Alcoholvrij','Alcoholvrij IPA']},

@@ -199,3 +199,7 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - De bierstijl en clusterfilter heten voortaan `Alcoholvrij` in plaats van `Alcoholvrij IPA`; editor biedt `Alcoholvrij` als keuze.
 - `displayBeerStyle` toont oudere catalogusrecords met `beerStyle: 'Alcoholvrij IPA'` eveneens als Alcoholvrij. `beerCluster` accepteert beide opslagwaarden, zodat bestaande Firestore-records zichtbaar en filterbaar blijven zonder automatische datamigratie.
 - Bij het opnieuw opslaan vanuit de editor wordt de genormaliseerde nieuwe waarde `Alcoholvrij` opgeslagen. Andere bierstijlen blijven ongewijzigd.
+
+## Blond bier verplaatst naar Belgisch cluster (2026-11-12)
+- `beerClusters`: Licht en toegankelijk bevat alleen Pils en Lager; Blond valt onder Belgische en kruidige stijlen, samen met Dubbel, Tripel en Saison.
+- `beerStyleOrder` sorteert Blond voortaan binnen het Belgische cluster (na IPA, vóór Dubbel). Bestaande `beerStyle: 'Blond'` records blijven ongewijzigd in Firestore; alleen filtergroepering en weergavevolgorde wijzigen.

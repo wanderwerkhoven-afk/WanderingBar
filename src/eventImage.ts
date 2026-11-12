@@ -9,7 +9,12 @@ export async function imageToBase64(file:File):Promise<string>{
   const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
   const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Afbeelding kan niet worden verwerkt.');
   ctx.drawImage(image,0,0,canvas.width,canvas.height);
-  const data=canvas.toDataURL('image/jpeg',0.75);
+  // JPEG discards alpha (transparent PNGs can turn black). Preserve transparency
+  // only when actual transparent pixels are present; keep opaque photos compact.
+  const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  let transparent=false;
+  for(let i=3;i<pixels.length;i+=4){if(pixels[i]<255){transparent=true;break}}
+  const data=transparent?canvas.toDataURL('image/png'):canvas.toDataURL('image/jpeg',0.75);
   // Firestore documents have a 1 MiB limit; keep room for other event fields.
   if(data.length>700000)throw new Error('De afbeelding is te groot voor Firestore. Kies een kleinere foto.');
   return data;

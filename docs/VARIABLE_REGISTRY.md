@@ -277,3 +277,8 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 ## Inventaris gebruikt cataloguskaartcomponentstijlen (2026-11-12)
 - `Inventory.tsx` importeert `Catalog.css` en past de echte catalogusklassen `catalog-product-grid`, `catalog-card`, `catalog-product-card`, `catalog-product-top`, `catalog-product-type`, `catalog-product-media`, `catalog-product-image-button`, `catalog-product-zoom-hint`, `catalog-product-footer` toe op inventarisproducten.
 - `inventory.css` harmoniseert uitsluitend inventaris-specifieke layoutverschillen en behoudt dezelfde afmetingen, fotohoogtes, hover, lightbox, mobiele 2-koloms grid en kaartuitstraling als de catalogus. Bestaande inventarisvelden, bewerkactie, recepten en data blijven intact.
+
+## Transparante productfoto's behouden (2026-11-12)
+- `imageToBase64` in `src/eventImage.ts` controleert het alpha-kanaal na resizen: afbeeldingen met transparante pixels worden als `image/png` opgeslagen, ondoorzichtige foto's blijven compacte `image/jpeg`.
+- Hiermee wordt voorkomen dat transparante inventaris-/catalogus-PNG's bij upload een zwarte achtergrond krijgen. De bestaande Firestore-limiet van 700.000 tekens blijft gelden; een te grote PNG krijgt een foutmelding en wordt niet opgeslagen.
+- Eerder naar JPEG omgezette bestanden zijn niet automatisch te herstellen: upload daarvoor het originele PNG-bestand opnieuw. Bestaande opgeslagen data worden niet gemigreerd of overschreven.

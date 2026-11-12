@@ -236,3 +236,6 @@
 
 ## Inventarisafbeeldingen gecentreerd (2026-11-12)
 - `.inventory-product-media img` gebruikt `object-fit: cover` en `object-position: center center` zodat zowel geüploade Base64-foto's als afbeeldingslinks het volledige afbeeldingsvlak van de inventariskaart vullen zonder onderaan te hangen. De bestaande afbeeldingbytes en Firebase-inventarisdata worden niet gewijzigd. Foto's kunnen aan de randen worden bijgesneden.
+
+## Inventarisafbeelding: robuuste framepositionering (2026-11-12)
+- Correctie op vorige CSS: `.inventory-product-media` is een `position:relative` flexcontainer; directe `img`-kinderen worden absoluut met `inset:0`, `object-fit:cover` en `object-position:50% 50%` geplaatst. Dit voorkomt dat de browser de afbeelding als intrinsiek klein grid-item onderaan toont. Geen afbeeldingsbestanden of Firestore-data aangepast.

@@ -44,12 +44,14 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Brouwerij 't IJ IJwit",
+    "sourceUrl": "https://www.mitra.nl/product/t-ij-ijwit-33cl",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
   },
   {
     "name": "Brouwerij 't IJ Zatte",
+    "sourceUrl": "https://www.mitra.nl/product/t-ij-zatte-33cl",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -74,12 +76,14 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "De Molen Hel & Verdoemenis",
+    "sourceUrl": "https://brouwerijdemolen.nl/onze-bieren/de-molen-hel-verdoemenis-fles-33cl/",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
   },
   {
     "name": "Desperados Original",
+    "sourceUrl": "https://www.mitra.nl/product/desperados-original-33cl",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -92,42 +96,49 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Hoegaarden Wit",
+    "sourceUrl": "https://www.mitra.nl/product/hoegaarden-wit-30cl",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
   },
   {
     "name": "Jopen Adriaan Wit",
+    "sourceUrl": "https://www.sterkwaterlooplein.nl/p/jopen-adriaan-wit-330ml",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
   },
   {
     "name": "Jopen Mooie Nel IPA",
+    "sourceUrl": "https://www.jopenbier.nl/product/jopen-mooie-nel-ipa/",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
   },
   {
     "name": "Kasteel Rouge",
+    "sourceUrl": "https://www.mitra.nl/product/kasteel-rouge-33cl",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
   },
   {
     "name": "La Chouffe",
+    "sourceUrl": "https://www.mitra.nl/product/chouffe-la-33cl",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
   },
   {
     "name": "Liefmans Fruitesse",
+    "sourceUrl": "https://www.mitra.nl/product/liefmans-fruitesse-25cl",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
   },
   {
     "name": "Moersleutel Crank the Juice",
+    "sourceUrl": "https://moersleutel.com/nl/product/crank-the-juice/",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -140,6 +151,7 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Oedipus Mannenliefde",
+    "sourceUrl": "https://www.bockje.nl/bier/fles/oedipus-mannenliefde/",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -158,6 +170,7 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Texels Skuumkoppe",
+    "sourceUrl": "https://www.mitra.nl/product/texels-skuumkoppe-30cl",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -170,12 +183,14 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "Two Chefs Brewing Funky Falcon",
+    "sourceUrl": "https://www.jumbo.com/producten/two-chefs-brewing-funky-falcon-blik-330-ml-606578BLK",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
   },
   {
     "name": "Uiltje Bird of Prey",
+    "sourceUrl": "https://beerquest.nl/bieren/uiltje-brewing-company-bird-of-prey",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -188,12 +203,14 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "vandeStreek Playground IPA 0.5",
+    "sourceUrl": "https://drankdirect.nl/artikel/doos-vandestreek-playground-ipa-24x33cl",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
   },
   {
     "name": "Vedett Extra White",
+    "sourceUrl": "https://www.bockje.nl/bier/fles/vedett-extra-white/",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -213,7 +230,7 @@ export function appendMissingBeers(existing: MenuEntry[]): { entries: MenuEntry[
 
 /** Only fetch an image for an independently verified, exact product page. */
 export async function enrichBeerImages(entries: MenuEntry[]): Promise<MenuEntry[]> {
-  const allowedHosts = new Set(['eu.beerwulf.com', 'beerwulf.com', 'www.hanos.nl']);
+  const allowedHosts = new Set(['eu.beerwulf.com', 'beerwulf.com', 'www.hanos.nl', 'www.mitra.nl', 'www.jopenbier.nl', 'www.sterkwaterlooplein.nl', 'moersleutel.com', 'brouwerijdemolen.nl', 'www.bockje.nl', 'www.jumbo.com', 'drankdirect.nl', 'beerquest.nl']);
   return Promise.all(entries.map(async entry => {
     if (!entry.sourceUrl || entry.imageUrl || entry.image) return entry;
     try {

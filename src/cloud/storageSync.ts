@@ -295,13 +295,18 @@ export function startLiveSync(
       })();
     }
   };
+  // Keep the periodic fallback for legacy writers, but flush promptly when the
+  // application explicitly signals a change or the PWA returns to foreground.
   const poll = window.setInterval(flush, 1200);
+  const onVisible = () => { if (document.visibilityState === 'visible') flush(); };
   window.addEventListener('barback-sync-request', flush);
+  document.addEventListener('visibilitychange', onVisible);
 
   return () => {
     stopped = true;
     window.clearInterval(poll);
     window.removeEventListener('barback-sync-request', flush);
+    document.removeEventListener('visibilitychange', onVisible);
     unsubscribers.forEach(unsubscribe => unsubscribe());
   };
 }

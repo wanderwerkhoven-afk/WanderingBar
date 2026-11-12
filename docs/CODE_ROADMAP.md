@@ -314,3 +314,9 @@
 - V3 Firestore blijft de cloudautoriteit, met lokale UI-cache. Polling van 1200 ms blijft behouden totdat regressietests voor alternatieve sync zijn uitgevoerd.
 - Open: veilige inventaris-seedmigratie, componentopsplitsing, eventgestuurde sync, volledige build en PWA- en tweeapparatentests.
 - Service worker, manifest, GitHub Pages en live Firebase-data zijn niet gewijzigd.
+
+## Gerichte PWA-veilige refactor (12 november 2026)
+- Veiligheidsfix: de eerste inventaris-seedmigratie behoudt nu bestaande `quantity`-waarden; uitsluitend nieuw toegevoegde seedrecords beginnen op nul. Geen wijziging van opslagkey of Firestore-schema.
+- Live sync voert bij terugkeer naar de zichtbare PWA direct een flush uit; de 1200 ms fallback blijft bestaan voor bestaande schrijvers die geen expliciet sync-event sturen. Listener wordt bij unmount verwijderd.
+- De grote inventariscomponent en historische seed-/prijslogica blijven voorlopig staan: verwijderen of opsplitsen zonder build-, PWA- en Firebase-regressietests is niet veilig.
+- Te verifiëren vóór merge: `npm ci`, `npm test`, `npm run build`, offline/PWA-herstart, voorraadbehoud bij migratie, Google-login en synchronisatie op twee apparaten. Geen live Firebase-mutaties door deze branch.

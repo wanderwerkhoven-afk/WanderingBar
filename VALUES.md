@@ -3,19 +3,19 @@
 
 ## Ononderhandelbare principes
 1. **Geen stilzwijgend gegevensverlies.** Nooit bestaande lokale of Firestore-records verwijderen op basis van aannames over migratie of synchronisatie.
-2. **Eén Google-account per lokale workspace.** Cloudgegevens staan onder `users/{uid}`; accountwisseling en conflicten worden in de cloudgate behandeld.
+2. **Eén Google-account per lokale workspace.** Cloudgegevens staan in de eigenaar-afgeschermde v3-workspace `WanderingBar/main`; accountwisseling en conflicten worden in de cloudgate behandeld.
 3. **GitHub Pages blijft hosting.** Firebase levert authenticatie en database, niet de sitehosting.
 4. **Geen schijnzekerheid.** Een codecommit, een 'Gesynchroniseerd'-label of een geslaagde build bewijst niet op zichzelf dat alle cloudrecords juist zijn.
 5. **Datamodel en afnemers samen onderhouden.** Nieuwe velden, hernoemen of verwijderen: altijd editor, evenementselecties, inkoop, documenten, opslag en synchronisatie nalopen.
 6. **Documentatie is een kaart van de code.** Variabelenregister en roadmap in dezelfde wijziging bijwerken; verouderde claims corrigeren, niet blijven herhalen.
 
-## Huidige opslagarchitectuur (NIET Firestore-only)
+## Huidige opslagarchitectuur (v3-cloud met lokale UI-cache)
 | Dataset | Browser-key | Firestore-collectie | Broncode |
 |---|---|---|---|
-| Evenementen | `wandering-barback-events-v1` | `users/{uid}/events/{recordId}` | `src/repositories/eventRepository.ts`, `src/main.tsx` |
-| Verwijderde evenementen | `wandering-barback-deleted-events-v1` | `users/{uid}/deletedEvents/{recordId}` | `src/repositories/eventRepository.ts`, `src/main.tsx` |
-| Inventaris | `wandering-barback-inventory-v1` | `users/{uid}/inventory/{recordId}` | `src/Inventory.tsx`, `src/repositories/inventoryRepository.ts` |
-| Catalogus | `wandering-barback-catalog-v1` | `users/{uid}/catalog/{recordId}` | `src/data/menuCatalog.ts`, `src/Catalog.tsx` |
+| Evenementen | `wandering-barback-events-v1` | `WanderingBar/main/events/{recordId}` | `src/repositories/eventRepository.ts`, `src/main.tsx` |
+| Verwijderde evenementen | `wandering-barback-deleted-events-v1` | `WanderingBar/main/deletedEvents/{recordId}` | `src/repositories/eventRepository.ts`, `src/main.tsx` |
+| Inventaris | `wandering-barback-inventory-v1` | `WanderingBar/main/inventory/{category}/items/{recordId}` | `src/Inventory.tsx`, `src/repositories/inventoryRepository.ts` |
+| Catalogus | `wandering-barback-catalog-v1` | `WanderingBar/main/catalog/{category}/products/{productId}` | `src/data/menuCatalog.ts`, `src/Catalog.tsx` |
 
 `src/cloud/storageSync.ts` synchroniseert de vier lokale datasets met Firestore via een poll van 1200 ms en detecteert externe wijzigingen via `onSnapshot`. De UI leest op dit moment in hoofdzaak uit lokale opslag. Het schema bewaart `value` (JSON-string) en `position`; nieuwe/gewijzigde records krijgen daarnaast `schemaVersion:2`, `recordId`, `slug`, `name` en datasetspecifieke velden. **Bestaande records zijn niet aantoonbaar allemaal gemigreerd.**
 
@@ -57,7 +57,7 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 ## Wijzigingscontrole
 - 2026-11-11 — De verplichte documentatieprocedure staat in `AGENTS.md`; de GitHub Actions-controle in `.github/workflows/documentation-contract.yml` verlangt updates aan alle drie de referentiedocumenten bij code-/configuratiewijzigingen. Geen wijziging aan opslagcontract of runtime-architectuur. Deze workflow controleert bestandswijzigingen, niet inhoudelijke juistheid.
 
-## Firestore v3 — overeengekomen doelarchitectuur (niet live)
+## Firestore v3 — actuele cloudstructuur (oudere migratienotities hieronder historisch)
 - Bedrijfsroot: collectie `WanderingBar`, document `main` (Firestore vereist afwisseling van collectie en document).
 - Catalogus: `catalog/{Cocktail|Mocktail|Wijn|Bier}/products/{productId}`; G&T onder Cocktail.
 - Inventaris: `inventory/{Dranken|BarMaterialen|Garneringen|Verbruiksartikelen}/items/{itemId}`; bestaande categorieën eerst expliciet mappen.
@@ -296,3 +296,10 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - Tijdelijke UI-knoppen voor opslagcontrole en orphan-opruiming en bijbehorende collection-group query en Firestore-regel zijn uit de repository verwijderd.
 - De reguliere afbeeldingsfuncties (upload, ophalen, vervangen, verwijderen en veilige migratie van oude afbeeldingen) blijven behouden.
 - Geen databasegegevens verwijderd door deze code-opschoning. De live Firestore Rules moeten apart worden teruggezet naar de versie zonder de tijdelijke collection-group leesregel.
+
+## Veilige consolidatie — 12 november 2026
+- Inventaris gebruikt nu de bestaande repositoryhelpers voor standaard lokale reads en writes. De bestaande sleutel en JSON-vorm blijven behouden.
+- Demo-evenementen worden niet meer automatisch toegevoegd bij een ontbrekende lokale eventlijst; een lege lijst blijft leeg.
+- V3 Firestore blijft de cloudautoriteit, met lokale UI-cache. Polling van 1200 ms blijft behouden totdat regressietests voor alternatieve sync zijn uitgevoerd.
+- Open: veilige inventaris-seedmigratie, componentopsplitsing, eventgestuurde sync, volledige build en PWA- en tweeapparatentests.
+- Service worker, manifest, GitHub Pages en live Firebase-data zijn niet gewijzigd.

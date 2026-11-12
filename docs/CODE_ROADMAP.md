@@ -205,3 +205,8 @@
 - Biereditor heeft een invoerveld `Alcoholpercentage (%)` met numerieke validatie 0–100, stap 0,1 en lege waarde toegestaan.
 - Gebruikt het bestaande `MenuEntry.alcoholPercentage?: number` (geen schemawijziging); opslag via `writeMenuCatalog` en bestaande Firestore v3 sync.
 - Bierkaart toont reeds `alcoholPercentage` als percentage-tag. `EventDetail.tsx` leest dit bestaande veld al bij het genereren van de biermenukaart; ontbrekende waarden worden niet ingevuld of verzonnen.
+
+## Alcoholvrij bierstijl (2026-11-12)
+- De bierstijl en clusterfilter heten voortaan `Alcoholvrij` in plaats van `Alcoholvrij IPA`; editor biedt `Alcoholvrij` als keuze.
+- `displayBeerStyle` toont oudere catalogusrecords met `beerStyle: 'Alcoholvrij IPA'` eveneens als Alcoholvrij. `beerCluster` accepteert beide opslagwaarden, zodat bestaande Firestore-records zichtbaar en filterbaar blijven zonder automatische datamigratie.
+- Bij het opnieuw opslaan vanuit de editor wordt de genormaliseerde nieuwe waarde `Alcoholvrij` opgeslagen. Andere bierstijlen blijven ongewijzigd.

@@ -273,3 +273,7 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 ## Inventarisfoto hover en lightbox (2026-11-12)
 - `InventoryProductImage` in `src/Inventory.tsx` hergebruikt de bestaande catalogus-hover-preview en fullscreen-lightbox styling. Desktop-hover toont grote preview; klikken/tikken op foto opent een modal met sluitknop, buitenklik en Escape.
 - De fotoknop is los van de productdetails-/bewerkknop, zodat foto vergroten niet de inventariseditor opent. `inventory-product-zoom-hint` en `inventory-product-details` zijn in `src/inventory.css` vastgelegd. Geen wijziging aan data of afbeeldingen.
+
+## Inventaris gebruikt cataloguskaartcomponentstijlen (2026-11-12)
+- `Inventory.tsx` importeert `Catalog.css` en past de echte catalogusklassen `catalog-product-grid`, `catalog-card`, `catalog-product-card`, `catalog-product-top`, `catalog-product-type`, `catalog-product-media`, `catalog-product-image-button`, `catalog-product-zoom-hint`, `catalog-product-footer` toe op inventarisproducten.
+- `inventory.css` harmoniseert uitsluitend inventaris-specifieke layoutverschillen en behoudt dezelfde afmetingen, fotohoogtes, hover, lightbox, mobiele 2-koloms grid en kaartuitstraling als de catalogus. Bestaande inventarisvelden, bewerkactie, recepten en data blijven intact.

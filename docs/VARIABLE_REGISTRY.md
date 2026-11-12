@@ -352,3 +352,8 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 - Event-, verwijderde-event-, inventaris- en catalogusrepositories sturen na een geslaagde lokale write nu `barback-sync-request`. Hierdoor wordt de bestaande Firestore-flush direct getriggerd in plaats van uitsluitend op de 1200ms fallback te wachten. Bij Firestore-fouten blijven lokale gegevens bewaard en verschijnt de bestaande sync-fout.
 - **Niet voltooid:** werkelijk Firestore-first veldniveau lezen/schrijven, subcollecties voor alle afzonderlijke evenementvelden, generieke documentcreatie voor nog niet bestaande formulieren, conflictvrije realtime samenwerking en volledige offline/PWA-regressietests. Het huidige model is cloud-authoritatief bij login en lokale cache tijdens bewerken.
 - Nog vereist: build en browser-/Firebase-tests op twee apparaten vóór merge. Geen productiegegevens gemigreerd of gewist.
+
+## Inventaris-toast UX (12 november 2026)
+- Na succesvol lokaal opslaan van een inventarisproduct toont de toast nu `Product {naam} is opgeslagen` in plaats van technische synchronisatietekst.
+- De toast bevestigt de lokale opslag; Firebase-synchronisatie loopt via de bestaande statusafhandeling en wordt hiermee niet ten onrechte als voltooid aangeduid.
+- Geen wijziging aan PWA, Firebase-schema, opslagkeys of bestaande productgegevens.

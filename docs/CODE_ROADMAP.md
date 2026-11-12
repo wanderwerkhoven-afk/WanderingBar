@@ -340,3 +340,8 @@
 - Nieuw inventarisartikel of ingrediënt: `{naam} is toegevoegd aan de inventaris`; bestaand artikel bewerken behoudt `Wijzigingen voor {naam} zijn opgeslagen`.
 - Nieuw catalogusproduct: `{naam} is toegevoegd aan de catalogus`; bestaand product bewerken toont `Wijzigingen voor {naam} zijn opgeslagen`.
 - Beide meldingen verschijnen pas na geslaagde lokale opslag, verdwijnen na 3,5 seconden en beweren geen voltooide cloudsync. Catalogus gebruikt eigen toaststijl met dezelfde visuele vorm als inventaris. Geen wijzigingen aan PWA of Firebase-schema.
+
+## Categoriegerichte toevoeg-toast (12 november 2026)
+- Nieuwe inventarisartikelen tonen nu `{productnaam} is toegevoegd aan {categorie} inventaris`, met de werkelijke categorie (`Dranken`, `Bar & materialen`, `Garneringen`, `Verbruiksartikelen`).
+- Nieuwe catalogusproducten tonen `{productnaam} is toegevoegd aan {type} catalogus` met het producttype (cocktail, mocktail, wijn, speciaalbier of gin-tonic).
+- De bestaande wijzigingentoast `Wijzigingen voor {naam} zijn opgeslagen` blijft ongewijzigd. Alleen de meldingstekst is aangepast; opslag en PWA blijven intact.

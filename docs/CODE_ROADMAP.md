@@ -239,3 +239,7 @@
 
 ## Inventarisafbeelding: robuuste framepositionering (2026-11-12)
 - Correctie op vorige CSS: `.inventory-product-media` is een `position:relative` flexcontainer; directe `img`-kinderen worden absoluut met `inset:0`, `object-fit:cover` en `object-position:50% 50%` geplaatst. Dit voorkomt dat de browser de afbeelding als intrinsiek klein grid-item onderaan toont. Geen afbeeldingsbestanden of Firestore-data aangepast.
+
+## Inventariskaarten gelijk aan catalogus (2026-11-12)
+- `src/inventory.css`: inventariskaarten gebruiken dezelfde productfotohoogte (230px desktop, 185px mobiel), binnenpadding, `object-fit:contain`, gecentreerde foto, achtergrond en kaartpadding als de cataloguskaarten. De eerdere `cover`/absolute-positioning overrides worden expliciet overschreven zodat productfoto's volledig zichtbaar blijven.
+- Geen aanpassing aan inventarisrecords, afbeeldingsbytes, Firebase of eventgegevens. Geüploade foto's met ingebakken witruimte kunnen die witruimte nog tonen; CSS kan dat niet betrouwbaar verwijderen zonder bijsnijden.

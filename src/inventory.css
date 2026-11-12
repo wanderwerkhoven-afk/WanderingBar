@@ -30,3 +30,16 @@
 /* Force uploaded and linked inventory images to fill the media frame independently of grid-item sizing. */
 .inventory-product-media{position:relative;display:flex;align-items:center;justify-content:center;isolation:isolate}
 .inventory-product-media>img{position:absolute;inset:0;display:block;width:100%;height:100%;min-width:100%;min-height:100%;max-width:none;max-height:none;object-fit:cover;object-position:50% 50%;margin:0;padding:0}
+
+/* Inventory cards mirror the catalog's product-photo layout and spacing. */
+.inventory-product-card{gap:12px;min-height:0;padding:20px}
+.inventory-product-main{flex:1;gap:10px}
+.inventory-product-media{position:relative;display:grid;place-items:center;box-sizing:border-box;width:100%;height:230px;min-height:230px;padding:12px;border-radius:12px;background:#f3eadf;overflow:hidden}
+.inventory-product-media>img{position:static;inset:auto;display:block;box-sizing:border-box;width:100%;height:100%;min-width:0;min-height:0;max-width:100%;max-height:100%;margin:0;padding:0;object-fit:contain;object-position:center}
+.inventory-product-media>svg{align-self:center;justify-self:center}
+.inventory-product-footer{margin-top:auto}
+@media(max-width:520px){
+ .inventory-product-card{min-height:0;padding:13px;gap:10px}
+ .inventory-product-main{gap:10px}
+ .inventory-product-media{height:185px;min-height:185px;padding:8px}
+}

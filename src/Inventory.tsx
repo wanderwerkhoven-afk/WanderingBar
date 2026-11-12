@@ -498,7 +498,7 @@ async function save(){
  const size=new Blob([JSON.stringify(item)]).size;
  if(size>750000){setImageError('Dit artikel is te groot voor Firebase ('+Math.round(size/1024)+' KB). Upload de afbeelding opnieuw.');return}
  try{writeStoredInventory(next)}catch{setImageError('Opslagruimte van dit apparaat is vol. De wijziging is niet opgeslagen.');return}
- setStorageError('');setItems(next);setDraft(null);setPendingImage('');setSaveToast('Artikel lokaal opgeslagen · synchronisatie met Firebase volgt');
+ setStorageError('');setItems(next);setDraft(null);setPendingImage('');setSaveToast(`Product ${item.name} is opgeslagen`);
  }catch(error){setImageError(error instanceof Error?error.message:'Afbeelding opslaan in Firebase mislukt.');}finally{setImageBusy(false)}
 }
 async function removeImage(){

@@ -141,7 +141,9 @@ async function writeDataset(dataset: Dataset, desired: Row[], previous: Row[]): 
         const path = v3Path(dataset, change.row);
         const record = JSON.parse(change.row.value) as Record<string, unknown>;
         batch.set(doc(db, path), {
-          ...(firestoreSafeData(record) as Record<string, unknown>),
+          // Images live once in legacyValue. Duplicating Base64 in flattened fields
+          // wastes Firestore's 1 MiB document limit without helping readers.
+          ...(dataset === 'inventory' ? firestoreSafeData(Object.fromEntries(Object.entries(record).filter(([key]) => key !== 'image'))) : firestoreSafeData(record)) as Record<string, unknown>,
           legacyValue: change.row.value, legacyId: change.row.id,
           position: change.row.position, schemaVersion: 3,
           ...(dataset === 'catalog' ? { productId: path.split('/').pop() } : {}),

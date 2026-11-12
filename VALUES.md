@@ -263,3 +263,8 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 ## Inventaris opslaan: toast (2026-11-12)
 - `Inventory.tsx`: na geslaagde lokale kaartopslag verschijnt 3,5 seconden een toegankelijke toast `Artikel lokaal opgeslagen · synchronisatie met Firebase volgt`.
 - De toast wordt niet getoond bij validatiefouten of te grote afbeeldingen en claimt geen succesvolle cloudsync voordat Firebase heeft bevestigd. `inventory-save-toast` is vormgegeven in `inventory.css`.
+
+## Inventarisfoto's blijven na herstart behouden (2026-11-12)
+- Root cause: Firestore v3 schreef de Base64-afbeelding tweemaal in één document (`image` én `legacyValue`). `storageSync.writeDataset` schrijft `image` niet meer als afgevlakt veld voor inventaris; `legacyValue` behoudt de volledige afbeelding en bestaande records blijven leesbaar. Andere velden en datasets blijven onveranderd.
+- `Inventory.save` schrijft de volledige nieuwe inventaris eerst expliciet naar `localStorage` en toont bij quota-/opslagfouten een fout in plaats van een misleidende succes-toast. Ook achtergrondopslagfouten worden zichtbaar. De cloud blijft autoritatief; toast betekent uitsluitend lokaal opgeslagen, niet cloudbevestigd.
+- Geen bestaande cloudrecords of afbeeldingen verwijderd. Al mislukte uploads moeten na deployment opnieuw worden opgeslagen.

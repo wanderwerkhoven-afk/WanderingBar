@@ -4,18 +4,21 @@ import type { MenuEntry } from './menuCatalog';
 export const temporaryBeerSeed: MenuEntry[] = [
   {
     "name": "Affligem Blond BLADE 8 L",
+    "sourceUrl": "https://eu.beerwulf.com/nl-nl/products/affligem-blonde-8l-blade-biervat",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "BLADE 8 L"
   },
   {
     "name": "Lagunitas IPA BLADE 8 L",
+    "sourceUrl": "https://eu.beerwulf.com/nl-nl/products/lagunitas-ipa-8l-blade-biervat",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "BLADE 8 L"
   },
   {
     "name": "Birra Moretti BLADE 8 L",
+    "sourceUrl": "https://beerwulf.com/products/birra-moretti-ricetta-originale-8l-blade-keg",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "BLADE 8 L"
@@ -34,6 +37,7 @@ export const temporaryBeerSeed: MenuEntry[] = [
   },
   {
     "name": "BrewDog Punk IPA",
+    "sourceUrl": "https://www.hanos.nl/nl/product/brewdog-punk-ipa-33cl-1213330",
     "type": "Speciaalbier",
     "ingredients": [],
     "tasteProfile": "Flesbier"
@@ -205,4 +209,24 @@ export function appendMissingBeers(existing: MenuEntry[]): { entries: MenuEntry[
     return true;
   });
   return { entries: [...existing, ...additions], added: additions.length };
+}
+
+/** Only fetch an image for an independently verified, exact product page. */
+export async function enrichBeerImages(entries: MenuEntry[]): Promise<MenuEntry[]> {
+  const allowedHosts = new Set(['eu.beerwulf.com', 'beerwulf.com', 'www.hanos.nl']);
+  return Promise.all(entries.map(async entry => {
+    if (!entry.sourceUrl || entry.imageUrl || entry.image) return entry;
+    try {
+      const page = new URL(entry.sourceUrl);
+      if (page.protocol !== 'https:' || !allowedHosts.has(page.hostname)) return entry;
+      const response = await fetch('https://api.microlink.io?url=' + encodeURIComponent(page.href), {
+        signal: AbortSignal.timeout(12000),
+      });
+      if (!response.ok) return entry;
+      const result: unknown = await response.json();
+      const image = (result as {data?:{image?:{url?:unknown}}})?.data?.image?.url;
+      if (typeof image !== 'string' || !/^https:\/\//i.test(image)) return entry;
+      return {...entry, imageUrl:image};
+    } catch { return entry; }
+  }));
 }

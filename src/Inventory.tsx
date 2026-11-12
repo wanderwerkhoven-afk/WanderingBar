@@ -431,7 +431,8 @@ try{
  if(localStorage.getItem(migrationKey)==='yes'){const known=new Set(existing.map(i=>i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));const missing=homemadeStarter.filter(i=>!known.has(i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));return addBeerBarOptions(applyVerifiedPrices(attachHomemadeRecipes([...existing,...missing])));}
  const known=new Set(existing.map(i=>i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));
  const missing=all.filter(i=>!known.has(i.category+'|'+i.name.trim().toLocaleLowerCase('nl')));
- const result=[...existing,...missing].map(i=>({...i,quantity:0}));
+ // Preserve existing stock quantities; only newly seeded records start at zero.
+ const result=[...existing,...missing];
  localStorage.setItem(migrationKey,'yes');
  return addBeerBarOptions(applyVerifiedPrices(attachHomemadeRecipes(result)));
 }catch{return applyVerifiedPrices(attachHomemadeRecipes(all))}

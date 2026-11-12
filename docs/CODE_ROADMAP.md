@@ -225,3 +225,6 @@
 - `MenuEntry.menuDescriptionFull`, `menuDescriptionShort`, `menuDescriptionKeywords` zijn optionele bewerkbare velden voor 3-, 2- en 1-regelige eventmenukaartvarianten, onafhankelijk van `tasteProfile`.
 - De cataloguseditor toont deze velden voor alle producttypen; de bestaande catalogusopslag/Firebase-sync bewaart ze zonder migratie.
 - Bij bier- en wijnmenukaarten wordt de gekozen tekstvariant rechtstreeks uit de catalogus gelezen. Indien leeg, blijft de bestaande automatische omschrijvingslogica werken. Alcoholpercentage blijft apart uit `alcoholPercentage` komen. Bij andere menu's heeft de uitgebreide tekst voorrang boven smaakprofiel en ingrediënten.
+
+## Eventselectie buildcorrectie (2026-11-12)
+- De `visibleMenu`-filterexpressie in `EventDetail.tsx` had een ontbrekende afsluitende haak; dit is gecorrigeerd zodat de TypeScript-build kan slagen. Filtergedrag is ongewijzigd.

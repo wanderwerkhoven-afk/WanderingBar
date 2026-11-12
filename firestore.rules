@@ -18,12 +18,6 @@ service cloud.firestore {
       }
     }
 
-    // Collection-group audit discovers orphaned chunks without parent documents.
-    // Restricted to the authenticated workspace owner.
-    match /{path=**}/chunks/{chunkId} {
-      allow read: if isOwner();
-    }
-
     // Legacy users/{uid} paths intentionally have no allow rule.
   }
 }

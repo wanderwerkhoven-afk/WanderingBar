@@ -256,3 +256,22 @@ export async function enrichBeerImages(entries: MenuEntry[]): Promise<MenuEntry[
     } catch { return entry; }
   }));
 }
+
+/** Update only missing metadata on already imported beers; never replace user edits. */
+export function mergeBeerSources(existing: MenuEntry[]): { entries: MenuEntry[]; added: number; updated: number } {
+  const byName = new Map(temporaryBeerSeed.map(item => [item.name.trim().toLocaleLowerCase('nl'), item]));
+  const found = new Set<string>();
+  let updated = 0;
+  const entries = existing.map(entry => {
+    if (entry.type !== 'Speciaalbier') return entry;
+    const key = entry.name.trim().toLocaleLowerCase('nl');
+    const source = byName.get(key);
+    if (!source) return entry;
+    found.add(key);
+    if (entry.sourceUrl || !source.sourceUrl) return entry;
+    updated++;
+    return {...entry, sourceUrl: source.sourceUrl};
+  });
+  const additions = temporaryBeerSeed.filter(item => !found.has(item.name.trim().toLocaleLowerCase('nl')));
+  return {entries:[...entries,...additions], added:additions.length, updated};
+}

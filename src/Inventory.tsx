@@ -8,6 +8,7 @@ import {readInventoryImage,writeInventoryImage,deleteInventoryImage,cachedInvent
 
 import type {Category,Item} from './types/inventory';
 import {INVENTORY_STORAGE_KEY} from './repositories/storageKeys';
+import {readStoredInventory,writeStoredInventory} from './repositories/inventoryRepository';
 export type {Item} from './types/inventory';
 export {INVENTORY_STORAGE_KEY} from './repositories/storageKeys';
 function InventoryProductImage({item}:{item:Item}){
@@ -421,9 +422,9 @@ function attachHomemadeRecipes(items:Item[]):Item[]{return items.map(item=>{cons
 function load():Item[]{
 const all=[...starter,...beverageStarter,...extraStarter,...homemadeStarter].map(i=>verifiedPrices[i.name]?{...i,...verifiedPrices[i.name],priceCheckedAt:'2026-11-04'}:i);
 try{
- const raw=localStorage.getItem(key);
- if(!raw)return addBeerBarOptions(applyVerifiedPrices(attachHomemadeRecipes(all)));
- const value:unknown=JSON.parse(raw);
+ const stored=readStoredInventory();
+ if(stored===null)return addBeerBarOptions(applyVerifiedPrices(attachHomemadeRecipes(all)));
+ const value:unknown=stored;
  if(!Array.isArray(value))return applyVerifiedPrices(attachHomemadeRecipes(all));
  const existing=value as Item[];
  const migrationKey='wandering-barback-inventory-expanded-zero-v1';
@@ -467,7 +468,7 @@ async function migrateLegacyImages(){
    const index=current.findIndex(i=>i.id===original.id&&i.image===original.image);
    if(index<0)throw new Error('Artikel is ondertussen gewijzigd. Originele gegevens behouden.');
    const next=[...current];next[index]={...current[index],image:'',imageRef:ref};
-   localStorage.setItem(key,JSON.stringify(next));
+   writeStoredInventory(next);
    setItems(next);migrated++;
    window.dispatchEvent(new Event('barback-sync-request'));
   }
@@ -477,13 +478,13 @@ async function migrateLegacyImages(){
 }
 useEffect(()=>{if(!saveToast)return;const timer=window.setTimeout(()=>setSaveToast(''),3500);return()=>window.clearTimeout(timer)},[saveToast]);
 const [recipeItem,setRecipeItem]=useState<Item|null>(null);
-useEffect(()=>{try{localStorage.setItem(key,JSON.stringify(items));setStorageError('')}catch(error){setStorageError('Opslaan op dit apparaat mislukt (opslagruimte vol). De afbeelding is NIET opgeslagen of gesynchroniseerd. Maak ruimte vrij of gebruik een kleinere afbeelding.');setSaveToast('');console.error('Inventory local storage failed',error)}},[items]);
+useEffect(()=>{try{writeStoredInventory(items);setStorageError('')}catch(error){setStorageError('Opslaan op dit apparaat mislukt (opslagruimte vol). De afbeelding is NIET opgeslagen of gesynchroniseerd. Maak ruimte vrij of gebruik een kleinere afbeelding.');setSaveToast('');console.error('Inventory local storage failed',error)}},[items]);
 const visible=useMemo(()=>items.filter(i=>(!category||i.category===category)&&(sub==='Alles'||i.subcategory===sub)&&i.name.toLocaleLowerCase('nl').includes(search.toLocaleLowerCase('nl'))).sort((a,b)=>a.name.localeCompare(b.name,'nl')),[items,category,sub,search]);
 function persistItem(item:Item, successMessage:string):boolean{
  const next=items.map(existing=>existing.id===item.id?item:existing);
  const size=new Blob([JSON.stringify(item)]).size;
  if(size>750000){setImageError('Dit artikel is te groot voor Firebase ('+Math.round(size/1024)+' KB). Upload de afbeelding opnieuw.');return false}
- try{localStorage.setItem(key,JSON.stringify(next))}catch{setImageError('Opslagruimte van dit apparaat is vol. De wijziging is niet opgeslagen.');return false}
+ try{writeStoredInventory(next)}catch{setImageError('Opslagruimte van dit apparaat is vol. De wijziging is niet opgeslagen.');return false}
  setStorageError('');setItems(next);setDraft(null);setSaveToast(successMessage);return true;
 }
 async function save(){
@@ -495,7 +496,7 @@ async function save(){
  const next=draft.id?items.map(i=>i.id===draft.id?item:i):[...items,item];
  const size=new Blob([JSON.stringify(item)]).size;
  if(size>750000){setImageError('Dit artikel is te groot voor Firebase ('+Math.round(size/1024)+' KB). Upload de afbeelding opnieuw.');return}
- try{localStorage.setItem(key,JSON.stringify(next))}catch{setImageError('Opslagruimte van dit apparaat is vol. De wijziging is niet opgeslagen.');return}
+ try{writeStoredInventory(next)}catch{setImageError('Opslagruimte van dit apparaat is vol. De wijziging is niet opgeslagen.');return}
  setStorageError('');setItems(next);setDraft(null);setPendingImage('');setSaveToast('Artikel lokaal opgeslagen · synchronisatie met Firebase volgt');
  }catch(error){setImageError(error instanceof Error?error.message:'Afbeelding opslaan in Firebase mislukt.');}finally{setImageBusy(false)}
 }

@@ -254,3 +254,8 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 
 ## Eventselectie buildcorrectie (2026-11-12)
 - De `visibleMenu`-filterexpressie in `EventDetail.tsx` had een ontbrekende afsluitende haak; dit is gecorrigeerd zodat de TypeScript-build kan slagen. Filtergedrag is ongewijzigd.
+
+## Datasheet-export bieren en wijnen (2026-11-12)
+- `Catalog.exportDatasheet(type)` downloadt een UTF-8 CSV met BOM en puntkomma-scheiding van alle actuele catalogusproducten van type `Speciaalbier` of `Wijn`, ongeacht actieve zoek- of clusterfilters.
+- Exportvelden: naam, type, bierstijl, biercluster, verpakking, alcoholpercentage, smaakprofiel, wijnsoort, druiven, land, regio, productlink, `menuDescriptionFull`, `menuDescriptionShort`, `menuDescriptionKeywords`.
+- Bestandsnamen `wanderingbar-bieren-datasheet.csv` en `wanderingbar-wijnen-datasheet.csv`. Alleen-lezen export; geen mutaties in lokale opslag of Firebase; productfoto's en base64 uitgesloten.

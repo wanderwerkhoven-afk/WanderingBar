@@ -348,3 +348,7 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 ## Chronologische volgorde evenementen (12 november 2026)
 - De evenementlijst sorteert automatisch op datum: eerst toekomstige evenementen vanaf vandaag (dichtstbijzijnde bovenaan), daarna verstreken evenementen (meest recente eerst), en evenementen zonder geldige ISO-datum als laatste.
 - Sortering geldt binnen de bestaande filters en zoekresultaten, zonder opgeslagen evenementgegevens of Firebase-volgorde te wijzigen. De bestaande datumparser valideert YYYY-MM-DD.
+
+## Desktop inventaris plusknop (13 november 2026)
+- `src/inventory.css`: bij desktopbreedte vanaf 900px staat de zwevende toevoegknop rechtsonder in het hoofdcontentgebied (`right: clamp(24px, 4vw, 70px); bottom: 32px`) in plaats van rond het midden van het scherm.
+- De bestaande mobiele positionering blijft ongewijzigd; de knopfunctionaliteit, PWA en Firebase-opslag veranderen niet.

@@ -9,6 +9,7 @@ import {readInventoryImage,writeInventoryImage,deleteInventoryImage,cachedInvent
 import type {Category,Item} from './types/inventory';
 import {INVENTORY_STORAGE_KEY} from './repositories/storageKeys';
 import {readStoredInventory,writeStoredInventory} from './repositories/inventoryRepository';
+import {readMenuCatalog,writeMenuCatalog} from './data/menuCatalog';
 export type {Item} from './types/inventory';
 export {INVENTORY_STORAGE_KEY} from './repositories/storageKeys';
 function InventoryProductImage({item}:{item:Item}){
@@ -498,7 +499,10 @@ async function save(){
  const size=new Blob([JSON.stringify(item)]).size;
  if(size>750000){setImageError('Dit artikel is te groot voor Firebase ('+Math.round(size/1024)+' KB). Upload de afbeelding opnieuw.');return}
  try{writeStoredInventory(next)}catch{setImageError('Opslagruimte van dit apparaat is vol. De wijziging is niet opgeslagen.');return}
- setStorageError('');setItems(next);setDraft(null);setPendingImage('');setSaveToast(draft.id ? `Wijzigingen voor ${item.name} zijn opgeslagen` : `${item.name} is toegevoegd aan ${item.category} inventaris`);
+ setStorageError('');setItems(next);setDraft(null);setPendingImage('');
+ const catalog=readMenuCatalog();const linked=catalog.filter(entry=>entry.inventoryItemId===item.id);
+ if(linked.length){try{writeMenuCatalog(catalog.map(entry=>entry.inventoryItemId===item.id?{...entry,name:item.name,image:undefined,imageUrl:undefined}:entry))}catch(error){setStorageError('Inventaris opgeslagen, maar cataloguskoppeling bijwerken is mislukt: '+String(error))}}
+ setSaveToast(draft.id ? `Wijzigingen voor ${item.name} zijn opgeslagen` : `${item.name} is toegevoegd aan ${item.category} inventaris`);
  }catch(error){setImageError(error instanceof Error?error.message:'Afbeelding opslaan in Firebase mislukt.');}finally{setImageBusy(false)}
 }
 async function removeImage(){

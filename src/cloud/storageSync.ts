@@ -252,9 +252,10 @@ export function startLiveSync(
             .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
           if (JSON.stringify(next) === JSON.stringify(remote[dataset])) return;
           if (readLocal()[dataset] !== baseline[dataset]) {
-            conflict = true;
-            onStatus('error');
-            onError('Er zijn tegelijkertijd lokale en online wijzigingen. Maak een back-up en herlaad de pagina om ze samen te voegen.');
+            // Do not overwrite unsent edits with a remote snapshot. Flush will
+            // reconcile against a fresh server read before writing.
+            remote[dataset] = next;
+            flush();
             return;
           }
           remote[dataset] = next;
@@ -270,27 +271,60 @@ export function startLiveSync(
 
   const flush = () => {
     if (stopped || conflict) return;
-    const current = readLocal();
     for (const dataset of DATASETS) {
-      if (busy.has(dataset) || current[dataset] === baseline[dataset]) continue;
+      if (busy.has(dataset) || readLocal()[dataset] === baseline[dataset]) continue;
       busy.add(dataset);
       onStatus('syncing');
-      const raw = current[dataset];
       void (async () => {
         try {
-          const wanted = rowsFromLocal(dataset, raw);
-          await writeDataset(dataset, wanted, remote[dataset]);
-          remote[dataset] = wanted;
-          baseline[dataset] = raw;
-          markSynced(uid, baseline);
-        } catch (error) {
-          // Keep the unsynced local data and never claim cloud success after a failed write.
+          // Read the server again immediately before writing: a stale listener
+          // snapshot must never become the authority for deleting other edits.
+          const server = (await Promise.all(v3Collections(dataset).map(ref => getDocsFromServer(ref))))
+            .flatMap(v3Rows).sort((a,b)=>a.position-b.position||a.id.localeCompare(b.id));
+          const base = rowsFromLocal(dataset, baseline[dataset]);
+          const desired = rowsFromLocal(dataset, readLocal()[dataset]);
+          const baseMap = new Map(base.map(row=>[row.id,row]));
+          const localMap = new Map(desired.map(row=>[row.id,row]));
+          const serverMap = new Map(server.map(row=>[row.id,row]));
+          const changedIds = new Set([...baseMap.keys(),...localMap.keys()].filter(id=>
+            baseMap.get(id)?.value!==localMap.get(id)?.value ||
+            Boolean(baseMap.has(id))!==Boolean(localMap.has(id))));
+          const conflictIds = [...changedIds].filter(id=>{
+            const before=baseMap.get(id)?.value;
+            const current=serverMap.get(id)?.value;
+            const wanted=localMap.get(id)?.value;
+            return current!==before && current!==wanted;
+          });
+          if(conflictIds.length){
+            conflict=true;onStatus('error');
+            onError('Firebase heeft gelijktijdige wijzigingen voor '+dataset+' ('+conflictIds.slice(0,3).join(', ')+'). Lokale wijzigingen zijn behouden. Maak een back-up voordat je herlaadt.');
+            return;
+          }
+          // Merge non-overlapping changes at document level; never replace the
+          // whole remote dataset with a stale browser snapshot.
+          const merged=new Map(serverMap);
+          for(const id of changedIds){const row=localMap.get(id);if(row)merged.set(id,row);else merged.delete(id);}
+          const next=[...merged.values()].map((row,position)=>({...row,position}));
+          await writeDataset(dataset,next,server);
+          remote[dataset]=next;
+          const raw=toRaw(next);
+          // Do not overwrite a newer edit made while the write was in flight.
+          const latest=readLocal()[dataset];
+          if(latest===JSON.stringify(desired.map(row=>JSON.parse(row.value)))){
+            localStorage.setItem(KEYS[dataset],raw);
+            baseline[dataset]=raw;
+            markSynced(uid,baseline);
+            onRemote();
+          }else{
+            // Preserve newer local edits; they will be flushed in the next pass.
+            baseline[dataset]=raw;
+          }
+        }catch(error){
           onStatus('error');
-          onError('Niet opgeslagen in Firebase. Herstart de app nog niet: wijzigingen kunnen anders verdwijnen. ' + (error instanceof Error ? error.message : 'Synchroniseren mislukt.'));
-        } finally {
+          onError('Niet opgeslagen in Firebase. Lokale wijzigingen zijn behouden. '+(error instanceof Error?error.message:'Synchroniseren mislukt.'));
+        }finally{
           busy.delete(dataset);
-          if (!stopped && !conflict && busy.size === 0 &&
-              DATASETS.every(key => readLocal()[key] === baseline[key])) onStatus('synced');
+          if(!stopped&&!conflict&&busy.size===0&&DATASETS.every(key=>readLocal()[key]===baseline[key]))onStatus('synced');
         }
       })();
     }

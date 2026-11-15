@@ -500,8 +500,17 @@ async function save(){
  if(size>750000){setImageError('Dit artikel is te groot voor Firebase ('+Math.round(size/1024)+' KB). Upload de afbeelding opnieuw.');return}
  try{writeStoredInventory(next)}catch{setImageError('Opslagruimte van dit apparaat is vol. De wijziging is niet opgeslagen.');return}
  setStorageError('');setItems(next);setDraft(null);setPendingImage('');
- const catalog=readMenuCatalog();const linked=catalog.filter(entry=>entry.inventoryItemId===item.id);
- if(linked.length){try{writeMenuCatalog(catalog.map(entry=>entry.inventoryItemId===item.id?{...entry,name:item.name,image:undefined,imageUrl:undefined}:entry))}catch(error){setStorageError('Inventaris opgeslagen, maar cataloguskoppeling bijwerken is mislukt: '+String(error))}}
+ const catalog=readMenuCatalog();
+ const normalized=item.name.trim().toLocaleLowerCase('nl');
+ const uniqueStock=next.filter(row=>row.category==='Dranken'&&row.name.trim().toLocaleLowerCase('nl')===normalized).length===1;
+ const nextCatalog=catalog.map(entry=>{
+  if(entry.inventoryItemId===item.id)return {...entry,name:item.name,image:undefined,imageUrl:undefined};
+  if(item.category==='Dranken'&&uniqueStock&&!entry.inventoryItemId&&(entry.type==='Wijn'||entry.type==='Speciaalbier')&&entry.name.trim().toLocaleLowerCase('nl')===normalized){
+   return {...entry,inventoryItemId:item.id,image:undefined,imageUrl:undefined};
+  }
+  return entry;
+ });
+ if(nextCatalog.some((entry,index)=>entry!==catalog[index])){try{writeMenuCatalog(nextCatalog)}catch(error){setStorageError('Inventaris opgeslagen, maar cataloguskoppeling bijwerken is mislukt: '+String(error))}}
  setSaveToast(draft.id ? `Wijzigingen voor ${item.name} zijn opgeslagen` : `${item.name} is toegevoegd aan ${item.category} inventaris`);
  }catch(error){setImageError(error instanceof Error?error.message:'Afbeelding opslaan in Firebase mislukt.');}finally{setImageBusy(false)}
 }

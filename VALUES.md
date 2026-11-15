@@ -359,3 +359,10 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - Gekoppelde items tonen de inventarisafbeelding in de catalogus. Een geüploade catalogusfoto wordt in de bestaande Firestore-afbeeldingsopslag opgeslagen en aan het voorraadartikel gekoppeld. De naam wordt bij gekoppelde producten gedeeld.
 - Inventariswijzigingen melden zich via `barback-inventory-updated` voor verversen van de catalogusweergave. Bestaande voorraadhoeveelheden worden niet overschreven door automatische koppelingen.
 - Nog niet afgerond: ingredient-ID-koppelingen voor cocktails/mocktails en volledige voorraad-/inkoopberekening; deployment en end-to-end cloudsync zijn niet geverifieerd.
+
+## Firebase leidend — synchronisatie en ingrediëntkoppelingen (15 november 2026)
+- `storageSync.ts` leest de actuele Firestore-rijen opnieuw vóór synchronisatie, vergelijkt per record de laatst bekende basis en lokale wijzigingen en blokkeert tegenstrijdige wijzigingen zonder lokale data te wissen. Niet-overlappende wijzigingen worden per dataset samengevoegd; Firestore blijft de autoriteit bij aanmelden.
+- Catalogus ondersteunt expliciete `ingredientInventoryIds` voor ingrediënten van cocktails en mocktails. Event-inkoop gebruikt gekoppelde voorraad-ID's voor ingrediënten en bier, met naammatching uitsluitend als terugval voor oudere recepten. Batchboekingen gebruiken nu de inventarisrepository zodat de Firebase-sync wordt getriggerd.
+- Alleen wijn en speciaalbier krijgen een voorraadproductkoppeling in de cataloguseditor; recepten zijn geen fysieke voorraadproducten. Gedeelde afbeelding blijft aan het gekoppelde inventarisartikel hangen.
+- Grote catalogusafbeeldingen worden niet dubbel als uitgeklapte Firestore-velden opgeslagen. Bestaande opslagkeys en producthoeveelheden blijven behouden.
+- **Open verificatie:** GitHub Actions build, live Firebase-regels, twee-apparatenconcurrentie en transactieve multi-dataset-updates zijn nog niet end-to-end getest. De browsercache is een offline werkbuffer, niet een onafhankelijke bron van waarheid.

@@ -408,3 +408,8 @@ EventDetail → readMenuCatalog + inventoryItems → menukaart / inkoop / paklij
 - Wijn- en bierkaarten tonen de voorraadstatus uit het gekoppelde inventarisartikel (`quantity`, `unit`); bij ontbrekende koppeling of onbekende voorraad wordt dat expliciet aangegeven.
 - Inkoop valt bij oude recepten alleen terug op naammatching als precies één inventarisartikel overeenkomt. Bij dubbele namen wordt niet willekeurig een voorraadartikel geselecteerd.
 - Nieuwe `tests/productLinks.test.mjs` dekt expliciete ID-koppelingen, inkooptekorten en ambigue namen. Tests en productiebuild zijn nog niet in GitHub Actions geverifieerd.
+
+## Testbare voorraadkoppeling (15 november 2026)
+- `src/data/stockLookup.ts` is een zuivere ID-eerst lookup zonder Firebase- of browserafhankelijkheden; `inventoryPlanning.matchItem` gebruikt deze helper na de bestaande ingrediëntalias.
+- `tests/productLinks.test.mjs` controleert unieke naamfallback, ambigue namen, expliciete IDs en ontbrekende IDs met Node's ingebouwde test runner.
+- De productiebuild en Firestore-integratietests zijn nog niet bevestigd.

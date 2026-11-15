@@ -143,7 +143,7 @@ async function writeDataset(dataset: Dataset, desired: Row[], previous: Row[]): 
         batch.set(doc(db, path), {
           // Images live once in legacyValue. Duplicating Base64 in flattened fields
           // wastes Firestore's 1 MiB document limit without helping readers.
-          ...(dataset === 'inventory' ? firestoreSafeData(Object.fromEntries(Object.entries(record).filter(([key]) => key !== 'image'))) : firestoreSafeData(record)) as Record<string, unknown>,
+          ...((dataset === 'inventory' || dataset === 'catalog') ? firestoreSafeData(Object.fromEntries(Object.entries(record).filter(([key]) => key !== 'image'))) : firestoreSafeData(record)) as Record<string, unknown>,
           legacyValue: change.row.value, legacyId: change.row.id,
           position: change.row.position, schemaVersion: 3,
           ...(dataset === 'catalog' ? { productId: path.split('/').pop() } : {}),

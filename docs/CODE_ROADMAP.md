@@ -363,3 +363,10 @@
 ## Desktop inventaris plusknop (13 november 2026)
 - `src/inventory.css`: bij desktopbreedte vanaf 900px staat de zwevende toevoegknop rechtsonder in het hoofdcontentgebied (`right: clamp(24px, 4vw, 70px); bottom: 32px`) in plaats van rond het midden van het scherm.
 - De bestaande mobiele positionering blijft ongewijzigd; de knopfunctionaliteit, PWA en Firebase-opslag veranderen niet.
+
+## Catalogus ↔ inventaris productkoppeling (15 november 2026)
+- Catalogusproducten ondersteunen `inventoryItemId` voor een expliciete voorraadkoppeling. In de cataloguseditor kan een bestaand voorraadartikel gekozen worden.
+- Bij het opslaan van wijn en speciaalbier: één exacte bestaande inventarismatch wordt gekoppeld; bij geen match wordt een nieuw inventarisartikel aangemaakt met onbekende voorraad; bij meerdere matches wordt om een expliciete keuze gevraagd.
+- Gekoppelde items tonen de inventarisafbeelding in de catalogus. Een geüploade catalogusfoto wordt in de bestaande Firestore-afbeeldingsopslag opgeslagen en aan het voorraadartikel gekoppeld. De naam wordt bij gekoppelde producten gedeeld.
+- Inventariswijzigingen melden zich via `barback-inventory-updated` voor verversen van de catalogusweergave. Bestaande voorraadhoeveelheden worden niet overschreven door automatische koppelingen.
+- Nog niet afgerond: ingredient-ID-koppelingen voor cocktails/mocktails en volledige voorraad-/inkoopberekening; deployment en end-to-end cloudsync zijn niet geverifieerd.

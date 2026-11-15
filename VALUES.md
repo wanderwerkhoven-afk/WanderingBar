@@ -380,3 +380,12 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 ## Tweezijdige productkoppeling (15 november 2026)
 - Inventaris opslaan koppelt bestaande niet-gekoppelde wijn-/biercatalogusitems automatisch wanneer exact één Dranken-voorraadartikel met dezelfde genormaliseerde naam bestaat. Bij dubbele namen wordt niets automatisch gekoppeld.
 - Bestaande gekoppelde catalogusproducten krijgen de gedeelde naam en afbeeldingsverwijzing; aantallen, leveranciers en inkoopprijzen blijven uitsluitend in inventaris. Geen automatische verwijdering van voorraad bij catalogusverwijdering.
+
+## Catalogus als bron voor bier en wijn in Inventaris (15 november 2026)
+- `src/Inventory.tsx`: alle hardcoded product-seeds, vaste bierlijsten en automatische prijs-/productinjectie uit de inventarisweergave verwijderd. Categorieën en subcategorieën blijven UI-configuratie.
+- De lijst met bier- en wijnproducten wordt uitsluitend afgeleid van `readMenuCatalog()` (de door Firebase gesynchroniseerde catalogus). Catalogusproducten zonder voorraadrecord verschijnen met onbekende voorraad (`quantity: null`) en worden niet automatisch naar Firebase geschreven.
+- Bestaande inventarisrecords worden gekoppeld via expliciete `inventoryItemId`, of uitsluitend bij een unieke exacte naam in dezelfde bier-/wijnsubcategorie. Bestaande aantallen, leveranciers, prijzen en afbeeldingen blijven intact.
+- Oude bier- en wijnvoorraadrecords die niet in de catalogus voorkomen, blijven veilig opgeslagen maar worden niet meer als catalogusproduct getoond. Geen automatische verwijdering of destructieve migratie.
+- Wijzigingen in de catalogus en inventaris verversen de weergave via de bestaande events. Alleen expliciet opslaan of verwijderen schrijft inventarisgegevens. Catalogusgebonden bieren en wijnen kunnen niet vanuit inventaris worden verwijderd; beheer het assortiment in de catalogus.
+- Andere dranken en ingrediënten worden in deze fase nog uit bestaande inventarisrecords geladen. De volgende fase kan recepten/ingrediënten uit de catalogus als bron gebruiken.
+- Productiebuild en live Firebase-sync zijn nog niet geverifieerd.

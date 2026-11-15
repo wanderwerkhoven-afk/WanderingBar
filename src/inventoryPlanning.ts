@@ -1,12 +1,13 @@
 import type {Item} from './types/inventory';
 import {INVENTORY_STORAGE_KEY} from './repositories/storageKeys';
-export type Need={name:string;unit:string;amount:number};
+import {writeStoredInventory} from './repositories/inventoryRepository';
+export type Need={name:string;unit:string;amount:number;inventoryItemId?:string};
 export type PurchaseLine=Need&{stock:number|null;shortage:number|null;supplier:string;price:number|null;cost:number|null;inventoryName:string|null};
 const aliases:Record<string,string>={'Honingsiroop':'Honingstroop','Verse bramen':'Bramen','Verse salie':'Salie','Munt':'Verse munt'};
 export function inventoryItems():Item[]{try{const raw=localStorage.getItem(INVENTORY_STORAGE_KEY);const value=raw?JSON.parse(raw):[];return Array.isArray(value)?value:[]}catch{return []}}
-export function matchItem(name:string,items:Item[]):Item|undefined{const target=(aliases[name]||name).toLocaleLowerCase('nl');return items.find(i=>i.name.toLocaleLowerCase('nl')===target)}
+export function matchItem(name:string,items:Item[],inventoryItemId?:string):Item|undefined{if(inventoryItemId){return items.find(i=>i.id===inventoryItemId)}const target=(aliases[name]||name).toLocaleLowerCase('nl');return items.find(i=>i.name.toLocaleLowerCase('nl')===target)}
 function available(item:Item,unit:string):number|null{if(item.quantity==null)return null;const u=item.unit.toLowerCase();if(u===unit)return item.quantity;if(unit==='ml'&&u==='liter')return item.quantity*1000;if(unit==='gram'&&u==='kg')return item.quantity*1000;if(unit==='ml'&&u==='flessen'){const label=item.brand||'';const match=label.match(/(\d+(?:[.,]\d+)?)\s*(cl|ml|liter|l)\b/i);if(!match)return null;const size=Number(match[1].replace(',','.'));const ml=match[2].toLowerCase()==='cl'?size*10:match[2].toLowerCase()==='ml'?size:size*1000;return item.quantity*ml;}return null}
-export function purchaseLines(needs:Need[],items:Item[],margin:number):PurchaseLine[]{return needs.map(n=>{const item=matchItem(n.name,items);const amount=n.amount*(1+margin/100);const stock=item?available(item,n.unit):null;const shortage=stock==null?null:Math.max(0,amount-stock);const cost=item?.price!=null&&shortage!=null&&item.quantity!=null&&item.quantity>0&&stock!=null&&stock>0?shortage/stock*item.quantity*item.price:null;return {...n,amount,stock,shortage,supplier:item?.supplier||'Niet ingesteld',price:item?.price??null,cost,inventoryName:item?.name||null}})}
+export function purchaseLines(needs:Need[],items:Item[],margin:number):PurchaseLine[]{return needs.map(n=>{const item=matchItem(n.name,items,n.inventoryItemId);const amount=n.amount*(1+margin/100);const stock=item?available(item,n.unit):null;const shortage=stock==null?null:Math.max(0,amount-stock);const cost=item?.price!=null&&shortage!=null&&item.quantity!=null&&item.quantity>0&&stock!=null&&stock>0?shortage/stock*item.quantity*item.price:null;return {...n,amount,stock,shortage,supplier:item?.supplier||'Niet ingesteld',price:item?.price??null,cost,inventoryName:item?.name||null}})}
 export type BatchRecipe={name:string;outputMl:number;ingredients:{name:string;amount:number;unit:string}[];instructions:string};
 export const batchRecipes:BatchRecipe[]=[
 {name:'Honingstroop',outputMl:1000,ingredients:[{name:'Honing',amount:500,unit:'gram'},{name:'Water',amount:500,unit:'ml'}],instructions:'Meng 500 g honing met 500 ml warm water (ongeveer gelijke delen; uiteindelijke volume kan afwijken), roer glad, laat afkoelen en bewaar gekoeld.'},
@@ -26,5 +27,5 @@ export function saveBatch(recipe:BatchRecipe,quantityMl:number,items:Item[]):{ok
  if(item.quantity==null||item.quantity<deduction)return {ok:false,message:'Onvoldoende bekende voorraad van '+item.name,items};deductions.set(item.id,(deductions.get(item.id)||0)+deduction)
  }
  const updated=items.map(item=>{if(item.id===output.id)return {...item,quantity:(item.quantity||0)+(output.unit==='liter'?quantityMl/1000:quantityMl)};const deduction=deductions.get(item.id);return deduction==null?item:{...item,quantity:Math.max(0,(item.quantity||0)-deduction)}});
- try{localStorage.setItem(INVENTORY_STORAGE_KEY,JSON.stringify(updated));window.dispatchEvent(new Event('wandering-inventory-updated'));return {ok:true,message:'Batch geboekt. Grondstoffen zijn afgeschreven.',items:updated}}catch{return {ok:false,message:'Opslaan mislukt. Controleer de beschikbare opslagruimte.',items}}
+ try{writeStoredInventory(updated);window.dispatchEvent(new Event('wandering-inventory-updated'));return {ok:true,message:'Batch geboekt. Grondstoffen zijn afgeschreven.',items:updated}}catch{return {ok:false,message:'Opslaan mislukt. Controleer de beschikbare opslagruimte.',items}}
 }

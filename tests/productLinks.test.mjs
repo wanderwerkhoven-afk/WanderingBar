@@ -14,6 +14,6 @@ test('purchase calculations use linked inventory quantities',()=>{
  const [line]=purchaseLines([{name:'Huiswijn',unit:'flessen',amount:30,inventoryItemId:'wine-b'}],inventory,0);
  equal(line.stock,24);equal(line.shortage,6);equal(line.supplier,'Leverancier B');
 });
-test('legacy recipes can still resolve by name',()=>{
- equal(matchItem('Huiswijn',inventory)?.id,'wine-a');
+test('ambiguous legacy names do not select arbitrary stock',()=>{
+ equal(matchItem('Huiswijn',inventory),undefined);
 });

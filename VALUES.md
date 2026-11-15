@@ -366,3 +366,8 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - Alleen wijn en speciaalbier krijgen een voorraadproductkoppeling in de cataloguseditor; recepten zijn geen fysieke voorraadproducten. Gedeelde afbeelding blijft aan het gekoppelde inventarisartikel hangen.
 - Grote catalogusafbeeldingen worden niet dubbel als uitgeklapte Firestore-velden opgeslagen. Bestaande opslagkeys en producthoeveelheden blijven behouden.
 - **Open verificatie:** GitHub Actions build, live Firebase-regels, twee-apparatenconcurrentie en transactieve multi-dataset-updates zijn nog niet end-to-end getest. De browsercache is een offline werkbuffer, niet een onafhankelijke bron van waarheid.
+
+## Catalogus voorraadindicator en veilige naammatching (15 november 2026)
+- Wijn- en bierkaarten tonen de voorraadstatus uit het gekoppelde inventarisartikel (`quantity`, `unit`); bij ontbrekende koppeling of onbekende voorraad wordt dat expliciet aangegeven.
+- Inkoop valt bij oude recepten alleen terug op naammatching als precies één inventarisartikel overeenkomt. Bij dubbele namen wordt niet willekeurig een voorraadartikel geselecteerd.
+- Nieuwe `tests/productLinks.test.mjs` dekt expliciete ID-koppelingen, inkooptekorten en ambigue namen. Tests en productiebuild zijn nog niet in GitHub Actions geverifieerd.

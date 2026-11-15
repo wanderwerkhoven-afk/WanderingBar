@@ -90,3 +90,5 @@
 /* Save feedback matches the inventory toast without importing inventory layout styles. */
 .catalog-save-toast{position:fixed;z-index:10020;bottom:calc(95px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:9px;max-width:min(92vw,440px);width:max-content;padding:13px 17px;border-radius:14px;background:#4b2d20;color:#fff9ee;box-shadow:0 8px 26px #35251b35;font-size:14px;font-weight:600;text-align:center;pointer-events:none}
 .catalog-save-toast span{font-size:18px;color:#e6c69c}
+
+.catalog-stock-status{font-size:12px;font-weight:600;color:#684c37;padding:7px 12px;background:#f4e9db;border-radius:10px;margin:8px 0}

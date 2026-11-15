@@ -376,3 +376,7 @@ Deze waarden **niet verwijderen omdat er mogelijk al data in Firestore staat**: 
 - `src/data/stockLookup.ts` is een zuivere ID-eerst lookup zonder Firebase- of browserafhankelijkheden; `inventoryPlanning.matchItem` gebruikt deze helper na de bestaande ingrediëntalias.
 - `tests/productLinks.test.mjs` controleert unieke naamfallback, ambigue namen, expliciete IDs en ontbrekende IDs met Node's ingebouwde test runner.
 - De productiebuild en Firestore-integratietests zijn nog niet bevestigd.
+
+## Tweezijdige productkoppeling (15 november 2026)
+- Inventaris opslaan koppelt bestaande niet-gekoppelde wijn-/biercatalogusitems automatisch wanneer exact één Dranken-voorraadartikel met dezelfde genormaliseerde naam bestaat. Bij dubbele namen wordt niets automatisch gekoppeld.
+- Bestaande gekoppelde catalogusproducten krijgen de gedeelde naam en afbeeldingsverwijzing; aantallen, leveranciers en inkoopprijzen blijven uitsluitend in inventaris. Geen automatische verwijdering van voorraad bij catalogusverwijdering.
